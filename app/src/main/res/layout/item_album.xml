@@ -48,13 +48,15 @@
             android:padding="@dimen/_2sdp">
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/txtAlbum"
-                android:textColor="@color/colorBlack"
-                android:layout_width="wrap_content"
-                android:textSize="@dimen/_13sdp"
-                android:gravity="center_vertical"
-                android:text="@string/app_name_base"
-                android:layout_marginStart="@dimen/_3sdp"
+                android:textColor="@color/colorGrey"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="@dimen/_9sdp"
+                android:gravity="center_vertical"
+                android:text="dfhefjhefjefefe efre            rere        erere        erere ererere ererer  e rerere "
+                android:layout_marginStart="@dimen/_3sdp"
+
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/relativeLayout"
@@ -64,15 +66,16 @@
                 android:layout_margin="@dimen/_2sdp"
                 android:layout_gravity="center_vertical"
                 android:layout_width="@dimen/_5sdp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
         android:src="@color/colorTrans"/>
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/txtAlbumCount"
                 android:layout_gravity="center_vertical"
                 android:layout_width="wrap_content"
+                android:maxLines="1"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/_10sdp"
+                android:textSize="@dimen/_7sdp"
                 android:text="@string/app_name_base"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginRight="16dp"

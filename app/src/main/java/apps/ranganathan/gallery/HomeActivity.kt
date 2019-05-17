@@ -1,29 +1,39 @@
 package apps.ranganathan.gallery
 
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.LinearLayout
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView.VERTICAL
 import apps.ranganathan.configlibrary.base.BaseAppActivity
 import apps.ranganathan.gallery.adapter.CustomAdapter
 import apps.ranganathan.gallery.model.Album
+import apps.ranganathan.gallery.viewmodel.HomeViewModel
 
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.content_home.*
+import java.io.File
+import kotlin.math.absoluteValue
+
+
 
 class HomeActivity : BaseAppActivity() {
+
+    private lateinit var homeVieModel: HomeViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
         setSupportActionBar(toolbar)
         setConnectivityChange()
-        initAlbum()
+
+
+        homeVieModel = ViewModelProviders.of(this).get(HomeViewModel::class.java)
+        var files = homeVieModel.getAllImages(this)
+        initAlbum(files)
+
         fabCamera.setOnClickListener { view ->
            takePhoto(object : ImagePickerListener{
                override fun onPicked(bitmap: Bitmap) {
@@ -36,21 +46,23 @@ class HomeActivity : BaseAppActivity() {
 
     private lateinit var albumm: Album
 
-    private fun initAlbum() {
+    private fun initAlbum(files: List<File>) {
 
         recyclerAlbums.layoutManager =  GridLayoutManager(this,  2)
         val users = ArrayList<Album>()
 
-        //adding some dummy data to the list
-        for (i in 1 until 10) {
+        for (file in files){
             // i in [1, 10), 10 is excluded
-            println(i)
             albumm = Album()
-            albumm.name = "abc"+i*i
-            albumm.count = ""+i*i
-            albumm.albumUri = ""
+            albumm.name = file.nameWithoutExtension
+            var k = Uri.fromFile(file)
+            val parent = File(file.parent)
+            albumm.count  = parent.nameWithoutExtension
+            albumm.albumUri = k.toString()
             users.add(albumm)
         }
+
+
 
         val adapter = CustomAdapter(this,users)
 
@@ -69,8 +81,18 @@ class HomeActivity : BaseAppActivity() {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.action_settings -> true
+            R.id.action_album -> {
+                var files = homeVieModel.getAlbums(this)
+                initAlbum(files)
+                true
+            }
+            R.id.action_photos -> {
+                var files = homeVieModel.getAllImages(this)
+                initAlbum(files)
+                true
+            }
             else -> super.onOptionsItemSelected(item)
+
         }
     }
 }

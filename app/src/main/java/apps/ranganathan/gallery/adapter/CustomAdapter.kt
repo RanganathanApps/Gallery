@@ -44,7 +44,7 @@ class CustomAdapter(activity:BaseAppActivity,val userList: ArrayList<Album>) : R
             val progressAlbum  =itemView.findViewById(R.id.progressAlbum) as View
             txtAlbum.text = user.name
             txtAlbumCount.text = user.count
-            activity.loadImage("https://images.pexels.com/photos/1386604/pexels-photo-1386604.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+            activity.loadImage(user.albumUri,
                 imageAlbum,R.drawable.ic_camera_alt_white_24dp,
                 R.drawable.ic_camera_alt_white_24dp,progressAlbum)
         }
