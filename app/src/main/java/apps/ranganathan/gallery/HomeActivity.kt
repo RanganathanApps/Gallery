@@ -5,18 +5,23 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.AdapterView
+import android.widget.LinearLayout.VERTICAL
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import apps.ranganathan.configlibrary.base.BaseAppActivity
-import apps.ranganathan.gallery.adapter.CustomAdapter
+import apps.ranganathan.gallery.adapter.AlbumsAdapter
+import apps.ranganathan.gallery.adapter.PhotosAdapter
 import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.viewmodel.HomeViewModel
 
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.content_home.*
+import kotlinx.android.synthetic.main.toolbar_home.*
 import java.io.File
-import kotlin.math.absoluteValue
-
 
 
 class HomeActivity : BaseAppActivity() {
@@ -26,7 +31,7 @@ class HomeActivity : BaseAppActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
-        setSupportActionBar(toolbar)
+        setSupportActionBar(toolbarHome)
         setConnectivityChange()
 
 
@@ -34,37 +39,59 @@ class HomeActivity : BaseAppActivity() {
         var files = homeVieModel.getAllImages(this)
         initAlbum(files)
 
+        action_bar_spinner.adapter = homeVieModel.setTypes(this)
+
         fabCamera.setOnClickListener { view ->
            takePhoto(object : ImagePickerListener{
                override fun onPicked(bitmap: Bitmap) {
                    showToast(""+bitmap.height.toString())
+
                }
            })
         }
+
+        action_bar_spinner.onItemSelectedListener = (object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                when(action_bar_spinner.selectedItem.toString()){
+                    "Albums"->{
+                        initAlbum(homeVieModel.getAlbums(this@HomeActivity))
+                    }
+                    "Photos" ->{
+                        initPhotos(homeVieModel.getAllImages(this@HomeActivity))
+                    }
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+
+            }
+
+        })
+
+
 
     }
 
     private lateinit var albumm: Album
 
-    private fun initAlbum(files: List<File>) {
+    private fun initPhotos(files: List<Album>) {
 
-        recyclerAlbums.layoutManager =  GridLayoutManager(this,  2)
-        val users = ArrayList<Album>()
+        recyclerAlbums.layoutManager = StaggeredGridLayoutManager(3,StaggeredGridLayoutManager.VERTICAL)
 
-        for (file in files){
-            // i in [1, 10), 10 is excluded
-            albumm = Album()
-            albumm.name = file.nameWithoutExtension
-            var k = Uri.fromFile(file)
-            val parent = File(file.parent)
-            albumm.count  = parent.nameWithoutExtension
-            albumm.albumUri = k.toString()
-            users.add(albumm)
-        }
+        val adapter = PhotosAdapter(this,files)
+
+        //now adding the adapter to recyclerview
+        recyclerAlbums.adapter = adapter
+    }
 
 
+    private fun initAlbum(files: List<Album>) {
 
-        val adapter = CustomAdapter(this,users)
+        recyclerAlbums.layoutManager = GridLayoutManager(this,  2) as RecyclerView.LayoutManager?
+        recyclerAlbums.layoutManager = StaggeredGridLayoutManager(2,VERTICAL)
+
+        val adapter = AlbumsAdapter(this,files)
 
         //now adding the adapter to recyclerview
         recyclerAlbums.adapter = adapter
@@ -82,13 +109,11 @@ class HomeActivity : BaseAppActivity() {
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
             R.id.action_album -> {
-                var files = homeVieModel.getAlbums(this)
-                initAlbum(files)
+
                 true
             }
             R.id.action_photos -> {
-                var files = homeVieModel.getAllImages(this)
-                initAlbum(files)
+
                 true
             }
             else -> super.onOptionsItemSelected(item)

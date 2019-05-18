@@ -5,6 +5,9 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
 import apps.ranganathan.configlibrary.base.BaseAppActivity
+import apps.ranganathan.gallery.adapter.ViewTypeAdapter
+import apps.ranganathan.gallery.model.Album
+import kotlinx.android.synthetic.main.toolbar_home.*
 import java.io.File
 
 
@@ -38,49 +41,62 @@ open class HomeViewModel : BaseViewModel(){
 
    }
 
+    fun setTypes(context: Context): ViewTypeAdapter {
+        val types = arrayOf<String>("Photos","Albums")
+        val adapter = ViewTypeAdapter(context,types)
+       return adapter
+    }
 
-    fun getAllImages(context: Context): List<File> {
-        val results = mutableListOf<File>()
+    fun getAllImages(context: Context): List<Album> {
+        val results = mutableListOf<Album>()
         results.addAll(getExternalStorageContent(context))
        // results.addAll(getInternalStorageContent(context))
         return results
     }
 
-    fun getAlbums(activity: BaseAppActivity): List<File> {
+    fun getAlbums(activity: BaseAppActivity): List<Album> {
         return getAlbumFileFromUri(activity,uri)
     }
 
 
 
-    fun getAllImagesUnderFolder(context: Context, file: File): List<File> = getImageFileFromUri(context, Uri.fromFile(file))
+    fun getAllImagesUnderFolder(context: Context, file: File): List<Album> = getImageFileFromUri(context, Uri.fromFile(file))
 
-    private fun getInternalStorageContent(context: Context): Collection<File> = getImageFileFromUri(context, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+    private fun getInternalStorageContent(context: Context): Collection<Album> = getImageFileFromUri(context, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
 
-    private fun getExternalStorageContent(context: Context): Collection<File> = getImageFileFromUri(context, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+    private fun getExternalStorageContent(context: Context): Collection<Album> = getImageFileFromUri(context, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
 
 
-    private fun getImageFileFromUri(context: Context, uri: Uri): List<File> {
+    private fun getImageFileFromUri(context: Context, uri: Uri): List<Album> {
+        var  album =Album()
+
         val cursor = context.contentResolver.query(uri,projection,
             null, null, "$orderBy DESC")
 
-        val results = mutableListOf<File>()
+        val albums = mutableListOf<Album>()
 
         while (cursor.moveToNext()) {
             absolutePathOfImage = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA))
             Log.w("path : ",absolutePathOfImage)
-            results.add(File(absolutePathOfImage))
+            //albums.add(File(absolutePathOfImage))
+            album = Album()
+            album.count = ""
+            album.name = File(absolutePathOfImage).nameWithoutExtension
+            album.albumUri = Uri.fromFile(File(absolutePathOfImage)).toString()
+            albums.add(album)
         }
 
         cursor.close()
 
-        return results
+        return albums
     }
 
-    private fun getAlbumFileFromUri(context: Context, uri: Uri): List<File> {
+    private fun getAlbumFileFromUri(context: Context, uri: Uri): List<Album> {
 
+        var  album =Album()
         val cursor2 = context.contentResolver.query(uri, projection,
             BUCKET_GROUP_BY, null, BUCKET_ORDER_BY)
-        val results = mutableListOf<File>()
+        val albums = mutableListOf<Album>()
 
         val folderName = cursor2.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
         val imageData = cursor2.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA)
@@ -94,11 +110,17 @@ open class HomeViewModel : BaseViewModel(){
 
             val cursorBucket = context.contentResolver.query(uri, projectionOnlyBucket, selection, selectionArgs, null)
             Log.w("albums :", "album size :" + cursorBucket.count + " "+imagePath)
-            results.add(File(imagePath))
+            album = Album()
+            album.count = ""+cursorBucket.count
+            album.file = File(imagePath)
+            album.name = bucket
+            album.albumUri = Uri.fromFile(File(imagePath)).toString()
+
+            albums.add(album)
 
         }
         cursor2.close()
 
-        return results
+        return albums
     }
 }
