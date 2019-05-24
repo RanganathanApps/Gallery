@@ -6,14 +6,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:showIn="@layout/activity_home"
-        tools:context=".ui.activity.HomeActivity">
+        tools:showIn="@layout/activity_picture_view"
+        tools:context=".ui.activity.PictureViewActivity">
 
-    <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerAlbums"
+
+
+    <androidx.viewpager.widget.ViewPager
+            android:id="@+id/viewpagerPhotos"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-    </androidx.recyclerview.widget.RecyclerView>
+    </androidx.viewpager.widget.ViewPager>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

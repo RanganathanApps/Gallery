@@ -1,7 +1,6 @@
-package apps.ranganathan.gallery
+package apps.ranganathan.gallery.ui.activity
 
 import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -12,7 +11,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import apps.ranganathan.configlibrary.base.BaseAppActivity
+import apps.ranganathan.gallery.R
 import apps.ranganathan.gallery.adapter.AlbumsAdapter
 import apps.ranganathan.gallery.adapter.PhotosAdapter
 import apps.ranganathan.gallery.model.Album
@@ -21,10 +20,9 @@ import apps.ranganathan.gallery.viewmodel.HomeViewModel
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.content_home.*
 import kotlinx.android.synthetic.main.toolbar_home.*
-import java.io.File
 
 
-class HomeActivity : BaseAppActivity() {
+class HomeActivity : BaseActivity() {
 
     private lateinit var homeVieModel: HomeViewModel
 
@@ -36,11 +34,9 @@ class HomeActivity : BaseAppActivity() {
 
 
         homeVieModel = ViewModelProviders.of(this).get(HomeViewModel::class.java)
-        var files = homeVieModel.getAllImages(this)
-        initAlbum(files)
+
 
         action_bar_spinner.adapter = homeVieModel.setTypes(this)
-
         fabCamera.setOnClickListener { view ->
            takePhoto(object : ImagePickerListener{
                override fun onPicked(bitmap: Bitmap) {
@@ -49,6 +45,7 @@ class HomeActivity : BaseAppActivity() {
                }
            })
         }
+
 
         action_bar_spinner.onItemSelectedListener = (object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -63,7 +60,7 @@ class HomeActivity : BaseAppActivity() {
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
-
+                initPhotos(homeVieModel.getAllImages(this@HomeActivity))
 
             }
 
@@ -77,12 +74,35 @@ class HomeActivity : BaseAppActivity() {
 
     private fun initPhotos(files: List<Album>) {
 
-        recyclerAlbums.layoutManager = StaggeredGridLayoutManager(3,StaggeredGridLayoutManager.VERTICAL)
+        //recyclerAlbums.layoutManager = GridLayoutManager(this,  2) as RecyclerView.LayoutManager?
+       //recyclerAlbums.layoutManager = StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL)
+
+       /* val glm = GridLayoutManager(this, 3)
+        glm.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                if (position % 3 == 2) {
+                    return 3
+                }
+                when (position % 4) {
+                    1, 3 -> return 1
+                    0, 2 -> return 2
+                    else ->
+                        //never gonna happen
+                        return -1
+                }
+            }
+        }
+        recyclerAlbums.setLayoutManager(glm)*/
+
+
 
         val adapter = PhotosAdapter(this,files)
 
         //now adding the adapter to recyclerview
         recyclerAlbums.adapter = adapter
+        //recyclerAlbums.setHasFixedSize(true)
+        //recyclerAlbums.setItemViewCacheSize(20)
+        //recyclerAlbums.setDrawingCacheEnabled(true)
     }
 
 

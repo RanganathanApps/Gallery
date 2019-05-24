@@ -2,6 +2,7 @@ package apps.ranganathan.gallery.viewmodel
 
 import android.content.Context
 import android.net.Uri
+import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import apps.ranganathan.configlibrary.base.BaseAppActivity
@@ -14,6 +15,8 @@ import java.io.File
 open class HomeViewModel : BaseViewModel(){
 
     lateinit var uri: Uri
+
+    var pathDirectory = StringBuffer()
 
     val orderBy = MediaStore.Images.Media._ID
 
@@ -39,10 +42,12 @@ open class HomeViewModel : BaseViewModel(){
             MediaStore.Images.ImageColumns.DATE_TAKEN,
             MediaStore.Images.ImageColumns.DATA)
 
+
+
    }
 
     fun setTypes(context: Context): ViewTypeAdapter {
-        val types = arrayOf<String>("Photos","Albums")
+        val types = arrayOf<String>("Albums","Photos")
         val adapter = ViewTypeAdapter(context,types)
        return adapter
     }
@@ -68,27 +73,32 @@ open class HomeViewModel : BaseViewModel(){
 
 
     private fun getImageFileFromUri(context: Context, uri: Uri): List<Album> {
-        var  album =Album()
-
-        val cursor = context.contentResolver.query(uri,projection,
-            null, null, "$orderBy DESC")
-
         val albums = mutableListOf<Album>()
+        try {
+            var  album =Album()
 
-        while (cursor.moveToNext()) {
-            absolutePathOfImage = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA))
-            Log.w("path : ",absolutePathOfImage)
-            //albums.add(File(absolutePathOfImage))
-            album = Album()
-            album.count = ""
-            album.name = File(absolutePathOfImage).nameWithoutExtension
-            album.albumUri = Uri.fromFile(File(absolutePathOfImage)).toString()
-            albums.add(album)
+            val cursor = context.contentResolver.query(uri,projection,
+                null, null, "$orderBy DESC")
+
+
+
+            while (cursor.moveToNext()) {
+                absolutePathOfImage = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA))
+                Log.w("path : ",absolutePathOfImage)
+                //albums.add(File(absolutePathOfImage))
+                album = Album()
+                album.count = ""
+                album.name = File(absolutePathOfImage).nameWithoutExtension
+                album.albumUri = Uri.fromFile(File(absolutePathOfImage)).toString()
+                albums.add(album)
+            }
+
+            cursor.close()
+
+            return albums
+        } catch (e: Exception) {
+            return albums
         }
-
-        cursor.close()
-
-        return albums
     }
 
     private fun getAlbumFileFromUri(context: Context, uri: Uri): List<Album> {
@@ -104,16 +114,31 @@ open class HomeViewModel : BaseViewModel(){
             val bucket = cursor2.getString(folderName)
             val imagePath = cursor2.getString(imageData)
             Log.w("albums  : ",bucket)
-            val selectionArgs = arrayOf("%" + cursor2.getString(folderName) + "%")
+            val selectionArgs = arrayOf("%$bucket%")
             val selection = MediaStore.Video.Media.DATA + " like ? "
             val projectionOnlyBucket = arrayOf(MediaStore.MediaColumns.DATA, MediaStore.Video.Media.BUCKET_DISPLAY_NAME)
 
             val cursorBucket = context.contentResolver.query(uri, projectionOnlyBucket, selection, selectionArgs, null)
-            Log.w("albums :", "album size :" + cursorBucket.count + " "+imagePath)
+            Log.w("albums :", "size :" + cursorBucket.count + ", path "+imagePath)
+            val filePathUri = Uri.parse(imagePath)
+            val fileName = filePathUri.getLastPathSegment().toString()
+            val size = filePathUri.pathSegments.size -1
+            pathDirectory = StringBuffer()
+            for (i in 0 until size){
+                pathDirectory.append("/")
+                pathDirectory .append(filePathUri.pathSegments.get(i))
+
+            }
+            Log.w("albums :", "filePath fileName  :$pathDirectory")
+
+
+
+
             album = Album()
             album.count = ""+cursorBucket.count
             album.file = File(imagePath)
             album.name = bucket
+            album.path = pathDirectory.toString()
             album.albumUri = Uri.fromFile(File(imagePath)).toString()
 
             albums.add(album)
@@ -122,5 +147,37 @@ open class HomeViewModel : BaseViewModel(){
         cursor2.close()
 
         return albums
+    }
+
+    fun imageReader(root : File): ArrayList<File>? {
+        val a = ArrayList<File>()
+        val files = root.listFiles()
+        if (files!=null) {
+            for (i in 0..files.size - 1) {
+                if (files[i].name.endsWith(".jpg")) {
+                    a.add(files[i])
+                }
+            }
+        }
+        return a
+    }
+
+    fun getDirectory(folderName:String) :File{
+        var externalStorageAbsolutePath: String = Environment.getExternalStorageDirectory()!!.absolutePath
+        Log.w("albums AbsolutePath", " " + externalStorageAbsolutePath)
+        val file = File(externalStorageAbsolutePath + File.separator + folderName)
+        return  file
+
+    }
+
+    fun getImagesInFile(file: File): ArrayList<File>? {
+        Log.w("albums fullpath", "" + file)
+        val images = imageReader(file)
+        if (images!=null){
+            for (a in images){
+                Log.w("albums absolutePath", "" + a.absolutePath)
+            }
+        }
+        return images
     }
 }

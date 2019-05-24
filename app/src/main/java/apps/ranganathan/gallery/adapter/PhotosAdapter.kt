@@ -9,12 +9,17 @@ import androidx.recyclerview.widget.RecyclerView
 import apps.ranganathan.configlibrary.base.BaseAppActivity
 import apps.ranganathan.gallery.R
 import apps.ranganathan.gallery.model.Album
+import apps.ranganathan.gallery.ui.activity.BaseActivity
+import apps.ranganathan.gallery.ui.activity.PictureViewActivity
+import com.squareup.picasso.Callback
+import com.squareup.picasso.Picasso
 import java.util.*
 
-class PhotosAdapter(activity:BaseAppActivity, val userList: List<Album>) : RecyclerView.Adapter<PhotosAdapter.ViewHolder>() {
+
+class PhotosAdapter(activity: BaseActivity, val userList: List<Album>) : RecyclerView.Adapter<PhotosAdapter.ViewHolder>() {
 
     val  activity = activity
-
+    private val mRandom = Random()
 
     //this method is returning the view for each item in the list
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotosAdapter.ViewHolder {
@@ -26,6 +31,14 @@ class PhotosAdapter(activity:BaseAppActivity, val userList: List<Album>) : Recyc
     //this method is binding the data on the list
     override fun onBindViewHolder(holder: PhotosAdapter.ViewHolder, position: Int) {
         holder.bindItems(userList[position])
+
+        holder.imageAlbum.setOnClickListener {
+            val anotherMap = mapOf("photos" to userList,"position" to position)
+            activity.startActivityputExtra(activity,PictureViewActivity::class.java,anotherMap)
+        }
+       /* val layoutParams = holder.itemView.getLayoutParams() as StaggeredGridLayoutManager.LayoutParams
+        layoutParams.isFullSpan = getRandomIntInRange(56,91)%2==0
+        holder.itemView.layoutParams = layoutParams*/
     }
 
     //this method is giving the size of the list
@@ -33,24 +46,52 @@ class PhotosAdapter(activity:BaseAppActivity, val userList: List<Album>) : Recyc
         return userList.size
     }
 
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
+
     //the class is hodling the list view
     class ViewHolder(activity: BaseAppActivity,itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val mRandom = Random()
         val activity = activity
+        private val txtPhotoName = itemView.findViewById(R.id.txtPhotoName) as TextView
+        val imageAlbum  =itemView.findViewById(R.id.imgAlbum) as AppCompatImageView
+
         fun bindItems(user: Album) {
-            val txtPhotoName = itemView.findViewById(R.id.txtPhotoName) as TextView
-            val imageAlbum  =itemView.findViewById(R.id.imgAlbum) as AppCompatImageView
-            /* val params = view.layoutParams
-      params.height = 60
-      view.layoutParams = params*/
-            imageAlbum.layoutParams.height = getRandomIntInRange(250, 150)
-            imageAlbum.layoutParams.width = getRandomIntInRange(550, 350)
-            val progressAlbum  =itemView.findViewById(R.id.progressAlbum) as View
+
+
+
+            /*val params = view.layoutParams
+            params.height = 60
+            view.layoutParams = params*/
+
+
+
             txtPhotoName.text = user.name
 
-            activity.loadImage(user.albumUri,
-                imageAlbum,R.drawable.ic_camera_alt_white_24dp,
-                R.drawable.ic_camera_alt_white_24dp,progressAlbum)
+            if (imageAlbum.drawable==null) {
+                imageAlbum.layoutParams.height = getRandomIntInRange(250, 150)
+                imageAlbum.layoutParams.width = getRandomIntInRange(550, 350)
+
+                Picasso.get().load(user.albumUri).into(imageAlbum, object : Callback {
+                    override fun onError(e: Exception?) {
+
+                    }
+
+                    override fun onSuccess() {
+                        //imageAlbum.heightRatio = (imageAlbum.height /4).toDouble()
+                        //imageAlbum.layoutParams.height = imageAlbum.height/2
+                        //imageAlbum.layoutParams.width = imageAlbum.width/2
+                    }
+
+
+                })
+                /*activity.loadImage(
+                    activity, user.albumUri,
+                    imageAlbum,
+                    R.drawable.ic_camera_alt_white_24dp
+                )*/
+            }
         }
 
         private fun getRandomIntInRange(max: Int, min: Int): Int {
@@ -58,5 +99,10 @@ class PhotosAdapter(activity:BaseAppActivity, val userList: List<Album>) : Recyc
         }
     }
 
+    private fun getRandomIntInRange(max: Int, min: Int): Int {
+        return mRandom.nextInt(max - min + min) + min
+    }
+
 
 }
+

@@ -1,6 +1,6 @@
 plugins {
     id("com.android.application")
-   /* id("io.fabric")*/
+    /* id("io.fabric")*/
     id("kotlin-android")
     id("kotlin-android-extensions")
     id("kotlin-kapt")
@@ -65,8 +65,6 @@ android {
 }
 
 
-
-
 dependencies {
     /*kotlin*/
     implementation(Libs.Kotlin.kotlin_std)
@@ -108,7 +106,8 @@ dependencies {
     implementation("com.github.mukeshsolanki:android-otpview-pinview:2.0.3")
     implementation(Libs.lottie)
     //implementation(Libs.baseAppConfig)
-    implementation ("com.github.ranganathansamraj92:ConfigApp:0.0.11")
+    implementation("com.github.ranganathansamraj92:ConfigApp:0.0.12")
+    implementation("com.felipecsl.asymmetricgridview:library:2.0.1")
 
 
 }

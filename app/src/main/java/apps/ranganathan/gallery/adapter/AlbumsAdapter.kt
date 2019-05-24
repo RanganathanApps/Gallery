@@ -9,8 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import apps.ranganathan.configlibrary.base.BaseAppActivity
 import apps.ranganathan.gallery.R
 import apps.ranganathan.gallery.model.Album
+import apps.ranganathan.gallery.ui.activity.BaseActivity
+import apps.ranganathan.gallery.ui.activity.PictureViewActivity
 
-class AlbumsAdapter(activity:BaseAppActivity, val userList: List<Album>) : RecyclerView.Adapter<AlbumsAdapter.ViewHolder>() {
+class AlbumsAdapter(activity: BaseActivity, val userList: List<Album>) : RecyclerView.Adapter<AlbumsAdapter.ViewHolder>() {
 
     val  activity = activity
 
@@ -24,6 +26,11 @@ class AlbumsAdapter(activity:BaseAppActivity, val userList: List<Album>) : Recyc
     //this method is binding the data on the list
     override fun onBindViewHolder(holder: AlbumsAdapter.ViewHolder, position: Int) {
         holder.bindItems(userList[position])
+        holder.imageAlbum.setOnClickListener {
+            val album = userList.get(position)
+            val anotherMap = mapOf("directory" to album.name,"position" to position,"count" to album.count,"album" to album)
+            activity.startActivityputExtra(activity, PictureViewActivity::class.java,anotherMap)
+        }
     }
 
     //this method is giving the size of the list
@@ -35,16 +42,18 @@ class AlbumsAdapter(activity:BaseAppActivity, val userList: List<Album>) : Recyc
     class ViewHolder(activity: BaseAppActivity,itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         val activity = activity
+        val txtAlbum = itemView.findViewById(R.id.txtAlbum) as TextView
+        val txtAlbumCount  = itemView.findViewById(R.id.txtAlbumCount) as TextView
+        val imageAlbum  =itemView.findViewById(R.id.imgAlbum) as AppCompatImageView
+
         fun bindItems(user: Album) {
-            val txtAlbum = itemView.findViewById(R.id.txtAlbum) as TextView
-            val txtAlbumCount  = itemView.findViewById(R.id.txtAlbumCount) as TextView
-            val imageAlbum  =itemView.findViewById(R.id.imgAlbum) as AppCompatImageView
-            val progressAlbum  =itemView.findViewById(R.id.progressAlbum) as View
+
             txtAlbum.text = user.name
             txtAlbumCount.text = coverWithParanthesis(user.count)
+
             activity.loadImage(user.albumUri,
-                imageAlbum,R.drawable.ic_camera_alt_white_24dp,
-                R.drawable.ic_camera_alt_white_24dp,progressAlbum)
+                imageAlbum,
+                R.drawable.ic_camera_alt_white_24dp)
         }
 
         private fun coverWithParanthesis(count: String): CharSequence? {

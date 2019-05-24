@@ -27,11 +27,6 @@
                     app:layout_constraintStart_toStartOf="parent"
                     android:id="@+id/imgAlbum"/>
 
-            <ProgressBar
-                    android:layout_centerInParent="true"
-                    android:id="@+id/progressAlbum"
-                    android:layout_width="@dimen/_45sdp"
-                    android:layout_height="@dimen/_45sdp"/>
 
         </RelativeLayout>
 
