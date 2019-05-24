@@ -1,28 +1,19 @@
 package apps.ranganathan.gallery.ui.activity
 
 import android.os.Bundle
-import android.widget.ImageView
-import com.google.android.material.snackbar.Snackbar
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders
-import apps.ranganathan.configlibrary.base.BaseAppActivity
 import apps.ranganathan.gallery.R
 import apps.ranganathan.gallery.adapter.ViewPagerAdapter
 import apps.ranganathan.gallery.model.Album
-import apps.ranganathan.gallery.viewmodel.HomeViewModel
 import apps.ranganathan.gallery.viewmodel.PictureViewModel
-import com.squareup.picasso.Callback
-import com.squareup.picasso.Picasso
-
-import kotlinx.android.synthetic.main.activity_picture_view.*
 import kotlinx.android.synthetic.main.content_picture_view.*
 import java.io.File
-import java.io.Serializable
+
 
 class PictureViewActivity : BaseActivity() {
 
     private lateinit var pictureViewModel: PictureViewModel
-   lateinit var  userList: List<Album>
+    lateinit var userList: List<Album>
     private var position: Int = 0
 
 
@@ -39,8 +30,8 @@ class PictureViewActivity : BaseActivity() {
         setAppBar("Photo")
 
         pictureViewModel = ViewModelProviders.of(this).get(PictureViewModel::class.java)
-        if ( intent!!.extras!=null) {
-            if (intent!!.extras!!.containsKey("album")){
+        if (intent!!.extras != null) {
+            if (intent!!.extras!!.containsKey("album")) {
                 album = intent!!.extras!!.getSerializable("album") as Album
                 directory = album.name
                 count = album.count
@@ -56,8 +47,9 @@ class PictureViewActivity : BaseActivity() {
 
             viewpagerPhotos.adapter = ViewPagerAdapter(this, userList)
             viewpagerPhotos.setCurrentItem(position, true)
-        }
 
+
+        }
 
 
     }

@@ -2,14 +2,13 @@ package apps.ranganathan.gallery.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ImageView
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import apps.ranganathan.gallery.R
 import apps.ranganathan.gallery.model.Album
+import apps.ranganathan.gallery.utils.ScaleListener
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 
@@ -26,11 +25,22 @@ class ViewPagerAdapter(private val context : Context,list: List<Album>) : PagerA
         return imgaeslist.size
     }
 
-    @SuppressLint("InflateParams")
+    private lateinit var mScaleGestureDetector: ScaleGestureDetector
+
+    @SuppressLint("InflateParams", "ClickableViewAccessibility")
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         layoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val v = layoutInflater!!.inflate(R.layout.item_picture_view , null)
         val imgAlbum = v.findViewById<View>(R.id.imgAlbum) as ImageView
+
+        imgAlbum.setOnTouchListener(object : View.OnTouchListener {
+            override fun onTouch(v: View, m: MotionEvent): Boolean {
+                // Perform tasks here
+                mScaleGestureDetector.onTouchEvent(m)
+                return true
+            }
+        })
+        mScaleGestureDetector = ScaleGestureDetector(context, ScaleListener(imgAlbum))
         Picasso.get().load(imgaeslist[position].albumUri).into(imgAlbum, object : Callback {
             override fun onError(e: Exception?) {
 
