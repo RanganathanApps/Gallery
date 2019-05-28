@@ -108,6 +108,8 @@ dependencies {
     //implementation(Libs.baseAppConfig)
     implementation("com.github.ranganathansamraj92:ConfigApp:0.0.12")
     implementation("com.felipecsl.asymmetricgridview:library:2.0.1")
+    implementation("com.jsibbold:zoomage:1.2.0")
+
 
 
 }

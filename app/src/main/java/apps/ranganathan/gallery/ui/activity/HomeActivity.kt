@@ -128,14 +128,7 @@ class HomeActivity : BaseActivity() {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.action_album -> {
 
-                true
-            }
-            R.id.action_photos -> {
-
-                true
-            }
             else -> super.onOptionsItemSelected(item)
 
         }

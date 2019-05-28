@@ -89,6 +89,7 @@ open class HomeViewModel : BaseViewModel(){
                 album = Album()
                 album.count = ""
                 album.name = File(absolutePathOfImage).nameWithoutExtension
+                album.file = File(absolutePathOfImage)
                 album.albumUri = Uri.fromFile(File(absolutePathOfImage)).toString()
                 albums.add(album)
             }

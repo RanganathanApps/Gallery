@@ -3,4 +3,8 @@
     <string name="action_photos">Photos</string>
     <string name="action_albums">Album</string>
     <string name="title_activity_picture_view">PictureViewActivity</string>
+    <string name="label_size">Size</string>
+    <string name="label_path">Path</string>
+    <string name="label_lastModified">Last modified</string>
+    <string name="action_info">Info</string>
 </resources>
