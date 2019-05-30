@@ -69,46 +69,8 @@ class PictureViewActivity : BaseActivity() {
                     // here you will get the position of selected page
                     album = userList[i]
                     try {
-                        setToolBarTitle("$directory (${i+1}/${album.count} items)")
+                        setToolBarTitle("$directory (${i+1}/${userList.size} items)")
                     } catch (e: UninitializedPropertyAccessException) {
-                        val lastModified = userList[i].file.lastModified()// date
-                        val lastMod = Date(lastModified)
-                        val length = userList[i].file.length()// Size in KB
-                        val lengthKB = length / 1024 // Size in KB
-                        Log.w("length",""+length)
-                        Log.w("lastModified",""+lastMod)
-                        Log.w("lengthKB",""+lengthKB)
-                        val sizeMB =  {length /(1024 * 1024)}
-                        setToolBarTitle("${album.name} $lengthKB KB")
-                        try {
-                            val exifInterface = ExifInterface(userList[i].file.absolutePath)
-                            val latLong = FloatArray(2)
-                            if (exifInterface.getLatLong(latLong)) {
-                                // Do stuff with lat / long...
-                                Log.w("latlng: " ,"Do stuff with latlng")
-                            }else{
-                                Log.w("latlng: " ,"Not found")
-                            }
-                            val orientation = exifInterface.getAttributeInt(  ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED)
-
-                            when (orientation) {
-
-                                ExifInterface.ORIENTATION_ROTATE_90 ->  Log.w("ORIENTATION: " , ""+90)
-
-                                ExifInterface.ORIENTATION_ROTATE_180 ->  Log.w("ORIENTATION: " , ""+180)
-
-                                ExifInterface.ORIENTATION_ROTATE_270 -> Log.w("ORIENTATION: " , ""+270)
-
-                                ExifInterface.ORIENTATION_NORMAL -> {
-                                    Log.w("ORIENTATION: " , "ORIENTATION_NORMAL")
-                                }
-
-                                else -> {
-                                }
-                            }
-                        } catch (e: IOException) {
-                            Log.w("Couldn't read info: " , e.getLocalizedMessage())
-                        }
 
                     }
 
