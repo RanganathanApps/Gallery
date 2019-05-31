@@ -25,7 +25,7 @@ class InfoActivity : BaseActivity() {
         if (intent!!.extras != null) {
             if (intent!!.extras!!.containsKey("album")) {
                 album = intent!!.extras!!.getSerializable("album") as Album
-                setToolBarTitle("${album.name})")
+                setToolBarTitle(album.name)
             }
         }
 

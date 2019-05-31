@@ -71,7 +71,9 @@ class PictureViewActivity : BaseActivity() {
                     try {
                         setToolBarTitle("$directory (${i+1}/${userList.size} items)")
                     } catch (e: UninitializedPropertyAccessException) {
-
+                        setToolBarTitle(userList[i].name)
+                    }catch (e: Exception ){
+                        setToolBarTitle(userList[i].name)
                     }
 
                 }

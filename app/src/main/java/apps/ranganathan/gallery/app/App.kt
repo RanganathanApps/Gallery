@@ -1,22 +1,29 @@
 package apps.ranganathan.gallery.app
 
 import android.app.Application
+import android.content.Context
+import apps.ranganathan.gallery.R
+import io.github.inflationx.calligraphy3.CalligraphyConfig
+import io.github.inflationx.calligraphy3.CalligraphyInterceptor
+import io.github.inflationx.viewpump.ViewPump
+import io.github.inflationx.viewpump.ViewPumpContextWrapper
 
-import uk.co.chrisjenx.calligraphy.CalligraphyConfig
-
-
-class App : Application() {
-
-
+class MyApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
 
-        CalligraphyConfig.initDefault(
-            CalligraphyConfig.Builder()
-                .setDefaultFontPath("fonts/Poppins-Medium.ttf")
-                .setFontAttrId(apps.ranganathan.gallery.R.attr.fontPath).build()
-        )
+        ViewPump.init(ViewPump.builder()
+            .addInterceptor( CalligraphyInterceptor(
+                     CalligraphyConfig.Builder()
+                        .setDefaultFontPath("fonts/Hind-Light.ttf")
+                        .setFontAttrId(R.attr.fontPath)
+                        .build())
+            ).build())
+    }
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase))
     }
 
 

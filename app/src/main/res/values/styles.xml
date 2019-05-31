@@ -9,6 +9,7 @@
         <item name="android:textColorSecondary">@color/colorBlack</item>
         <item name="colorControlNormal">@color/colorBlack</item>
         <item name="iconTint">@color/colorBlack</item>
+        <item name="android:textViewStyle">@style/AppTheme.Widget.TextView</item>
     </style>
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
@@ -17,5 +18,11 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark"/>
     <style name="AppTheme.MyThemeName" parent="@style/ThemeOverlay.AppCompat.Light"/>
+
+    <style name="AppTheme.Widget"/>
+
+    <style name="AppTheme.Widget.TextView" parent="android:Widget.Holo.Light.TextView">
+        <item name="fontPath">fonts/Quicksand-Italic.otf</item>
+    </style>
 
 </resources>

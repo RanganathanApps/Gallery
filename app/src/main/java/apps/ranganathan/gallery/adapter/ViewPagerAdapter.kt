@@ -14,6 +14,7 @@ import com.squareup.picasso.Picasso
 import android.view.MotionEvent
 import android.graphics.PointF
 import androidx.lifecycle.MutableLiveData
+import apps.ranganathan.configlibrary.base.BaseAppActivity
 import kotlin.math.absoluteValue
 
 
@@ -60,20 +61,10 @@ class ViewPagerAdapter(
         position1.value = position
 
         mScaleGestureDetector = ScaleGestureDetector(context, ScaleListener(imgAlbum))
-        Picasso.get().load(imgaeslist[position].albumUri).into(imgAlbum, object : Callback {
-            override fun onError(e: Exception?) {
-
-            }
-
-            override fun onSuccess() {
-                //imageAlbum.heightRatio = (imageAlbum.height /4).toDouble()
-                //imageAlbum.layoutParams.height = imageAlbum.height/2
-                //imageAlbum.layoutParams.width = imageAlbum.width/2
-
-            }
-
-
-        })
+                val activity :BaseAppActivity = context as BaseAppActivity
+        activity.loadImage(imgaeslist[position].albumUri,
+            imgAlbum,
+            R.drawable.ic_camera_alt_white_24dp)
         val vp = container as ViewPager
         vp.addView(v , 0)
 

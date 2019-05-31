@@ -73,24 +73,13 @@ class PhotosAdapter(activity: BaseActivity, val userList: List<Album>) : Recycle
                 imageAlbum.layoutParams.height = getRandomIntInRange(250, 150)
                 imageAlbum.layoutParams.width = getRandomIntInRange(550, 350)
 
-                Picasso.get().load(user.albumUri).into(imageAlbum, object : Callback {
-                    override fun onError(e: Exception?) {
-
-                    }
-
-                    override fun onSuccess() {
-                        //imageAlbum.heightRatio = (imageAlbum.height /4).toDouble()
-                        //imageAlbum.layoutParams.height = imageAlbum.height/2
-                        //imageAlbum.layoutParams.width = imageAlbum.width/2
-                    }
-
-
-                })
-                /*activity.loadImage(
-                    activity, user.albumUri,
+              /*  Picasso.get().load(user.albumUri)
+                    .fit()
+                    .centerCrop()
+                    .into(imageAlbum)*/
+                activity.loadImage(user.albumUri,
                     imageAlbum,
-                    R.drawable.ic_camera_alt_white_24dp
-                )*/
+                    R.drawable.ic_camera_alt_white_24dp)
             }
         }
 

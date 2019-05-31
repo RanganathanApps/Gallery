@@ -11,6 +11,8 @@ import apps.ranganathan.gallery.R
 import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.ui.activity.BaseActivity
 import apps.ranganathan.gallery.ui.activity.PictureViewActivity
+import com.squareup.picasso.Callback
+import com.squareup.picasso.Picasso
 
 class AlbumsAdapter(activity: BaseActivity, val userList: List<Album>) : RecyclerView.Adapter<AlbumsAdapter.ViewHolder>() {
 
@@ -50,6 +52,7 @@ class AlbumsAdapter(activity: BaseActivity, val userList: List<Album>) : Recycle
 
             txtAlbum.text = user.name
             txtAlbumCount.text = coverWithParanthesis(user.count)
+
 
             activity.loadImage(user.albumUri,
                 imageAlbum,

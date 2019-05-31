@@ -21,7 +21,7 @@ open class InfoViewModel : BaseViewModel() {
         try {
             val date = Date(file.lastModified())
             dateString = date.toString()
-            var spf = SimpleDateFormat("E MMM dd, hh:mm:ss")
+            var spf = SimpleDateFormat("EEE MMM dd HH:mm:ss ")
             val newDate = spf.parse(dateString)
             spf = SimpleDateFormat("dd MMM yyyy")
             dateString = spf.format(newDate)

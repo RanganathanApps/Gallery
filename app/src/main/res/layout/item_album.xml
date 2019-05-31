@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView
+        tools:ignore="MissingPrefix"
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         app:cardElevation="@dimen/_3sdp"
         app:cardCornerRadius="@dimen/_4sdp"
@@ -41,21 +43,20 @@
                 app:layout_constraintTop_toBottomOf="@+id/frameLayout"
                 android:layout_marginTop="0dp"
                 android:padding="@dimen/_4sdp">
-            <androidx.appcompat.widget.AppCompatTextView
+            <TextView
                     android:id="@+id/txtAlbum"
                     android:textColor="@color/colorGrey"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/_11sdp"
                     android:gravity="center_vertical"
-                    android:text="dfhefjhefjefefe "
-                    android:textStyle="bold"
+                    android:text="dfhefjhefjefefe"
+                    fontPath="fonts/Hind-Light.ttf"
                     android:layout_marginStart="@dimen/_3sdp"
-
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/relativeLayout"
-                    android:layout_marginLeft="@dimen/_3sdp"/>
+                    android:layout_marginLeft="@dimen/_3sdp" />
 
 
 
