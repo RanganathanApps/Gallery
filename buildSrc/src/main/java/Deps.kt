@@ -6,7 +6,7 @@ object AppConfig {
     val applicationId = "apps.ranganathan.gallery"
     val versionCode = 1
     val versionName = "1.0"
-    val applicaionName = "Gallery"
+    val applicaionName = "Photos & Gallery"
     val BaseAppTitle = "Names"
     val applicationIdTwo = "development.app.sample"
 }

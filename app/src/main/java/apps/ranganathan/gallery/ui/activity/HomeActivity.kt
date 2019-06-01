@@ -1,5 +1,6 @@
 package apps.ranganathan.gallery.ui.activity
 
+import android.Manifest
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.Menu
@@ -32,18 +33,39 @@ class HomeActivity : BaseActivity() {
         setSupportActionBar(toolbarHome)
         setConnectivityChange()
 
-
         homeVieModel = ViewModelProviders.of(this).get(HomeViewModel::class.java)
 
+        getPermission(this,object :PermissionListener{
+            override fun onDenied(deniedPermissions: List<String>) {
 
+            }
+
+            override fun onDeniedForeEver(deniedPermissions: List<String>) {
+            }
+
+            override fun onGranted() {
+                initDropDown()
+            }
+        },Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE)
+
+
+
+
+
+
+
+
+    }
+
+    private fun initDropDown() {
         action_bar_spinner.adapter = homeVieModel.setTypes(this)
         fabCamera.setOnClickListener { view ->
-           takePhoto(object : ImagePickerListener{
-               override fun onPicked(bitmap: Bitmap) {
-                   showToast(""+bitmap.height.toString())
+            takePhoto(object : ImagePickerListener{
+                override fun onPicked(bitmap: Bitmap) {
+                    showToast(""+bitmap.height.toString())
 
-               }
-           })
+                }
+            })
         }
 
 
@@ -65,9 +87,6 @@ class HomeActivity : BaseActivity() {
             }
 
         })
-
-
-
     }
 
     private lateinit var albumm: Album

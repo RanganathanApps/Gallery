@@ -3,22 +3,15 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:id="@+id/parent"
         xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.jsibbold.zoomage.ZoomageView
+    <com.github.chrisbanes.photoview.PhotoView
             android:id="@+id/imgAlbum"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:src="@drawable/ic_arrow_back_black_24dp"
-            app:zoomage_restrictBounds="false"
-            app:zoomage_animateOnReset="true"
-            app:zoomage_autoResetMode="UNDER"
-            app:zoomage_autoCenter="false"
-            app:zoomage_zoomable="true"
-            app:zoomage_translatable="false"
-            app:zoomage_doubleTapToZoom="true"
-            app:zoomage_minScale="0.6"
-            app:zoomage_maxScale="8"
+
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -31,6 +24,15 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:id="@+id/imgAlbum"/>-->
+            android:id="@+id/imgAlbum"
+            app:zoomage_restrictBounds="false"
+            app:zoomage_animateOnReset="true"
+            app:zoomage_autoResetMode="UNDER"
+            app:zoomage_autoCenter="false"
+            app:zoomage_zoomable="true"
+            app:zoomage_translatable="false"
+            app:zoomage_doubleTapToZoom="true"
+            app:zoomage_minScale="0.6"
+            app:zoomage_maxScale="8"/>-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

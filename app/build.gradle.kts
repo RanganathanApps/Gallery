@@ -109,8 +109,10 @@ dependencies {
     implementation(Libs.lottie)
     //implementation(Libs.baseAppConfig)
     implementation("com.github.RanganathanApps:BaseConfigApp:0.0.14")
+
     implementation("com.felipecsl.asymmetricgridview:library:2.0.1")
     implementation("com.jsibbold:zoomage:1.2.0")
+    implementation ("com.github.chrisbanes:PhotoView:2.3.0")
 
 
 
