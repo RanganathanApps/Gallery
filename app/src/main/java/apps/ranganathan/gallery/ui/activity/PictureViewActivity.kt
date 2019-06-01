@@ -84,8 +84,8 @@ class PictureViewActivity : BaseActivity() {
                     decor.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
                     decor.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                     decor.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    window.statusBarColor = Color.BLUE
-                    window.setStatusBarColor( Color.GREEN);
+                    window.statusBarColor = Color.RED
+                    window.setStatusBarColor( Color.RED);
                     /*enable status bar here*/
                     window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
                 } else {
