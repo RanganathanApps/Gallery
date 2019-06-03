@@ -17,7 +17,6 @@ import com.squareup.picasso.Picasso
 class AlbumsAdapter(activity: BaseActivity, val userList: List<Album>) : RecyclerView.Adapter<AlbumsAdapter.ViewHolder>() {
 
     val  activity = activity
-
     //this method is returning the view for each item in the list
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlbumsAdapter.ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.item_album, parent, false)
