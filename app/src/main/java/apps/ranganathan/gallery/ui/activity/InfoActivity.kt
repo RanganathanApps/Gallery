@@ -1,6 +1,7 @@
 package apps.ranganathan.gallery.ui.activity
 
 import android.os.Bundle
+import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.ViewModelProviders
 import apps.ranganathan.gallery.R
 import apps.ranganathan.gallery.model.Album

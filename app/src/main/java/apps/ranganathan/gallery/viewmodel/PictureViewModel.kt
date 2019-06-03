@@ -52,7 +52,7 @@ open class PictureViewModel : BaseViewModel(){
         //Arrays.sort(files) { f1, f2 -> compare(f1.lastModified(), f2.lastModified()) }
         if (files!=null) {
             for (i in 0..files.size - 1) {
-                if (files[i].name.endsWith(".jpg")) {
+                if (files[i].name.endsWith(".jpg") || files[i].name.endsWith(".png")) {
                     a.add(files[i])
                 }
             }

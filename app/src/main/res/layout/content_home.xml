@@ -10,10 +10,14 @@
         tools:context=".ui.activity.HomeActivity">
 
     <androidx.recyclerview.widget.RecyclerView
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:id="@+id/recyclerAlbums"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
     </androidx.recyclerview.widget.RecyclerView>
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

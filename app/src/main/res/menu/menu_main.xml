@@ -2,5 +2,10 @@
       xmlns:app="http://schemas.android.com/apk/res-auto"
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="apps.ranganathan.gallery.ui.activity.HomeActivity">
-   
+
+    <item
+            android:id="@+id/nav_photos"
+            android:icon="@drawable/ic_info_outline_black_24dp"
+            android:title="Photos"/>
+
 </menu>

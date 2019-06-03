@@ -60,7 +60,7 @@ class AlbumsAdapter(activity: BaseActivity, val userList: List<Album>) : Recycle
         }
 
         private fun coverWithParanthesis(count: String): CharSequence? {
-            return "( $count )"
+            return "($count)"
         }
     }
 }

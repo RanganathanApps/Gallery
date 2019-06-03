@@ -1,6 +1,7 @@
 package apps.ranganathan.gallery.ui.activity
 
 import android.Manifest
+import android.content.Context
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.Menu
@@ -8,6 +9,8 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.LinearLayout.VERTICAL
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,19 +20,48 @@ import apps.ranganathan.gallery.adapter.AlbumsAdapter
 import apps.ranganathan.gallery.adapter.PhotosAdapter
 import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.viewmodel.HomeViewModel
+import io.github.inflationx.viewpump.ViewPumpContextWrapper
+import kotlinx.android.synthetic.main.activity_drawer.*
 
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.content_home.*
 import kotlinx.android.synthetic.main.toolbar_home.*
+import android.widget.TextView
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
-class HomeActivity : BaseActivity() {
+
+
+class HomeActivity : BaseActivity(),BottomNavigationView.OnNavigationItemSelectedListener {
+
+    override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
+        when(menuItem.itemId){
+            R.id.action_photos ->{
+                initPhotos(homeVieModel.getAllImages(this@HomeActivity))
+            }
+            R.id.action_albums ->{
+                initAlbum(homeVieModel.getAllImages(this@HomeActivity))
+            }
+            R.id.action_settings ->{
+                initAlbum(homeVieModel.getAllImages(this@HomeActivity))
+            }
+            R.id.action_camera ->{
+                takePhoto(object : ImagePickerListener{
+                    override fun onPicked(bitmap: Bitmap) {
+                        showToast(""+bitmap.height.toString())
+
+                    }
+                })
+            }
+        }
+        return true
+    }
 
     private lateinit var homeVieModel: HomeViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_home)
+        setContentView(R.layout.activity_drawer)
         setSupportActionBar(toolbarHome)
         setConnectivityChange()
 
@@ -44,50 +76,36 @@ class HomeActivity : BaseActivity() {
             }
 
             override fun onGranted() {
-                initDropDown()
+
+                val view = navigation.findViewById(R.id.action_photos) as View
+                view.performClick()
             }
         },Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
+        setNavDrawer()
 
+        fabAnimation(recyclerAlbums)
 
-
-
-
-
-
+        setNavigation()
     }
 
-    private fun initDropDown() {
-        action_bar_spinner.adapter = homeVieModel.setTypes(this)
-        fabCamera.setOnClickListener { view ->
-            takePhoto(object : ImagePickerListener{
-                override fun onPicked(bitmap: Bitmap) {
-                    showToast(""+bitmap.height.toString())
-
-                }
-            })
-        }
-
-
-        action_bar_spinner.onItemSelectedListener = (object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                when(action_bar_spinner.selectedItem.toString()){
-                    "Albums"->{
-                        initAlbum(homeVieModel.getAlbums(this@HomeActivity))
-                    }
-                    "Photos" ->{
-                        initPhotos(homeVieModel.getAllImages(this@HomeActivity))
-                    }
-                }
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                initPhotos(homeVieModel.getAllImages(this@HomeActivity))
-
-            }
-
-        })
+    private fun setNavigation() {
+        navigation.setOnNavigationItemSelectedListener(this)
     }
+
+    /*navigation bar Icons and drawer toogle*/
+    private fun setNavDrawer() {
+
+        val toggle = ActionBarDrawerToggle(
+            this, drawer_layout, toolbarHome, R.string.navigation_drawer_open, R.string.navigation_drawer_close
+        )
+        drawer_layout.addDrawerListener(toggle)
+        toggle.syncState()
+
+        toggle.drawerArrowDrawable.color = ContextCompat.getColor(context, R.color.colorWhite)
+    }
+
+
 
     private lateinit var albumm: Album
 
@@ -117,9 +135,10 @@ class HomeActivity : BaseActivity() {
 
         val adapter = PhotosAdapter(this,files)
 
+        recyclerAlbums.layoutManager = StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL)
         //now adding the adapter to recyclerview
+        recyclerAlbums.setHasFixedSize(true)
         recyclerAlbums.adapter = adapter
-        //recyclerAlbums.setHasFixedSize(true)
         //recyclerAlbums.setItemViewCacheSize(20)
         //recyclerAlbums.setDrawingCacheEnabled(true)
     }
@@ -134,8 +153,24 @@ class HomeActivity : BaseActivity() {
 
         //now adding the adapter to recyclerview
         recyclerAlbums.adapter = adapter
+
+
     }
 
+
+    private fun fabAnimation(recyclerView: RecyclerView){
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (dy > 0 && fabCamera.isShown) {
+                    fabCamera.hide()
+                } else if (dy < 0 && fabCamera.visibility !== View.VISIBLE) {
+                    fabCamera.show()
+                }
+            }
+        })
+
+    }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
@@ -152,4 +187,7 @@ class HomeActivity : BaseActivity() {
 
         }
     }
+
+
+
 }

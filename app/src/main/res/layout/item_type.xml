@@ -11,7 +11,7 @@
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/txtAlbum"
             android:padding="@dimen/_6sdp"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/colorBlack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"

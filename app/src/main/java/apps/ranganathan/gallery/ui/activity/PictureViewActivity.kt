@@ -22,6 +22,9 @@ import android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 import android.util.TypedValue
 import android.view.WindowManager
 import kotlinx.android.synthetic.main.view_statusbar.*
+import android.view.ViewGroup
+
+
 
 
 class PictureViewActivity : BaseActivity() {
@@ -88,6 +91,10 @@ class PictureViewActivity : BaseActivity() {
                     window.setStatusBarColor( Color.RED);
                     /*enable status bar here*/
                     window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                    val statusBarHeight = getStatusBarHeight()
+                    //action bar height
+                    setMargins(appBar,0,statusBarHeight,0,0)
+
                 } else {
                     // We want to change tint color to white again.
                     // You can also record the flags in advance so that you can turn UI back completely if
@@ -103,6 +110,13 @@ class PictureViewActivity : BaseActivity() {
 
     }
 
+    private fun setMargins(view: View, left: Int, top: Int, right: Int, bottom: Int) {
+        if (view.layoutParams is ViewGroup.MarginLayoutParams) {
+            val p = view.layoutParams as ViewGroup.MarginLayoutParams
+            p.setMargins(left, top, right, bottom)
+            view.requestLayout()
+        }
+    }
     fun setStatusBarColor(statusBar: View, color: Int) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             val w = window
