@@ -1,12 +1,18 @@
 package apps.ranganathan.gallery.ui.activity
 
 import android.app.Activity
+import android.content.Context
 import android.graphics.Color
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -18,13 +24,6 @@ import apps.ranganathan.gallery.viewmodel.PictureViewModel
 import kotlinx.android.synthetic.main.activity_picture_view.*
 import kotlinx.android.synthetic.main.content_picture_view.*
 import java.io.File
-import android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-import android.util.TypedValue
-import android.view.WindowManager
-import kotlinx.android.synthetic.main.view_statusbar.*
-import android.view.ViewGroup
-
-
 
 
 class PictureViewActivity : BaseActivity() {
@@ -47,9 +46,10 @@ class PictureViewActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_picture_view)
-        setTransStatusbar()
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
         setAppBar("")
 
+        changeToolbarNavIconColor(R.color.colorWhite)
 
         touchToggle.value = false
 
@@ -83,23 +83,19 @@ class PictureViewActivity : BaseActivity() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 val decor = window.decorView
                 if (touchToggle.value!!) {
-                    decor.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+                   /* decor.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
                     decor.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
                     decor.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                     decor.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     window.statusBarColor = Color.RED
-                    window.setStatusBarColor( Color.RED);
+                    window.setStatusBarColor( Color.RED);*/
                     /*enable status bar here*/
+                    //window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    decor.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
                     window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-                    val statusBarHeight = getStatusBarHeight()
-                    //action bar height
-                    setMargins(appBar,0,statusBarHeight,0,0)
-
+                    setToolBarHeight()
                 } else {
-                    // We want to change tint color to white again.
-                    // You can also record the flags in advance so that you can turn UI back completely if
-                    // you have set other flags before, such as translucent or full screen.
-                    //decor.systemUiVisibility = 0
+
                     /*hide status bar here*/
                     window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
                     window.statusBarColor = Color.RED
@@ -110,6 +106,15 @@ class PictureViewActivity : BaseActivity() {
 
     }
 
+    private fun setToolBarHeight() {
+        val statusBarHeight = getStatusBarHeight()
+                    //action bar height
+                    setMargins(appBar,0,statusBarHeight,0,0)
+    }
+
+
+
+
     private fun setMargins(view: View, left: Int, top: Int, right: Int, bottom: Int) {
         if (view.layoutParams is ViewGroup.MarginLayoutParams) {
             val p = view.layoutParams as ViewGroup.MarginLayoutParams
@@ -117,29 +122,8 @@ class PictureViewActivity : BaseActivity() {
             view.requestLayout()
         }
     }
-    fun setStatusBarColor(statusBar: View, color: Int) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            val w = window
-            w.setFlags(
-                WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
-                WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
-            )
-            //status bar height
-            val actionBarHeight = getActionBarHeight()
-            val statusBarHeight = getStatusBarHeight()
-            //action bar height
-            statusBar.layoutParams.height = actionBarHeight + statusBarHeight
-            statusBar.setBackgroundColor(color)
-        }
-    }
-    fun getActionBarHeight(): Int {
-        var actionBarHeight = 0
-        val tv = TypedValue()
-        if (theme.resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
-            actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, resources.displayMetrics)
-        }
-        return actionBarHeight
-    }
+
+
 
     fun getStatusBarHeight(): Int {
         var result = 0
@@ -150,49 +134,9 @@ class PictureViewActivity : BaseActivity() {
         return result
     }
 
-    private fun setTransStatusbar() {
-        setTransparentStatusBar()
-        /* requestWindowFeature(Window.FEATURE_NO_TITLE)
-         getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
-         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.statusBarColor = ContextCompat.getColor(this ,R.color.colorAccent)*/
-    }
 
-    fun Activity.setTransparentStatusBar() {
 
-        /*window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.statusBarColor = Color.BLUE
-        }
 
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.statusBarColor = Color.RED
-        }*/
-
-    }
-
-    fun Activity.setStatusBarVisibility(isVisible: Boolean) {
-        //see details https://developer.android.com/training/system-ui/immersive
-        if (isVisible) {
-            window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_IMMERSIVE
-                    // Set the content to appear under the system bars so that the
-                    // content doesn't resize when the system bars hide and show.
-                    or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    // Hide the nav bar and status bar
-                    or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_FULLSCREEN)
-        } else {
-            window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    or View.SYSTEM_UI_FLAG_FULLSCREEN)
-        }
-    }
 
     private fun setUpViewPager() {
 

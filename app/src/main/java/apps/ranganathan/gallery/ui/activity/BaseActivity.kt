@@ -9,4 +9,7 @@ open class BaseActivity : BaseAppActivity() {
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase))
     }
+
+
+
 }

@@ -19,7 +19,10 @@
 
     <include layout="@layout/content_home"/>
 
+
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:layout_marginTop="@dimen/_6sdp"
             android:id="@+id/navigation"
             android:layout_gravity="bottom|end"
             android:layout_width="match_parent"
@@ -28,16 +31,7 @@
             android:background="@color/colorWhite"/>
 
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:visibility="gone"
-            android:id="@+id/fabCamera"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_marginRight="@dimen/fab_margin"
-            android:layout_marginBottom="@dimen/_56sdp"
-            app:backgroundTint="@color/colorPrimaryDark"
-            app:srcCompat="@drawable/ic_camera_alt_white_24dp"/>
+
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

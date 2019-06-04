@@ -7,6 +7,7 @@
     <item android:id="@+id/action_info"
           android:icon="@drawable/ic_info_outline_black_24dp"
           android:title="@string/action_info"
+          app:iconTint="@color/colorWhite"
           android:orderInCategory="100"
           app:showAsAction="always"/>
 </menu>

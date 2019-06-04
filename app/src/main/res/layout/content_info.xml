@@ -48,7 +48,7 @@
                       android:layout_marginEnd="@dimen/_10sdp"
                       tools:layout_editor_absoluteY="309dp"
                       tools:layout_editor_absoluteX="206dp"
-                      android:textColor="@color/colorAccent"
+                      android:textColor="@color/colorBlackLight"
                       android:textStyle="bold" android:layout_marginRight="@dimen/_10sdp"/>
 
             <TextView android:layout_width="match_parent"
@@ -58,7 +58,7 @@
                       tools:layout_editor_absoluteY="309dp"
                       tools:layout_editor_absoluteX="206dp"
                       android:id="@+id/txtSize"
-                      android:textColor="@color/colorAccent"
+                      android:textColor="@color/colorBlackLight"
                       android:textStyle="bold"/>
         </LinearLayout>
 
@@ -82,7 +82,7 @@
                       android:layout_marginEnd="@dimen/_10sdp"
                       tools:layout_editor_absoluteY="309dp"
                       tools:layout_editor_absoluteX="206dp"
-                      android:textColor="@color/colorAccent"
+                      android:textColor="@color/colorBlackLight"
                       android:textStyle="bold" android:layout_marginRight="@dimen/_10sdp"/>
 
             <TextView android:layout_width="match_parent"
@@ -92,7 +92,7 @@
                       tools:layout_editor_absoluteY="309dp"
                       tools:layout_editor_absoluteX="206dp"
                       android:id="@+id/txtPath"
-                      android:textColor="@color/colorAccent"
+                      android:textColor="@color/colorBlackLight"
                       android:textStyle="bold"/>
         </LinearLayout>
 
@@ -115,7 +115,7 @@
                       android:layout_marginEnd="@dimen/_10sdp"
                       tools:layout_editor_absoluteY="309dp"
                       tools:layout_editor_absoluteX="206dp"
-                      android:textColor="@color/colorAccent"
+                      android:textColor="@color/colorBlackLight"
                       android:textStyle="bold" android:layout_marginRight="@dimen/_10sdp"/>
 
             <TextView android:layout_width="match_parent"
@@ -125,7 +125,7 @@
                       tools:layout_editor_absoluteY="309dp"
                       tools:layout_editor_absoluteX="206dp"
                       android:id="@+id/txtLastModified"
-                      android:textColor="@color/colorAccent"
+                      android:textColor="@color/colorBlackLight"
                       android:textStyle="bold"/>
         </LinearLayout>
 

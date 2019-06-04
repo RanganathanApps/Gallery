@@ -50,7 +50,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/_11sdp"
                     android:gravity="center_vertical"
-                    android:text="dfhefjhefjefefe"
+                    android:text=""
                     fontPath="fonts/Hind-Light.ttf"
                     android:layout_marginStart="@dimen/_3sdp"
                     app:layout_constraintEnd_toEndOf="parent"

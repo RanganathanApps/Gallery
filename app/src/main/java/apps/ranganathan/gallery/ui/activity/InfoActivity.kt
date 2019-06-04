@@ -21,12 +21,13 @@ class InfoActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_info)
         setAppBar("")
+        changeToolbarNavIconColor(R.color.colorWhite)
 
         infoViewModel = ViewModelProviders.of(this).get(InfoViewModel::class.java)
         if (intent!!.extras != null) {
             if (intent!!.extras!!.containsKey("album")) {
                 album = intent!!.extras!!.getSerializable("album") as Album
-                setToolBarTitle(album.name)
+                setToolBarTitle(album.file.name)
             }
         }
 

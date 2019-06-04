@@ -10,6 +10,7 @@
         tools:context=".ui.activity.HomeActivity">
 
     <androidx.recyclerview.widget.RecyclerView
+            android:layout_marginBottom="@dimen/_6sdp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:id="@+id/recyclerAlbums"
             android:layout_width="match_parent"
