@@ -13,7 +13,7 @@ object AppConfig {
 
 object Versions {
 
-    const val kotlin_version = "1.3.21"
+    const val kotlin_version = "1.3.31"
     const val gradle_version = "3.2.0"
     const val android_plugin_version = "3.1.0"
     const val support_lib = "27.1.0"

@@ -14,6 +14,11 @@ import apps.ranganathan.gallery.ui.activity.PictureViewActivity
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import java.util.*
+import androidx.recyclerview.widget.GridLayoutManager
+
+
+
+
 
 
 class PhotosAdapter(activity: BaseActivity, val userList: List<Album>) : RecyclerView.Adapter<PhotosAdapter.ViewHolder>() {
@@ -23,8 +28,12 @@ class PhotosAdapter(activity: BaseActivity, val userList: List<Album>) : Recycle
 
     //this method is returning the view for each item in the list
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotosAdapter.ViewHolder {
-        val v = LayoutInflater.from(parent.context).inflate(R.layout.item_photos, parent, false)
-        return ViewHolder(activity,v)
+        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_photos, parent, false)
+
+       /* val lp = itemView.layoutParams as GridLayoutManager.LayoutParams
+        lp.height = parent.measuredHeight / 4
+        itemView.layoutParams = lp*/
+        return ViewHolder(activity,itemView)
 
     }
 
@@ -70,8 +79,8 @@ class PhotosAdapter(activity: BaseActivity, val userList: List<Album>) : Recycle
             txtPhotoName.text = user.name
 
             if (imageAlbum.drawable==null) {
-                imageAlbum.layoutParams.height = getRandomIntInRange(250, 150)
-                imageAlbum.layoutParams.width = getRandomIntInRange(550, 350)
+                //imageAlbum.layoutParams.height = getRandomIntInRange(250, 250)
+                //imageAlbum.layoutParams.width = getRandomIntInRange(550, 350)
 
               /*  Picasso.get().load(user.albumUri)
                     .fit()

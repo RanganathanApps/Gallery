@@ -76,6 +76,9 @@ dependencies {
     implementation(Libs.Support.design)
 
     /*databinding, viewmodel and coroutines*/
+    implementation ("androidx.legacy:legacy-support-v4:1.0.0")
+    implementation ("androidx.lifecycle:lifecycle-extensions:2.0.0")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0")
     kapt(Libs.databinding)
 
     implementation(Libs.viewModelExt)
@@ -98,8 +101,8 @@ dependencies {
     implementation(Libs.palette)
     /*caligraphy*/
     //implementation(Libs.caligraphy)
-    implementation ("io.github.inflationx:calligraphy3:3.1.1")
-    implementation ("io.github.inflationx:viewpump:1.0.0")
+    implementation("io.github.inflationx:calligraphy3:3.1.1")
+    implementation("io.github.inflationx:viewpump:1.0.0")
     /*materialEditext*/
     implementation(Libs.materialEditext)
     /*sdp*/
@@ -112,8 +115,7 @@ dependencies {
 
     implementation("com.felipecsl.asymmetricgridview:library:2.0.1")
     implementation("com.jsibbold:zoomage:1.2.0")
-    implementation ("com.github.chrisbanes:PhotoView:2.3.0")
-
+    implementation("com.github.chrisbanes:PhotoView:2.3.0")
 
 
 }

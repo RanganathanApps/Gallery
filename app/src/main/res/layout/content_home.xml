@@ -9,7 +9,14 @@
         tools:showIn="@layout/activity_home"
         tools:context=".ui.activity.HomeActivity">
 
+    <FrameLayout
+            android:id="@+id/frameFragmentHolder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="?attr/actionBarSize"/>
+
     <androidx.recyclerview.widget.RecyclerView
+            android:visibility="gone"
             android:layout_marginBottom="@dimen/_6sdp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:id="@+id/recyclerAlbums"

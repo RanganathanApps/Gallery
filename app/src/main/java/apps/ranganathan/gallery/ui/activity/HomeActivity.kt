@@ -2,7 +2,10 @@ package apps.ranganathan.gallery.ui.activity
 
 import android.Manifest
 import android.graphics.Bitmap
+import android.media.MediaScannerConnection
 import android.os.Bundle
+import android.os.Environment
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.LinearLayout.VERTICAL
@@ -25,16 +28,25 @@ import kotlinx.android.synthetic.main.toolbar_home.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import android.view.View
 import android.view.animation.TranslateAnimation
-
-
+import apps.ranganathan.gallery.ui.fragment.PhotosFragment
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.util.*
 
 
 class HomeActivity : BaseActivity(),BottomNavigationView.OnNavigationItemSelectedListener {
 
+    private  val DIRECTORY = "/GalleryImages"
+
     override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
         when(menuItem.itemId){
             R.id.action_photos ->{
-                initPhotos(homeVieModel.getAllImages(this@HomeActivity))
+                val photosFragment = PhotosFragment.newInstance()
+
+                supportFragmentManager.beginTransaction().replace(R.id.frameFragmentHolder, photosFragment, "TAG").commit()
+                //initPhotos(homeVieModel.getAllImages(this@HomeActivity))
             }
             R.id.action_albums ->{
                 initAlbum(homeVieModel.getAlbums(this@HomeActivity))
@@ -49,7 +61,7 @@ class HomeActivity : BaseActivity(),BottomNavigationView.OnNavigationItemSelecte
                     }
 
                     override fun onPicked(bitmap: Bitmap) {
-                        showToast(""+bitmap.height.toString())
+                        saveImage(bitmap)
 
                     }
                 })
@@ -57,6 +69,47 @@ class HomeActivity : BaseActivity(),BottomNavigationView.OnNavigationItemSelecte
         }
         return true
     }
+
+    fun saveImage(myBitmap: Bitmap): String {
+
+
+        val bytes = ByteArrayOutputStream()
+        myBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+        val wallpaperDirectory = File(
+            (Environment.getExternalStorageDirectory()).toString() + DIRECTORY
+        )
+        // have the object build the directory structure, if needed.
+        Log.w("save image", wallpaperDirectory.toString())
+        if (!wallpaperDirectory.exists()) {
+
+            wallpaperDirectory.mkdirs()
+        }
+
+        try {
+            Log.w("save", wallpaperDirectory.toString())
+            val f = File(
+                wallpaperDirectory, ((Calendar.getInstance()
+                    .timeInMillis).toString() + ".jpg")
+            )
+            f.createNewFile()
+            val fo = FileOutputStream(f)
+            fo.write(bytes.toByteArray())
+            MediaScannerConnection.scanFile(
+                this,
+                arrayOf(f.path),
+                arrayOf("image/jpeg"), null
+            )
+            fo.close()
+            Log.w("save ", "File Saved::--->" + f.absolutePath)
+
+            return f.absolutePath
+        } catch (e1: IOException) {
+            e1.printStackTrace()
+        }
+
+        return ""
+    }
+
 
     private lateinit var homeVieModel: HomeViewModel
 
@@ -111,7 +164,7 @@ class HomeActivity : BaseActivity(),BottomNavigationView.OnNavigationItemSelecte
         //recyclerAlbums.layoutManager = GridLayoutManager(this,  2) as RecyclerView.LayoutManager?
        //recyclerAlbums.layoutManager = StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL)
 
-       /* val glm = GridLayoutManager(this, 3)
+      /*  val glm = GridLayoutManager(this, 3)
         glm.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
                 if (position % 3 == 2) {
@@ -132,7 +185,8 @@ class HomeActivity : BaseActivity(),BottomNavigationView.OnNavigationItemSelecte
 
         val adapter = PhotosAdapter(this,files)
 
-        recyclerAlbums.layoutManager = StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL)
+        recyclerAlbums.layoutManager = GridLayoutManager(this,  4) as RecyclerView.LayoutManager?
+        //recyclerAlbums.layoutManager = StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL)
         //now adding the adapter to recyclerview
         recyclerAlbums.setHasFixedSize(true)
         recyclerAlbums.adapter = adapter
@@ -201,8 +255,8 @@ class HomeActivity : BaseActivity(),BottomNavigationView.OnNavigationItemSelecte
     }
     private fun initAlbum(files: List<Album>) {
 
-        recyclerAlbums.layoutManager = GridLayoutManager(this,  2) as RecyclerView.LayoutManager?
-        recyclerAlbums.layoutManager = StaggeredGridLayoutManager(2,VERTICAL)
+        recyclerAlbums.layoutManager = GridLayoutManager(this,  3) as RecyclerView.LayoutManager?
+        //recyclerAlbums.layoutManager = StaggeredGridLayoutManager(2,VERTICAL)
 
         val adapter = AlbumsAdapter(this,files)
 
