@@ -28,6 +28,7 @@ import kotlinx.android.synthetic.main.toolbar_home.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import android.view.View
 import android.view.animation.TranslateAnimation
+import apps.ranganathan.gallery.ui.fragment.AlbumsFragment
 import apps.ranganathan.gallery.ui.fragment.PhotosFragment
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -38,18 +39,26 @@ import java.util.*
 
 class HomeActivity : BaseActivity(),BottomNavigationView.OnNavigationItemSelectedListener {
 
+    private lateinit var albumsFragment: AlbumsFragment
+    private lateinit var photosFragment: PhotosFragment
     private  val DIRECTORY = "/GalleryImages"
 
     override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
         when(menuItem.itemId){
             R.id.action_photos ->{
-                val photosFragment = PhotosFragment.newInstance()
-
-                supportFragmentManager.beginTransaction().replace(R.id.frameFragmentHolder, photosFragment, "TAG").commit()
+                if (!::photosFragment.isInitialized) {
+                    photosFragment = PhotosFragment.newInstance()
+                }
+                supportFragmentManager.beginTransaction().replace(R.id.frameFragmentHolder, photosFragment, "Photos").commit()
                 //initPhotos(homeVieModel.getAllImages(this@HomeActivity))
             }
             R.id.action_albums ->{
-                initAlbum(homeVieModel.getAlbums(this@HomeActivity))
+               // initAlbum(homeVieModel.getAlbums(this@HomeActivity))
+                if (!::photosFragment.isInitialized) {
+                    albumsFragment = AlbumsFragment.newInstance()
+                }
+
+                supportFragmentManager.beginTransaction().replace(R.id.frameFragmentHolder, albumsFragment, "Albums").commit()
             }
             R.id.action_favourites ->{
 
@@ -196,55 +205,9 @@ class HomeActivity : BaseActivity(),BottomNavigationView.OnNavigationItemSelecte
 
     }
 
-    protected fun makeHideShow(recyclerView : RecyclerView){
-        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                if (dy > 0 && navigation.isShown) {
-                    //navigation.visibility = View.GONE
-                    slideDown(navigation)
-                    //hideBottomNavigationView(navigation)
-                } else if (dy < 0) {
-                     //navigation.visibility = View.VISIBLE
-                    slideUp(navigation)
-                    //showBottomNavigationView(navigation)
 
-                }
-            }
 
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
 
-                super.onScrollStateChanged(recyclerView, newState)
-            }
-        })
-    }
-
-    // slide the view from below itself to the current position
-    fun slideUp(view: View) {
-        view.visibility = View.VISIBLE
-        val animate = TranslateAnimation(
-            0f, // fromXDelta
-            0f, // toXDelta
-            view.height.toFloat(), // fromYDelta
-            0f
-        )                // toYDelta
-        animate.duration = 500
-        animate.fillAfter = true
-        view.startAnimation(animate)
-    }
-
-    // slide the view from its current position to below itself
-    fun slideDown(view: View) {
-        view.visibility = View.GONE
-        val animate = TranslateAnimation(
-            0f, // fromXDelta
-            0f, // toXDelta
-            0f, // fromYDelta
-            view.height.toFloat()
-        ) // toYDelta
-        animate.duration = 500
-        animate.fillAfter = true
-        view.startAnimation(animate)
-    }
 
     private fun hideBottomNavigationView(view: BottomNavigationView) {
         view.animate().translationY(view.height.toFloat())
@@ -263,7 +226,7 @@ class HomeActivity : BaseActivity(),BottomNavigationView.OnNavigationItemSelecte
         //now adding the adapter to recyclerview
         recyclerAlbums.adapter = adapter
 
-        makeHideShow(recyclerAlbums)
+
 
 
     }

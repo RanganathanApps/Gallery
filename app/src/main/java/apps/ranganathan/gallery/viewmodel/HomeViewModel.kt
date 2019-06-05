@@ -5,9 +5,15 @@ import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import android.view.View
+import android.view.animation.TranslateAnimation
+import androidx.recyclerview.widget.RecyclerView
 import apps.ranganathan.configlibrary.base.BaseAppActivity
 import apps.ranganathan.gallery.adapter.ViewTypeAdapter
 import apps.ranganathan.gallery.model.Album
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.android.synthetic.main.content_home.*
 import kotlinx.android.synthetic.main.toolbar_home.*
 import java.io.File
 
@@ -59,8 +65,8 @@ open class HomeViewModel : BaseViewModel(){
         return results
     }
 
-    fun getAlbums(activity: BaseAppActivity): List<Album> {
-        return getAlbumFileFromUri(activity,uri)
+    fun getAlbums(context: Context): List<Album> {
+        return getAlbumFileFromUri(context,uri)
     }
 
 
@@ -180,5 +186,55 @@ open class HomeViewModel : BaseViewModel(){
             }
         }
         return images
+    }
+
+    fun makeHideShow(recyclerView : RecyclerView,navigation:BottomNavigationView){
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (dy > 0 && navigation.isShown) {
+                    //navigation.visibility = View.GONE
+                    slideDown(navigation)
+                    //hideBottomNavigationView(navigation)
+                } else if (dy < 0) {
+                    //navigation.visibility = View.VISIBLE
+                    slideUp(navigation)
+                    //showBottomNavigationView(navigation)
+
+                }
+            }
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+
+                super.onScrollStateChanged(recyclerView, newState)
+            }
+        })
+    }
+
+    // slide the view from below itself to the current position
+    fun slideUp(view: View) {
+        view.visibility = View.VISIBLE
+        val animate = TranslateAnimation(
+            0f, // fromXDelta
+            0f, // toXDelta
+            view.height.toFloat(), // fromYDelta
+            0f
+        )                // toYDelta
+        animate.duration = 500
+        animate.fillAfter = true
+        view.startAnimation(animate)
+    }
+
+    // slide the view from its current position to below itself
+    fun slideDown(view: View) {
+        view.visibility = View.GONE
+        val animate = TranslateAnimation(
+            0f, // fromXDelta
+            0f, // toXDelta
+            0f, // fromYDelta
+            view.height.toFloat()
+        ) // toYDelta
+        animate.duration = 500
+        animate.fillAfter = true
+        view.startAnimation(animate)
     }
 }
