@@ -24,6 +24,7 @@ class PhotosFragment : Fragment() {
 
     private lateinit var viewModel: PhotosViewModel
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
