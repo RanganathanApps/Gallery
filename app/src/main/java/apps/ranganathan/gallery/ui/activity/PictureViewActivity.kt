@@ -1,14 +1,15 @@
 package apps.ranganathan.gallery.ui.activity
 
+import android.content.Context
+import android.content.res.Configuration
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.ViewGroup
 import androidx.appcompat.app.ActionBar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
@@ -26,18 +27,15 @@ import kotlinx.android.synthetic.main.activity_picture_view.*
 import kotlinx.android.synthetic.main.content_picture_view.*
 import kotlinx.android.synthetic.main.toolbar_home.*
 import java.io.File
-import android.provider.MediaStore
-import android.content.ContentResolver
-import android.content.Context
 
 
 class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
     override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
         when (menuItem.itemId) {
             R.id.action_delete -> {
-                val isDeleted =delete(context,album.file)
-                if (isDeleted){
-                    showMsg(navigation,"File Deleted!")
+                val isDeleted = delete(context, album.file)
+                if (isDeleted) {
+                    showMsg(navigation, "File Deleted!")
                 }
             }
             R.id.action_share -> {
@@ -71,6 +69,7 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
         }
         return !file.exists()
     }
+
     private val TAG = "App"
 
     private lateinit var pictureViewModel: PictureViewModel
@@ -139,7 +138,30 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
     }
 
 
-    private fun fullScreen() {
+    // This snippet hides the system bars.
+    private fun hideSystemUI() {
+        // Set the IMMERSIVE flag.
+        // Set the content to appear under the system bars so that the content
+        // doesn't resize when the system bars hide and show.
+        window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+
+                or View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+
+                or View.SYSTEM_UI_FLAG_IMMERSIVE)
+    }
+
+    // This snippet shows the system bars. It does this by removing all the flags
+    // except for the ones that make the content appear under the system bars.
+    private fun showSystemUI() {
+        window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
+    }
+
+    private fun hideSystemUISettings() {
 
         // BEGIN_INCLUDE (get_current_ui_flags)
         // The UI options currently enabled are represented by a bitfield.
@@ -152,7 +174,7 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
         if (isImmersiveModeEnabled) {
             Log.w(TAG, "Turning immersive mode mode off. ")
         } else {
-            Log.i(TAG, "Turning immersive mode mode on.")
+            Log.w(TAG, "Turning immersive mode mode on.")
         }
 
         // Navigation bar hiding:  Backwards compatible to ICS.
@@ -185,6 +207,7 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
     private fun showToolbar() {
         appBar.visibility = VISIBLE
         navigation.visibility = VISIBLE
+        setBootomBarHeight()
         showSystemUI()
         setToolBarHeight()
         //setStatusBarVisibility(true)
@@ -195,52 +218,47 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
     private fun hideToolbar() {
         appBar.visibility = GONE
         navigation.visibility = GONE
-        //hideSystemUI()
-        fullScreen()
-        //setStatusBarVisibility(false)
-        /* window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-           WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
-*/
+        //hideSystemUISettings()
+        hideSystemUI()
+        /* window.setFlags(
+             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+           WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)*/
     }
 
-    override fun onWindowFocusChanged(hasFocus: Boolean) {
-        super.onWindowFocusChanged(hasFocus)
-        if (hasFocus) {
-            showToolbar()
-            touchToggle.value = true
+    fun getNavBarHeight(c: Context): Int {
+        val result = 0
+        val hasMenuKey = ViewConfiguration.get(c).hasPermanentMenuKey()
+        val hasBackKey = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK)
+
+        if (hasBackKey) {
+            //The device has a navigation bar
+            val resources = c.resources
+
+            val orientation = resources.configuration.orientation
+            val resourceId: Int
+            resourceId = resources.getIdentifier(
+                if (orientation == Configuration.ORIENTATION_PORTRAIT) "navigation_bar_height" else "navigation_bar_width",
+                "dimen",
+                "android"
+            )
+
+            if (resourceId > 0) {
+                return resources.getDimensionPixelSize(resourceId)
+            }
         }
-    }
-
-
-    private fun hideSystemUI() {
-        // Enables regular immersive mode.
-        // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
-        // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-        val decorView = window.decorView
-        decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_IMMERSIVE
-                // Set the content to appear under the system bars so that the
-                // content doesn't resize when the system bars hide and show.
-                or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                // Hide the nav bar and status bar
-                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_FULLSCREEN)
-    }
-
-    // Shows the system bars by removing all the flags
-    // except for the ones that make the content appear under the system bars.
-    private fun showSystemUI() {
-        val decorView = window.decorView
-        decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
+        return result
     }
 
     private fun setToolBarHeight() {
         val statusBarHeight = getStatusBarHeight()
         //action bar height
         setMargins(appBar, 0, statusBarHeight, 0, 0)
+    }
+
+    private fun setBootomBarHeight() {
+        val navigationBarHeight = getNavBarHeight(context)
+        //action bar height
+        setMargins(navigation, 0, 0, 0, navigationBarHeight)
     }
 
 
@@ -262,6 +280,14 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
         return result
     }
 
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) {
+            showToolbar()
+            touchToggle.value = true
+        }
+    }
 
     private fun setUpViewPager() {
 
