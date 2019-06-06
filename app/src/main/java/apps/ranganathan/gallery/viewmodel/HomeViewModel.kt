@@ -1,6 +1,8 @@
 package apps.ranganathan.gallery.viewmodel
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
@@ -15,7 +17,12 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.content_home.*
 import kotlinx.android.synthetic.main.toolbar_home.*
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 open class HomeViewModel : BaseViewModel(){
@@ -30,6 +37,7 @@ open class HomeViewModel : BaseViewModel(){
     val BUCKET_ORDER_BY = "MAX(datetaken) DESC"
 
     private var projection: Array<String>
+
 
     private var absolutePathOfImage: String? = null
 
@@ -161,7 +169,12 @@ open class HomeViewModel : BaseViewModel(){
         val files = root.listFiles()
         if (files!=null) {
             for (i in 0..files.size - 1) {
-                if (files[i].name.endsWith(".jpg")) {
+                if (files[i].name.endsWith(".jpg")
+                    || files[i].name.endsWith(".png")
+                    || files[i].name.endsWith(".gif")
+                    || files[i].name.endsWith(".bmp")
+                    || files[i].name.endsWith(".WebP")
+                    || files[i].name.endsWith(".jpeg") ) {
                     a.add(files[i])
                 }
             }
@@ -172,7 +185,7 @@ open class HomeViewModel : BaseViewModel(){
     fun getDirectory(folderName:String) :File{
         var externalStorageAbsolutePath: String = Environment.getExternalStorageDirectory()!!.absolutePath
         Log.w("albums AbsolutePath", " " + externalStorageAbsolutePath)
-        val file = File(externalStorageAbsolutePath + File.separator + folderName)
+        val file = File( folderName)
         return  file
 
     }
@@ -236,5 +249,45 @@ open class HomeViewModel : BaseViewModel(){
         animate.duration = 500
         animate.fillAfter = true
         view.startAnimation(animate)
+    }
+
+    fun saveImage(context: Context,myBitmap: Bitmap,directory:String): String {
+
+
+        val bytes = ByteArrayOutputStream()
+        myBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+        val wallpaperDirectory = File(
+            (Environment.getExternalStorageDirectory()).toString() + directory
+        )
+        // have the object build the directory structure, if needed.
+        Log.w("save image", wallpaperDirectory.toString())
+        if (!wallpaperDirectory.exists()) {
+
+            wallpaperDirectory.mkdirs()
+        }
+
+        try {
+            Log.w("save", wallpaperDirectory.toString())
+            val f = File(
+                wallpaperDirectory, ((Calendar.getInstance()
+                    .timeInMillis).toString() + ".jpg")
+            )
+            f.createNewFile()
+            val fo = FileOutputStream(f)
+            fo.write(bytes.toByteArray())
+            MediaScannerConnection.scanFile(
+                context,
+                arrayOf(f.path),
+                arrayOf("image/jpeg"), null
+            )
+            fo.close()
+            Log.w("save ", "File Saved::--->" + f.absolutePath)
+
+            return f.absolutePath
+        } catch (e1: IOException) {
+            e1.printStackTrace()
+        }
+
+        return ""
     }
 }

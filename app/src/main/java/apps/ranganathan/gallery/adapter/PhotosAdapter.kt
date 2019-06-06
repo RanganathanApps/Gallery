@@ -42,7 +42,7 @@ class PhotosAdapter(activity: BaseActivity, val userList: List<Album>) : Recycle
         holder.bindItems(userList[position])
 
         holder.imageAlbum.setOnClickListener {
-            val anotherMap = mapOf("photos" to userList,"position" to position)
+            val anotherMap = mapOf("position" to position,"tag" to "photos")
             activity.startActivityputExtra(activity,PictureViewActivity::class.java,anotherMap)
         }
        /* val layoutParams = holder.itemView.getLayoutParams() as StaggeredGridLayoutManager.LayoutParams

@@ -18,5 +18,9 @@
     <string name="menu_albums">Albums</string>
     <string name="menu_account">Account</string>
     <string name="menu_favourites">Favourites</string>
+    <string name="menu_delete">Delete</string>
+    <string name="menu_share">Share</string>
+    <string name="menu_edit">Edit</string>
+    <string name="menu_info">Info</string>
 
 </resources>

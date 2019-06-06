@@ -31,7 +31,7 @@ class AlbumsAdapter(activity: BaseActivity, val userList: List<Album>) : Recycle
         holder.bindItems(userList[position])
         holder.imageAlbum.setOnClickListener {
             val album = userList.get(position)
-            val anotherMap = mapOf("directory" to album.name,"position" to position,"count" to album.count,"album" to album)
+            val anotherMap = mapOf("tag" to "album","directory" to album.name,"position" to position,"count" to album.count,"album" to album)
             activity.startActivityputExtra(activity, PictureViewActivity::class.java,anotherMap)
         }
     }

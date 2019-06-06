@@ -3,23 +3,16 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-android:orientation="vertical">
+        android:orientation="vertical">
 
-
-   <!-- <androidx.appcompat.widget.AppCompatImageView
-            android:src="@drawable/screenshot"
-            android:id="@+id/imgAlbum"
-            android:scaleType="fitCenter"
-            android:layout_width="match_parent"
-            android:adjustViewBounds="true"
-            android:layout_height="wrap_content"/>-->
 
     <androidx.viewpager.widget.ViewPager
             android:visibility="visible"
+            android:adjustViewBounds="true"
             android:id="@+id/viewpagerPhotos"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-    android:background="@color/colorBlack">
+            android:background="@color/colorBlack">
 
     </androidx.viewpager.widget.ViewPager>
 

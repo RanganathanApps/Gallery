@@ -2,20 +2,17 @@ package apps.ranganathan.gallery.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.lifecycle.MutableLiveData
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
+import apps.ranganathan.configlibrary.base.BaseAppActivity
 import apps.ranganathan.gallery.R
 import apps.ranganathan.gallery.model.Album
-import apps.ranganathan.gallery.utils.ScaleListener
-import com.squareup.picasso.Callback
-import com.squareup.picasso.Picasso
-import android.view.MotionEvent
-import android.graphics.PointF
-import androidx.lifecycle.MutableLiveData
-import apps.ranganathan.configlibrary.base.BaseAppActivity
-import kotlin.math.absoluteValue
+import com.github.chrisbanes.photoview.PhotoViewAttacher
 
 
 class ViewPagerAdapter(
@@ -54,6 +51,9 @@ class ViewPagerAdapter(
 
        /* Picasso.get().load(imgaeslist[position].albumUri)
             .into(imgAlbum)*/
+
+
+
         imgAlbum.setOnClickListener {
             touchToggle.value = !touchToggle.value!!
 

@@ -8,9 +8,11 @@
 
     <com.github.chrisbanes.photoview.PhotoView
             android:id="@+id/imgAlbum"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/ic_arrow_back_black_24dp"
+            android:src="@mipmap/ic_launcher"
 
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

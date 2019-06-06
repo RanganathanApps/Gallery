@@ -3,7 +3,7 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
         tools:context=".ui.activity.PictureViewActivity">
 
 
@@ -21,6 +21,18 @@
         <include layout="@layout/toolbar_home"/>
 
     </com.google.android.material.appbar.AppBarLayout>
+
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/navigation"
+            android:layout_gravity="bottom|end"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            app:itemIconTint="@color/colorWhite"
+            app:itemTextColor="@color/colorTrans"
+            app:labelVisibilityMode="unlabeled"
+            app:menu="@menu/my_navigation_picture_view_items"
+            android:background="@color/colorTrans"/>
 
 
 

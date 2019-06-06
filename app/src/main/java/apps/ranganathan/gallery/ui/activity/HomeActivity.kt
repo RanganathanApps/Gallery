@@ -28,8 +28,11 @@ import kotlinx.android.synthetic.main.toolbar_home.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import android.view.View
 import android.view.animation.TranslateAnimation
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import apps.ranganathan.gallery.ui.fragment.AlbumsFragment
 import apps.ranganathan.gallery.ui.fragment.PhotosFragment
+import apps.ranganathan.gallery.utils.BottomNavigationBehavior
+import kotlinx.android.synthetic.main.photos_fragment.*
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -39,9 +42,46 @@ import java.util.*
 
 class HomeActivity : BaseActivity(),BottomNavigationView.OnNavigationItemSelectedListener {
 
+    private lateinit var homeVieModel: HomeViewModel
     private lateinit var albumsFragment: AlbumsFragment
     private lateinit var photosFragment: PhotosFragment
     private  val DIRECTORY = "/GalleryImages"
+
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_drawer)
+        setSupportActionBar(toolbar)
+        setConnectivityChange()
+        initCode()
+    }
+
+    private fun initCode() {
+        homeVieModel = ViewModelProviders.of(this).get(HomeViewModel::class.java)
+
+        setNavDrawer()
+        setNavigation()
+
+        getPermission(this,object :PermissionListener{
+            override fun onDenied(deniedPermissions: List<String>) {
+                showMsg(navigation,"Permissions are required to run this app")
+            }
+
+            override fun onDeniedForeEver(deniedPermissions: List<String>) {
+                showMsg(navigation,"Enable Permissions on settings")
+            }
+
+            override fun onGranted() {
+                if (!::photosFragment.isInitialized) {
+                    photosFragment = PhotosFragment.newInstance()
+                }
+                supportFragmentManager.beginTransaction().replace(R.id.frameFragmentHolder, photosFragment, "Photos").commit()
+            }
+        },Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE)
+
+
+    }
 
     override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
         when(menuItem.itemId){
@@ -53,24 +93,23 @@ class HomeActivity : BaseActivity(),BottomNavigationView.OnNavigationItemSelecte
                 //initPhotos(homeVieModel.getAllImages(this@HomeActivity))
             }
             R.id.action_albums ->{
-               // initAlbum(homeVieModel.getAlbums(this@HomeActivity))
-                if (!::photosFragment.isInitialized) {
+                // initAlbum(homeVieModel.getAlbums(this@HomeActivity))
+                if (!::albumsFragment.isInitialized) {
                     albumsFragment = AlbumsFragment.newInstance()
                 }
 
                 supportFragmentManager.beginTransaction().replace(R.id.frameFragmentHolder, albumsFragment, "Albums").commit()
             }
-            R.id.action_favourites ->{
 
-            }
             R.id.action_camera ->{
+
                 takePhoto(object : ImagePickerListener{
                     override fun onCancelled() {
-
+                        showToast("Camera cancelled")
                     }
 
                     override fun onPicked(bitmap: Bitmap) {
-                        saveImage(bitmap)
+                        homeVieModel.saveImage(context,bitmap,DIRECTORY)
 
                     }
                 })
@@ -79,77 +118,10 @@ class HomeActivity : BaseActivity(),BottomNavigationView.OnNavigationItemSelecte
         return true
     }
 
-    fun saveImage(myBitmap: Bitmap): String {
-
-
-        val bytes = ByteArrayOutputStream()
-        myBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
-        val wallpaperDirectory = File(
-            (Environment.getExternalStorageDirectory()).toString() + DIRECTORY
-        )
-        // have the object build the directory structure, if needed.
-        Log.w("save image", wallpaperDirectory.toString())
-        if (!wallpaperDirectory.exists()) {
-
-            wallpaperDirectory.mkdirs()
-        }
-
-        try {
-            Log.w("save", wallpaperDirectory.toString())
-            val f = File(
-                wallpaperDirectory, ((Calendar.getInstance()
-                    .timeInMillis).toString() + ".jpg")
-            )
-            f.createNewFile()
-            val fo = FileOutputStream(f)
-            fo.write(bytes.toByteArray())
-            MediaScannerConnection.scanFile(
-                this,
-                arrayOf(f.path),
-                arrayOf("image/jpeg"), null
-            )
-            fo.close()
-            Log.w("save ", "File Saved::--->" + f.absolutePath)
-
-            return f.absolutePath
-        } catch (e1: IOException) {
-            e1.printStackTrace()
-        }
-
-        return ""
-    }
-
-
-    private lateinit var homeVieModel: HomeViewModel
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_drawer)
-        setSupportActionBar(toolbar)
-        setConnectivityChange()
-
-        homeVieModel = ViewModelProviders.of(this).get(HomeViewModel::class.java)
-
-        getPermission(this,object :PermissionListener{
-            override fun onDenied(deniedPermissions: List<String>) {
-
-            }
-
-            override fun onDeniedForeEver(deniedPermissions: List<String>) {
-            }
-
-            override fun onGranted() {
-                initPhotos(homeVieModel.getAllImages(this@HomeActivity))
-            }
-        },Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE)
-
-        setNavDrawer()
-
-        setNavigation()
-    }
-
     private fun setNavigation() {
         navigation.setOnNavigationItemSelectedListener(this)
+        val layoutParams =  navigation.layoutParams as CoordinatorLayout.LayoutParams
+        layoutParams.behavior = BottomNavigationBehavior()
     }
 
     /*navigation bar Icons and drawer toogle*/
@@ -163,74 +135,6 @@ class HomeActivity : BaseActivity(),BottomNavigationView.OnNavigationItemSelecte
 
         toggle.drawerArrowDrawable.color = ContextCompat.getColor(context, R.color.colorWhite)
     }
-
-
-
-    private lateinit var albumm: Album
-
-    private fun initPhotos(files: List<Album>) {
-
-        //recyclerAlbums.layoutManager = GridLayoutManager(this,  2) as RecyclerView.LayoutManager?
-       //recyclerAlbums.layoutManager = StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL)
-
-      /*  val glm = GridLayoutManager(this, 3)
-        glm.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-            override fun getSpanSize(position: Int): Int {
-                if (position % 3 == 2) {
-                    return 3
-                }
-                when (position % 4) {
-                    1, 3 -> return 1
-                    0, 2 -> return 2
-                    else ->
-                        //never gonna happen
-                        return -1
-                }
-            }
-        }
-        recyclerAlbums.setLayoutManager(glm)*/
-
-
-
-        val adapter = PhotosAdapter(this,files)
-
-        recyclerAlbums.layoutManager = GridLayoutManager(this,  4) as RecyclerView.LayoutManager?
-        //recyclerAlbums.layoutManager = StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL)
-        //now adding the adapter to recyclerview
-        recyclerAlbums.setHasFixedSize(true)
-        recyclerAlbums.adapter = adapter
-        //recyclerAlbums.setItemViewCacheSize(20)
-        //recyclerAlbums.setDrawingCacheEnabled(true)
-
-
-    }
-
-
-
-
-
-    private fun hideBottomNavigationView(view: BottomNavigationView) {
-        view.animate().translationY(view.height.toFloat())
-    }
-
-    private fun showBottomNavigationView(view: BottomNavigationView) {
-        view.animate().translationY(0f)
-    }
-    private fun initAlbum(files: List<Album>) {
-
-        recyclerAlbums.layoutManager = GridLayoutManager(this,  3) as RecyclerView.LayoutManager?
-        //recyclerAlbums.layoutManager = StaggeredGridLayoutManager(2,VERTICAL)
-
-        val adapter = AlbumsAdapter(this,files)
-
-        //now adding the adapter to recyclerview
-        recyclerAlbums.adapter = adapter
-
-
-
-
-    }
-
 
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

@@ -1,18 +1,14 @@
 package apps.ranganathan.gallery.ui.activity
 
-import android.app.Activity
-import android.content.Context
-import android.graphics.Color
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
-import android.graphics.drawable.Drawable
-import android.os.Build
+import android.graphics.Bitmap
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.TypedValue
-import android.view.*
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import androidx.core.content.ContextCompat
+import android.view.ViewGroup
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -24,10 +20,46 @@ import apps.ranganathan.gallery.viewmodel.PictureViewModel
 import kotlinx.android.synthetic.main.activity_picture_view.*
 import kotlinx.android.synthetic.main.content_picture_view.*
 import java.io.File
+import android.os.Build.VERSION
+import android.os.Build.VERSION.SDK_INT
+import android.os.Build
+import android.util.Log
+import androidx.appcompat.app.ActionBar
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.content.ContextCompat
+import apps.ranganathan.gallery.ui.fragment.AlbumsFragment
+import apps.ranganathan.gallery.ui.fragment.PhotosFragment
+import apps.ranganathan.gallery.utils.BottomNavigationBehavior
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.android.synthetic.main.activity_picture_view.navigation
+import kotlinx.android.synthetic.main.toolbar_home.*
 
 
-class PictureViewActivity : BaseActivity() {
+class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
+    override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
+        when(menuItem.itemId){
+            R.id.action_delete ->{
 
+            }
+            R.id.action_share ->{
+
+            }
+
+            R.id.action_edit ->{
+
+            }
+            R.id.action_info ->{
+                val map = mapOf("album" to album)
+                startActivityputExtra(this, InfoActivity::class.java, map)
+            }
+
+
+        }
+        return true
+    }
+
+    private val TAG ="App"
 
     private lateinit var pictureViewModel: PictureViewModel
     lateinit var userList: List<Album>
@@ -46,15 +78,16 @@ class PictureViewActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_picture_view)
-        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
         setAppBar("")
-
         changeToolbarNavIconColor(R.color.colorWhite)
+        val mActionBar: ActionBar? = supportActionBar
+        mActionBar!!.setBackgroundDrawable(ColorDrawable(ContextCompat.getColor(this, R.color.colorTrans)))
+        toolbar.background.alpha = 1
+        iniCode()
 
-        touchToggle.value = false
+    }
 
-
-
+    private fun iniCode() {
         pictureViewModel = ViewModelProviders.of(this).get(PictureViewModel::class.java)
         if (intent!!.extras != null) {
             if (intent!!.extras!!.containsKey("album")) {
@@ -62,11 +95,12 @@ class PictureViewActivity : BaseActivity() {
                 directory = album.name
                 count = album.count
                 setToolBarTitle("$directory (${1}/${album.count} items)")
-                files = pictureViewModel.getImagesInFile(pictureViewModel.getDirectory(album.path))
+                files = pictureViewModel.getImagesInFile(pictureViewModel.getDirectory(album.path))!!
                 userList = pictureViewModel.getImages(files)
             } else {
-                userList = intent!!.extras!!.getSerializable("photos") as List<Album>
+                //userList = intent!!.extras!!.getSerializable("photos") as List<Album>
                 position = intent!!.extras!!.getInt("position")
+                userList = pictureViewModel.getAllImages(this)
                 album = userList[position]
                 setToolBarTitle(album.name)
             }
@@ -74,45 +108,147 @@ class PictureViewActivity : BaseActivity() {
         }
 
         touchToggle.observe(this, Observer {
-            it
             if (it) {
                 showToolbar()
             } else {
                 hideToolbar()
             }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                val decor = window.decorView
-                if (touchToggle.value!!) {
-                   /* decor.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-                    decor.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
-                    decor.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    decor.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    window.statusBarColor = Color.RED
-                    window.setStatusBarColor( Color.RED);*/
-                    /*enable status bar here*/
+            /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                 val decor = window.decorView
+                 if (touchToggle.value!!) {
+                     *//*enable status bar here*//*
                     //window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                     decor.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
                     window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
                     setToolBarHeight()
                 } else {
-
-                    /*hide status bar here*/
+                    *//*hide status bar here*//*
                     window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
                     window.statusBarColor = Color.RED
                 }
-            }
+            }*/
         })
         setUpViewPager()
+        setNavigation()
+    }
 
+    private fun setNavigation() {
+        navigation.setOnNavigationItemSelectedListener(this)
+        val layoutParams =  navigation.layoutParams as CoordinatorLayout.LayoutParams
+        layoutParams.behavior = BottomNavigationBehavior()
+        navigation.menu.getItem(0).isCheckable = false
+    }
+
+    override fun onResume() {
+        super.onResume()
+        /*if (navigation.menu.getItem(3).isEnabled){
+            navigation.menu.getItem(3).isChecked=false
+        }*/
+    }
+
+    private fun fullScreen() {
+
+        // BEGIN_INCLUDE (get_current_ui_flags)
+        // The UI options currently enabled are represented by a bitfield.
+        // getSystemUiVisibility() gives us that bitfield.
+        val uiOptions = window.decorView.systemUiVisibility
+        var newUiOptions = uiOptions
+        // END_INCLUDE (get_current_ui_flags)
+        // BEGIN_INCLUDE (toggle_ui_flags)
+        val isImmersiveModeEnabled = uiOptions or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY == uiOptions
+        if (isImmersiveModeEnabled) {
+            Log.w(TAG, "Turning immersive mode mode off. ")
+        } else {
+            Log.i(TAG, "Turning immersive mode mode on.")
+        }
+
+        // Navigation bar hiding:  Backwards compatible to ICS.
+        if (Build.VERSION.SDK_INT >= 14) {
+            newUiOptions = newUiOptions xor View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+        }
+
+        // Status bar hiding: Backwards compatible to Jellybean
+        if (Build.VERSION.SDK_INT >= 16) {
+            newUiOptions = newUiOptions xor View.SYSTEM_UI_FLAG_FULLSCREEN
+        }
+
+        // Immersive mode: Backward compatible to KitKat.
+        // Note that this flag doesn't do anything by itself, it only augments the behavior
+        // of HIDE_NAVIGATION and FLAG_FULLSCREEN.  For the purposes of this sample
+        // all three flags are being toggled together.
+        // Note that there are two immersive mode UI flags, one of which is referred to as "sticky".
+        // Sticky immersive mode differs in that it makes the navigation and status bars
+        // semi-transparent, and the UI flag does not get cleared when the user interacts with
+        // the screen.
+        if (Build.VERSION.SDK_INT >= 18) {
+            newUiOptions = newUiOptions xor View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+        }
+
+        window.decorView.systemUiVisibility = newUiOptions
+        //END_INCLUDE (set_ui_flags)
+    }
+
+
+    private fun showToolbar() {
+        appBar.visibility = VISIBLE
+        navigation.visibility = VISIBLE
+         showSystemUI()
+        setToolBarHeight()
+        //setStatusBarVisibility(true)
+        // window!!.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+
+    }
+
+    private fun hideToolbar() {
+        appBar.visibility = GONE
+        navigation.visibility = GONE
+        //hideSystemUI()
+        fullScreen()
+        //setStatusBarVisibility(false)
+        /* window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+           WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+*/
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) {
+            showToolbar()
+            touchToggle.value = true
+        }
+    }
+
+
+    private fun hideSystemUI() {
+        // Enables regular immersive mode.
+        // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
+        // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+        val decorView = window.decorView
+        decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_IMMERSIVE
+                // Set the content to appear under the system bars so that the
+                // content doesn't resize when the system bars hide and show.
+                or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                // Hide the nav bar and status bar
+                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_FULLSCREEN)
+    }
+
+    // Shows the system bars by removing all the flags
+    // except for the ones that make the content appear under the system bars.
+    private fun showSystemUI() {
+        val decorView = window.decorView
+        decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
     }
 
     private fun setToolBarHeight() {
         val statusBarHeight = getStatusBarHeight()
-                    //action bar height
-                    setMargins(appBar,0,statusBarHeight,0,0)
+        //action bar height
+        setMargins(appBar, 0, statusBarHeight, 0, 0)
     }
-
-
 
 
     private fun setMargins(view: View, left: Int, top: Int, right: Int, bottom: Int) {
@@ -124,7 +260,6 @@ class PictureViewActivity : BaseActivity() {
     }
 
 
-
     fun getStatusBarHeight(): Int {
         var result = 0
         val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
@@ -133,9 +268,6 @@ class PictureViewActivity : BaseActivity() {
         }
         return result
     }
-
-
-
 
 
     private fun setUpViewPager() {
@@ -168,26 +300,11 @@ class PictureViewActivity : BaseActivity() {
 
     }
 
-    private fun hideToolbar() {
-        appBar.visibility = GONE
-        //setStatusBarVisibility(false)
-         /* window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
-*/
-
-
-    }
 
 
 
-    private fun showToolbar() {
-        appBar.visibility = VISIBLE
-        //setStatusBarVisibility(true)
-         // window!!.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
 
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+    /*override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_picture_view, menu)
         return true
@@ -207,6 +324,6 @@ class PictureViewActivity : BaseActivity() {
             else -> super.onOptionsItemSelected(item)
 
         }
-    }
+    }*/
 
 }
