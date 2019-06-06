@@ -1,14 +1,17 @@
 package apps.ranganathan.gallery.ui.activity
 
-import android.graphics.Bitmap
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
-import android.view.Menu
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import androidx.appcompat.app.ActionBar
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -16,40 +19,35 @@ import androidx.viewpager.widget.ViewPager
 import apps.ranganathan.gallery.R
 import apps.ranganathan.gallery.adapter.ViewPagerAdapter
 import apps.ranganathan.gallery.model.Album
+import apps.ranganathan.gallery.utils.BottomNavigationBehavior
 import apps.ranganathan.gallery.viewmodel.PictureViewModel
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_picture_view.*
 import kotlinx.android.synthetic.main.content_picture_view.*
-import java.io.File
-import android.os.Build.VERSION
-import android.os.Build.VERSION.SDK_INT
-import android.os.Build
-import android.util.Log
-import androidx.appcompat.app.ActionBar
-import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.content.ContextCompat
-import apps.ranganathan.gallery.ui.fragment.AlbumsFragment
-import apps.ranganathan.gallery.ui.fragment.PhotosFragment
-import apps.ranganathan.gallery.utils.BottomNavigationBehavior
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import kotlinx.android.synthetic.main.activity_home.*
-import kotlinx.android.synthetic.main.activity_picture_view.navigation
 import kotlinx.android.synthetic.main.toolbar_home.*
+import java.io.File
+import android.provider.MediaStore
+import android.content.ContentResolver
+import android.content.Context
 
 
 class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
     override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
-        when(menuItem.itemId){
-            R.id.action_delete ->{
+        when (menuItem.itemId) {
+            R.id.action_delete -> {
+                val isDeleted =delete(context,album.file)
+                if (isDeleted){
+                    showMsg(navigation,"File Deleted!")
+                }
+            }
+            R.id.action_share -> {
 
             }
-            R.id.action_share ->{
+
+            R.id.action_edit -> {
 
             }
-
-            R.id.action_edit ->{
-
-            }
-            R.id.action_info ->{
+            R.id.action_info -> {
                 val map = mapOf("album" to album)
                 startActivityputExtra(this, InfoActivity::class.java, map)
             }
@@ -59,7 +57,21 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
         return true
     }
 
-    private val TAG ="App"
+    fun delete(context: Context, file: File): Boolean {
+        val where = MediaStore.MediaColumns.DATA + "=?"
+        val selectionArgs = arrayOf(file.absolutePath)
+        val contentResolver = context.getContentResolver()
+        val filesUri = MediaStore.Files.getContentUri("external")
+
+        contentResolver.delete(filesUri, where, selectionArgs)
+
+        if (file.exists()) {
+
+            contentResolver.delete(filesUri, where, selectionArgs)
+        }
+        return !file.exists()
+    }
+    private val TAG = "App"
 
     private lateinit var pictureViewModel: PictureViewModel
     lateinit var userList: List<Album>
@@ -82,7 +94,7 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
         changeToolbarNavIconColor(R.color.colorWhite)
         val mActionBar: ActionBar? = supportActionBar
         mActionBar!!.setBackgroundDrawable(ColorDrawable(ContextCompat.getColor(this, R.color.colorTrans)))
-        toolbar.background.alpha = 1
+        toolbar.background.alpha = 0
         iniCode()
 
     }
@@ -113,38 +125,19 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
             } else {
                 hideToolbar()
             }
-            /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                 val decor = window.decorView
-                 if (touchToggle.value!!) {
-                     *//*enable status bar here*//*
-                    //window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    decor.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-                    window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-                    setToolBarHeight()
-                } else {
-                    *//*hide status bar here*//*
-                    window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
-                    window.statusBarColor = Color.RED
-                }
-            }*/
         })
+
         setUpViewPager()
         setNavigation()
     }
 
     private fun setNavigation() {
         navigation.setOnNavigationItemSelectedListener(this)
-        val layoutParams =  navigation.layoutParams as CoordinatorLayout.LayoutParams
+        val layoutParams = navigation.layoutParams as CoordinatorLayout.LayoutParams
         layoutParams.behavior = BottomNavigationBehavior()
         navigation.menu.getItem(0).isCheckable = false
     }
 
-    override fun onResume() {
-        super.onResume()
-        /*if (navigation.menu.getItem(3).isEnabled){
-            navigation.menu.getItem(3).isChecked=false
-        }*/
-    }
 
     private fun fullScreen() {
 
@@ -192,7 +185,7 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
     private fun showToolbar() {
         appBar.visibility = VISIBLE
         navigation.visibility = VISIBLE
-         showSystemUI()
+        showSystemUI()
         setToolBarHeight()
         //setStatusBarVisibility(true)
         // window!!.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
@@ -299,9 +292,6 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
         })
 
     }
-
-
-
 
 
     /*override fun onCreateOptionsMenu(menu: Menu): Boolean {
