@@ -13,6 +13,10 @@ import apps.ranganathan.configlibrary.base.BaseAppActivity
 import apps.ranganathan.gallery.R
 import apps.ranganathan.gallery.model.Album
 import com.github.chrisbanes.photoview.PhotoViewAttacher
+import android.view.MotionEvent
+import android.text.method.Touch.onTouchEvent
+
+
 
 
 class ViewPagerAdapter(
@@ -53,17 +57,16 @@ class ViewPagerAdapter(
             .into(imgAlbum)*/
 
 
-
         imgAlbum.setOnClickListener {
             touchToggle.value = !touchToggle.value!!
 
         }
-//        imgAlbum.setOnTouchListener(object : View.OnTouchListener {
-//            override fun onTouch(v: View, m: MotionEvent): Boolean {
-//                touchToggle.value = !touchToggle.value!!
-//                return true
-//            }
-//        })
+       /* imgAlbum.setOnTouchListener(object : View.OnTouchListener {
+            override fun onTouch(v: View, m: MotionEvent): Boolean {
+                touchToggle.value = !touchToggle.value!!
+                return true
+            }
+        })*/
 
         val vp = container as ViewPager
         vp.addView(v , 0)
@@ -72,6 +75,7 @@ class ViewPagerAdapter(
         return v
 
     }
+
 
 
     override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {

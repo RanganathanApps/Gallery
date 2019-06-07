@@ -255,7 +255,7 @@ open class HomeViewModel : BaseViewModel(){
 
 
         val bytes = ByteArrayOutputStream()
-        myBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+        myBitmap.compress(Bitmap.CompressFormat.PNG, 100,  bytes)
         val wallpaperDirectory = File(
             (Environment.getExternalStorageDirectory()).toString() + directory
         )

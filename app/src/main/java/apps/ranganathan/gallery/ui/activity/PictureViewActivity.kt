@@ -27,48 +27,17 @@ import kotlinx.android.synthetic.main.activity_picture_view.*
 import kotlinx.android.synthetic.main.content_picture_view.*
 import kotlinx.android.synthetic.main.toolbar_home.*
 import java.io.File
+import android.widget.Toast
+import apps.ranganathan.configlibrary.utils.Utils
+import apps.ranganathan.configlibrary.utils.Utils.OnClickListener as OnClickListener1
+import android.content.Intent
+import android.net.Uri
 
 
 class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
-    override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
-        when (menuItem.itemId) {
-            R.id.action_delete -> {
-                val isDeleted = delete(context, album.file)
-                if (isDeleted) {
-                    showMsg(navigation, "File Deleted!")
-                }
-            }
-            R.id.action_share -> {
-
-            }
-
-            R.id.action_edit -> {
-
-            }
-            R.id.action_info -> {
-                val map = mapOf("album" to album)
-                startActivityputExtra(this, InfoActivity::class.java, map)
-            }
 
 
-        }
-        return true
-    }
 
-    fun delete(context: Context, file: File): Boolean {
-        val where = MediaStore.MediaColumns.DATA + "=?"
-        val selectionArgs = arrayOf(file.absolutePath)
-        val contentResolver = context.getContentResolver()
-        val filesUri = MediaStore.Files.getContentUri("external")
-
-        contentResolver.delete(filesUri, where, selectionArgs)
-
-        if (file.exists()) {
-
-            contentResolver.delete(filesUri, where, selectionArgs)
-        }
-        return !file.exists()
-    }
 
     private val TAG = "App"
 
@@ -128,6 +97,45 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
 
         setUpViewPager()
         setNavigation()
+    }
+
+    override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
+        when (menuItem.itemId) {
+            R.id.action_delete -> {
+                showConfirmationAlert("Delete", "Image will be deleted permanently. do you want to continue?", object: Utils.OnClickListener {
+                    override fun onClick(v: View) {
+                        val isDeleted = pictureViewModel.delete(context, album.file)
+                        if (isDeleted) {
+                            showMsg(navigation, "File Deleted!")
+                        }
+                    }
+
+                }, object : Utils.OnClickListener {
+                        override fun onClick(v: View) {
+                        }
+
+                    })
+
+            }
+            R.id.action_share -> {
+                val shareIntent = Intent(Intent.ACTION_SEND)
+                shareIntent.type = "image/jpg"
+                shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(album.file))
+                startActivity(Intent.createChooser(shareIntent, "Share image using"))
+            }
+
+            R.id.action_edit -> {
+                val map = mapOf("album" to album)
+                startActivityputExtra(this, EditActivity::class.java, map)
+            }
+            R.id.action_info -> {
+                val map = mapOf("album" to album)
+                startActivityputExtra(this, InfoActivity::class.java, map)
+            }
+
+
+        }
+        return true
     }
 
     private fun setNavigation() {
@@ -230,17 +238,22 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
         val hasMenuKey = ViewConfiguration.get(c).hasPermanentMenuKey()
         val hasBackKey = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK)
 
-        if (hasBackKey) {
+        if (hasMenuKey&& hasBackKey) {
             //The device has a navigation bar
             val resources = c.resources
 
             val orientation = resources.configuration.orientation
             val resourceId: Int
-            resourceId = resources.getIdentifier(
-                if (orientation == Configuration.ORIENTATION_PORTRAIT) "navigation_bar_height" else "navigation_bar_width",
-                "dimen",
-                "android"
-            )
+            if (orientation == Configuration.ORIENTATION_PORTRAIT){
+                resourceId = resources.getIdentifier(
+                    "navigation_bar_height",
+                    "dimen",
+                    "android"
+                )
+            }else{
+                resourceId = 0
+            }
+
 
             if (resourceId > 0) {
                 return resources.getDimensionPixelSize(resourceId)
@@ -286,6 +299,19 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
         if (hasFocus) {
             showToolbar()
             touchToggle.value = true
+        }
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+
+        // Checks the orientation of the screen
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show()
+            setMargins(navigation, 0, 0, 0, 0)
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            setBootomBarHeight()
+            Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show()
         }
     }
 
