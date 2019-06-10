@@ -41,6 +41,7 @@ class PhotosAdapter(activity: BaseActivity, val userList: List<Album>) : Recycle
     override fun onBindViewHolder(holder: PhotosAdapter.ViewHolder, position: Int) {
         holder.bindItems(userList[position])
 
+
         holder.imageAlbum.setOnClickListener {
             val anotherMap = mapOf("position" to position,"tag" to "photos")
             activity.startActivityputExtra(activity,PictureViewActivity::class.java,anotherMap)
@@ -75,7 +76,7 @@ class PhotosAdapter(activity: BaseActivity, val userList: List<Album>) : Recycle
             view.layoutParams = params*/
 
 
-
+            activity.makeLog("Date : ", user.file.lastModified().toString())
             txtPhotoName.text = user.name
 
             if (imageAlbum.drawable==null) {

@@ -7,6 +7,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
+
+
 open class InfoViewModel : BaseViewModel() {
 
 
@@ -36,6 +38,19 @@ open class InfoViewModel : BaseViewModel() {
             return dateString
         } finally {
             return dateString
+        }
+    }
+
+    fun getFileDateOnly(file: File): Date {
+        var date = Date()
+        try {
+            val rightNow = Calendar.getInstance()
+            rightNow.timeInMillis = file.lastModified()
+            date = rightNow.getTime()
+        } catch (e: Exception) {
+            return date
+        } finally {
+            return date
         }
     }
 

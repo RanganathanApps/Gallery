@@ -6,6 +6,7 @@ import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
+import android.text.format.DateUtils
 import android.util.Log
 import android.view.View
 import android.view.animation.TranslateAnimation
@@ -25,7 +26,14 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
+
+
+
+
+
+
 open class HomeViewModel : BaseViewModel(){
+
 
     lateinit var uri: Uri
 
@@ -74,7 +82,11 @@ open class HomeViewModel : BaseViewModel(){
     }
 
     fun getAlbums(context: Context): List<Album> {
-        return getAlbumFileFromUri(context,uri)
+
+        val k =  getAlbumFileFromUri(context,uri)
+
+
+        return k
     }
 
 
@@ -90,22 +102,43 @@ open class HomeViewModel : BaseViewModel(){
         val albums = mutableListOf<Album>()
         try {
             var  album =Album()
-
+            var file : File
+            var currentDate = Date()
+            var lastModified = Date()
             val cursor = context.contentResolver.query(uri,projection,
                 null, null, "$orderBy DESC")
-
-
-
             while (cursor.moveToNext()) {
                 absolutePathOfImage = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA))
-                Log.w("path : ",absolutePathOfImage)
-                //albums.add(File(absolutePathOfImage))
-                album = Album()
-                album.count = ""
-                album.name = File(absolutePathOfImage).nameWithoutExtension
-                album.file = File(absolutePathOfImage)
-                album.albumUri = Uri.fromFile(File(absolutePathOfImage)).toString()
-                albums.add(album)
+                file = File(absolutePathOfImage)
+                lastModified = getFileDateOnly(file)
+
+                val res = currentDate.compareTo(lastModified)
+                if (res>0){
+                    //  0 comes when two date are same,
+                    //  1 comes when date1 is higher then date2
+                    // -1 comes when date1 is lower then date2
+                   when(res){
+                       0->{
+
+                           album.count = ""
+                           album.name = File(absolutePathOfImage).nameWithoutExtension
+                           album.file = File(absolutePathOfImage)
+                           album.albumUri = Uri.fromFile(File(absolutePathOfImage)).toString()
+                           //albums.add(album)
+                       }
+                       1->{
+                           currentDate = lastModified
+                           album = Album()
+                           album.count = ""
+                           album.name = File(absolutePathOfImage).nameWithoutExtension
+                           album.file = File(absolutePathOfImage)
+                           album.albumUri = Uri.fromFile(File(absolutePathOfImage)).toString()
+                           albums.add(album)
+                       }
+                   }
+
+                }
+
             }
 
             cursor.close()
@@ -115,6 +148,26 @@ open class HomeViewModel : BaseViewModel(){
             return albums
         }
     }
+
+    fun getFileDateOnly(file: File): Date {
+        var date = Date(file.lastModified())
+        var clearDate = Date()
+        try {
+            val millisInDay = (60 * 60 * 24 * 1000).toLong()
+            val currentTime = date.time
+            val dateOnly = currentTime / millisInDay * millisInDay
+            clearDate = Date(dateOnly)
+
+            val rightNow = Calendar.getInstance()
+            rightNow.timeInMillis = file.lastModified()
+            date = rightNow.time
+        } catch (e: Exception) {
+            return clearDate
+        } finally {
+            return clearDate
+        }
+    }
+
 
     private fun getAlbumFileFromUri(context: Context, uri: Uri): List<Album> {
 
@@ -167,6 +220,18 @@ open class HomeViewModel : BaseViewModel(){
     fun imageReader(root : File): ArrayList<File>? {
         val a = ArrayList<File>()
         val files = root.listFiles()
+
+        files.sortWith(Comparator { file1, file2 ->
+            val k = file1.lastModified() - file2.lastModified()
+            if (k < 0) {
+                1
+            } else if (k == 0L) {
+                0
+            } else {
+                -1
+            }
+        })
+
         if (files!=null) {
             for (i in 0..files.size - 1) {
                 if (files[i].name.endsWith(".jpg")
@@ -179,6 +244,8 @@ open class HomeViewModel : BaseViewModel(){
                 }
             }
         }
+
+
         return a
     }
 

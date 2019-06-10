@@ -9,5 +9,6 @@ open class Album : Serializable{
     lateinit var albumUri:String
     lateinit var path:String
     lateinit var file:File
+    lateinit var subfiles:List<File>
 
 }

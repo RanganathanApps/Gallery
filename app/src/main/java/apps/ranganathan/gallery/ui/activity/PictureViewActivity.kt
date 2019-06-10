@@ -32,6 +32,9 @@ import apps.ranganathan.configlibrary.utils.Utils
 import apps.ranganathan.configlibrary.utils.Utils.OnClickListener as OnClickListener1
 import android.content.Intent
 import android.net.Uri
+import android.R.attr.orientation
+
+
 
 
 class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
@@ -215,7 +218,7 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
     private fun showToolbar() {
         appBar.visibility = VISIBLE
         navigation.visibility = VISIBLE
-        setBootomBarHeight()
+        //setBootomBarHeight()
         showSystemUI()
         setToolBarHeight()
         //setStatusBarVisibility(true)
@@ -244,6 +247,7 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
 
             val orientation = resources.configuration.orientation
             val resourceId: Int
+
             if (orientation == Configuration.ORIENTATION_PORTRAIT){
                 resourceId = resources.getIdentifier(
                     "navigation_bar_height",
