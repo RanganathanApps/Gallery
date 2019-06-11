@@ -113,30 +113,35 @@ open class HomeViewModel : BaseViewModel(){
                 lastModified = getFileDateOnly(file)
 
                 val res = currentDate.compareTo(lastModified)
-                if (res>0){
-                    //  0 comes when two date are same,
-                    //  1 comes when date1 is higher then date2
-                    // -1 comes when date1 is lower then date2
-                   when(res){
-                       0->{
+                //  0 comes when two date are same,
+                //  1 comes when date1 is higher then date2
+                // -1 comes when date1 is lower then date2
+                when(res){
+                    0->{
+                        try {
+                            if (album.subfiles.isEmpty()){
 
-                           album.count = ""
-                           album.name = File(absolutePathOfImage).nameWithoutExtension
-                           album.file = File(absolutePathOfImage)
-                           album.albumUri = Uri.fromFile(File(absolutePathOfImage)).toString()
-                           //albums.add(album)
-                       }
-                       1->{
-                           currentDate = lastModified
-                           album = Album()
-                           album.count = ""
-                           album.name = File(absolutePathOfImage).nameWithoutExtension
-                           album.file = File(absolutePathOfImage)
-                           album.albumUri = Uri.fromFile(File(absolutePathOfImage)).toString()
-                           albums.add(album)
-                       }
-                   }
+                            }
+                        } catch (e: UninitializedPropertyAccessException) {
+                            album.subfiles = ArrayList<File>()
+                        }
 
+                        album.count = ""
+                        album.name = File(absolutePathOfImage).nameWithoutExtension
+                        album.file = File(absolutePathOfImage)
+                        album.albumUri = Uri.fromFile(File(absolutePathOfImage)).toString()
+                        album.subfiles.add(file)
+                        albums.add(album)
+                    }
+                    1->{
+                        currentDate = lastModified
+                        album = Album()
+                        album.count = ""
+                        album.name = File(absolutePathOfImage).nameWithoutExtension
+                        album.file = File(absolutePathOfImage)
+                        album.albumUri = Uri.fromFile(File(absolutePathOfImage)).toString()
+                        albums.add(album)
+                    }
                 }
 
             }
