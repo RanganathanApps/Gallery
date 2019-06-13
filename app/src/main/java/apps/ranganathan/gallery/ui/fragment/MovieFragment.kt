@@ -96,8 +96,9 @@ class MovieFragment : Fragment(), BaseMovieAdapter.OnItemClickListener {
     }
 
     override fun onItemClicked(album: Album, position: Int) {
-        val anotherMap = mapOf("position" to position, "tag" to "photos")
-        (activity as BaseAppActivity).startActivityputExtra(activity as BaseActivity, PictureViewActivity::class.java, anotherMap)
+
+        val anotherMap = mapOf("tag" to "date","directory" to album.dateString,"position" to position,"count" to album.count,"album" to album)
+        (activity as BaseActivity).startActivityputExtra(activity as BaseActivity, PictureViewActivity::class.java,anotherMap)
         /*val index = mMovieList!!.indexOf(album)
         mMovieList!!.remove(movie)
         mSectionedRecyclerAdapter!!.notifyItemRemovedAtPosition(index)*/

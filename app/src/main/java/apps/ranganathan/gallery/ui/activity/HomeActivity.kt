@@ -56,25 +56,32 @@ class HomeActivity : BaseActivity(),BottomNavigationView.OnNavigationItemSelecte
             }
 
             override fun onGranted() {
-                movieFragment = MovieFragment()
-                if (!::photosFragment.isInitialized) {
-                    photosFragment = PhotosFragment.newInstance()
-                }
-                supportFragmentManager.beginTransaction().replace(R.id.frameFragmentHolder, movieFragment, "Photos").commit()
+                moveToAllPhotos()
+
             }
         },Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
 
     }
 
+    private fun moveToDateWise() {
+        if (!::movieFragment.isInitialized) {
+            movieFragment = MovieFragment()
+        }
+        supportFragmentManager.beginTransaction().replace(R.id.frameFragmentHolder, movieFragment, "Photos").commit()
+    }
+
+    private fun moveToAllPhotos() {
+        if (!::photosFragment.isInitialized) {
+            photosFragment = PhotosFragment.newInstance()
+        }
+        supportFragmentManager.beginTransaction().replace(R.id.frameFragmentHolder, photosFragment, "Photos").commit()
+    }
+
     override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
         when(menuItem.itemId){
             R.id.action_photos ->{
-                if (!::photosFragment.isInitialized) {
-                    photosFragment = PhotosFragment.newInstance()
-                }
-                supportFragmentManager.beginTransaction().replace(R.id.frameFragmentHolder, photosFragment, "Photos").commit()
-                //initPhotos(homeVieModel.getAllImages(this@HomeActivity))
+                moveToAllPhotos()
             }
             R.id.action_albums ->{
                 // initAlbum(homeVieModel.getAlbums(this@HomeActivity))
@@ -132,6 +139,15 @@ class HomeActivity : BaseActivity(),BottomNavigationView.OnNavigationItemSelecte
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
+            R.id.menu_photos ->{
+                moveToDateWise()
+                return true
+            }
+            R.id.menu_all_photos ->{
+                moveToAllPhotos()
+                return true
+            }
+
 
             else -> super.onOptionsItemSelected(item)
 

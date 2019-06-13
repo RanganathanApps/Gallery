@@ -74,19 +74,29 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
     private fun iniCode() {
         pictureViewModel = ViewModelProviders.of(this).get(PictureViewModel::class.java)
         if (intent!!.extras != null) {
-            if (intent!!.extras!!.containsKey("album")) {
+            if (!intent!!.extras!!.containsKey("tag") ){
+                return
+            }
+            if (intent!!.extras!!.getString("tag") == "album") {
                 album = intent!!.extras!!.getSerializable("album") as Album
                 directory = album.name
                 count = album.count
                 setToolBarTitle("$directory (${1}/${album.count} items)")
                 files = pictureViewModel.getImagesInFile(pictureViewModel.getDirectory(album.path))!!
                 userList = pictureViewModel.getImages(files)
-            } else {
+            } else if (intent!!.extras!!.getString("tag") == "photos"){
                 //userList = intent!!.extras!!.getSerializable("photos") as List<Album>
                 position = intent!!.extras!!.getInt("position")
                 userList = pictureViewModel.getAllImages(this)
                 album = userList[position]
                 setToolBarTitle(album.name)
+            }else{
+                album = intent!!.extras!!.getSerializable("album") as Album
+                setToolBarTitle(album.dateString)
+                position = intent!!.extras!!.getInt("position")
+                userList = pictureViewModel.getAllImages(this)
+                album = userList[position]
+
             }
             //pictureViewModel.position.observe(this, Observer {    setAppBar("$directory (${viewpagerPhotos.currentItem} / ${album.count} items)") })
         }
