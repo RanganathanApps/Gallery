@@ -41,16 +41,23 @@ open class InfoViewModel : BaseViewModel() {
         }
     }
 
-    fun getFileDateOnly(file: File): Date {
-        var date = Date()
+    fun getFileDateOnly(date: Date): String {
+        var dateString: String = ""
         try {
-            val rightNow = Calendar.getInstance()
-            rightNow.timeInMillis = file.lastModified()
-            date = rightNow.getTime()
+            dateString = date.toString()
+            Log.w("Date:", dateString)
+            val inputFormat = SimpleDateFormat(
+                "EEE MMM dd HH:mm:ss zzz yyyy", Locale.US
+            )
+            inputFormat.timeZone = TimeZone.getTimeZone("Etc/UTC")
+            var spf = SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT' yyy")
+            val newDate = inputFormat.parse(dateString)
+            spf = SimpleDateFormat("EEE dd MMM yyyy")
+            dateString = spf.format(newDate)
         } catch (e: Exception) {
-            return date
+            return dateString
         } finally {
-            return date
+            return dateString
         }
     }
 

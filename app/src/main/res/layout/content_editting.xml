@@ -11,16 +11,6 @@
 
 
 
-    <ja.burhanrashid52.photoeditor.PhotoEditorView
-            android:id="@+id/photoEditorView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            app:photo_src="@drawable/screenshot"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginBottom="@dimen/_40sdp"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

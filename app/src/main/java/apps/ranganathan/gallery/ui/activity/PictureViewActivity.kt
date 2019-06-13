@@ -32,7 +32,8 @@ import apps.ranganathan.configlibrary.utils.Utils
 import apps.ranganathan.configlibrary.utils.Utils.OnClickListener as OnClickListener1
 import android.content.Intent
 import android.net.Uri
-import android.R.attr.orientation
+
+
 
 
 
@@ -128,8 +129,12 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
             }
 
             R.id.action_edit -> {
-                val map = mapOf("album" to album)
-                startActivityputExtra(this, EditActivity::class.java, map)
+                val editIntent = Intent(Intent.ACTION_EDIT)
+                editIntent.setDataAndType(Uri.parse(album.albumUri), "image/*")
+                editIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                startActivity(Intent.createChooser(editIntent, null))
+               /* val map = mapOf("album" to album)
+                startActivityputExtra(this, EditActivity::class.java, map)*/
             }
             R.id.action_info -> {
                 val map = mapOf("album" to album)

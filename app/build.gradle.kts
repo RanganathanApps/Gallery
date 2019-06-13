@@ -116,7 +116,10 @@ dependencies {
     implementation("com.felipecsl.asymmetricgridview:library:2.0.1")
     implementation("com.jsibbold:zoomage:1.2.0")
     implementation("com.github.chrisbanes:PhotoView:2.3.0")
-    implementation("ja.burhanrashid52:photoeditor:0.3.3")
+
+    /*sectioned grid recycler*/
+    implementation ("com.github.zhukic:sectioned-recyclerview:1.2.3")
+
 
 
 

@@ -50,7 +50,7 @@ class PhotosFragment : Fragment() {
        //val k =  files.sortedWith(compareBy<Album> { it.file.lastModified() }.thenBy { it.file.lastModified() })
 
         val adapter = PhotosAdapter(activity!! as BaseActivity, files)
-        recyclerPhotos.layoutManager = GridLayoutManager(activity!! as BaseActivity, 4) as RecyclerView.LayoutManager?
+        recyclerPhotos.layoutManager = GridLayoutManager(activity!! as BaseActivity, 3) as RecyclerView.LayoutManager?
         recyclerPhotos.setHasFixedSize(true)
         recyclerPhotos.adapter = adapter
         //viewModel.makeHideShow(recyclerPhotos,navigation = (activity as HomeActivity).getBottomNavigationView())

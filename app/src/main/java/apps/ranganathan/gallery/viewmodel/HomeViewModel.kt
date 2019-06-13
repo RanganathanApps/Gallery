@@ -22,14 +22,9 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
-
-
-
-
-
-
 
 
 open class HomeViewModel : BaseViewModel(){
@@ -112,7 +107,16 @@ open class HomeViewModel : BaseViewModel(){
                 file = File(absolutePathOfImage)
                 lastModified = getFileDateOnly(file)
 
-                val res = currentDate.compareTo(lastModified)
+                album = Album()
+                album.count = ""
+                album.date = lastModified
+                album.dateString = getFileDateOnlyString(lastModified)
+                album.name = File(absolutePathOfImage).nameWithoutExtension
+                album.file = File(absolutePathOfImage)
+                album.albumUri = Uri.fromFile(File(absolutePathOfImage)).toString()
+                albums.add(album)
+
+                /*val res = currentDate.compareTo(lastModified)
                 //  0 comes when two date are same,
                 //  1 comes when date1 is higher then date2
                 // -1 comes when date1 is lower then date2
@@ -142,7 +146,7 @@ open class HomeViewModel : BaseViewModel(){
                         album.albumUri = Uri.fromFile(File(absolutePathOfImage)).toString()
                         albums.add(album)
                     }
-                }
+                }*/
 
             }
 
@@ -154,6 +158,26 @@ open class HomeViewModel : BaseViewModel(){
         }
     }
 
+
+    fun getFileDateOnlyString(date: Date): String {
+        var dateString: String = ""
+        try {
+            dateString = date.toString()
+            Log.w("Date:", dateString)
+            val inputFormat = SimpleDateFormat(
+                "EEE MMM dd HH:mm:ss zzz yyyy", Locale.US
+            )
+            inputFormat.timeZone = TimeZone.getTimeZone("Etc/UTC")
+            var spf = SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT' yyy")
+            val newDate = inputFormat.parse(dateString)
+            spf = SimpleDateFormat("EEE dd MMM yyyy")
+            dateString = spf.format(newDate)
+        } catch (e: Exception) {
+            return dateString
+        } finally {
+            return dateString
+        }
+    }
     fun getFileDateOnly(file: File): Date {
         var date = Date(file.lastModified())
         var clearDate = Date()

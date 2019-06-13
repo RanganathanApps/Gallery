@@ -2,42 +2,24 @@ package apps.ranganathan.gallery.ui.activity
 
 import android.Manifest
 import android.graphics.Bitmap
-import android.media.MediaScannerConnection
 import android.os.Bundle
-import android.os.Environment
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.LinearLayout.VERTICAL
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import apps.ranganathan.gallery.R
-import apps.ranganathan.gallery.adapter.AlbumsAdapter
-import apps.ranganathan.gallery.adapter.PhotosAdapter
-import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.viewmodel.HomeViewModel
 import kotlinx.android.synthetic.main.activity_drawer.*
 
 import kotlinx.android.synthetic.main.activity_home.*
-import kotlinx.android.synthetic.main.content_home.*
 import kotlinx.android.synthetic.main.toolbar_home.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import android.view.View
-import android.view.animation.TranslateAnimation
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import apps.ranganathan.gallery.ui.fragment.AlbumsFragment
+import apps.ranganathan.gallery.ui.fragment.MovieFragment
 import apps.ranganathan.gallery.ui.fragment.PhotosFragment
 import apps.ranganathan.gallery.utils.BottomNavigationBehavior
-import kotlinx.android.synthetic.main.photos_fragment.*
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.util.*
 
 
 class HomeActivity : BaseActivity(),BottomNavigationView.OnNavigationItemSelectedListener {
@@ -45,6 +27,7 @@ class HomeActivity : BaseActivity(),BottomNavigationView.OnNavigationItemSelecte
     private lateinit var homeVieModel: HomeViewModel
     private lateinit var albumsFragment: AlbumsFragment
     private lateinit var photosFragment: PhotosFragment
+    private lateinit var movieFragment: MovieFragment
     private  val DIRECTORY = "/GalleryImages"
 
 
@@ -73,10 +56,11 @@ class HomeActivity : BaseActivity(),BottomNavigationView.OnNavigationItemSelecte
             }
 
             override fun onGranted() {
+                movieFragment = MovieFragment()
                 if (!::photosFragment.isInitialized) {
                     photosFragment = PhotosFragment.newInstance()
                 }
-                supportFragmentManager.beginTransaction().replace(R.id.frameFragmentHolder, photosFragment, "Photos").commit()
+                supportFragmentManager.beginTransaction().replace(R.id.frameFragmentHolder, movieFragment, "Photos").commit()
             }
         },Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
