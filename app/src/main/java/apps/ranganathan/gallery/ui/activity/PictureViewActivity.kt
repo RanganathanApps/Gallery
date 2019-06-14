@@ -1,22 +1,27 @@
 package apps.ranganathan.gallery.ui.activity
 
+import android.R.attr.mimeType
 import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
+import apps.ranganathan.configlibrary.utils.Utils
 import apps.ranganathan.gallery.R
 import apps.ranganathan.gallery.adapter.ViewPagerAdapter
 import apps.ranganathan.gallery.model.Album
@@ -27,20 +32,10 @@ import kotlinx.android.synthetic.main.activity_picture_view.*
 import kotlinx.android.synthetic.main.content_picture_view.*
 import kotlinx.android.synthetic.main.toolbar_home.*
 import java.io.File
-import android.widget.Toast
-import apps.ranganathan.configlibrary.utils.Utils
 import apps.ranganathan.configlibrary.utils.Utils.OnClickListener as OnClickListener1
-import android.content.Intent
-import android.net.Uri
-
-
-
-
 
 
 class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
-
-
 
 
     private val TAG = "App"
@@ -74,7 +69,7 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
     private fun iniCode() {
         pictureViewModel = ViewModelProviders.of(this).get(PictureViewModel::class.java)
         if (intent!!.extras != null) {
-            if (!intent!!.extras!!.containsKey("tag") ){
+            if (!intent!!.extras!!.containsKey("tag")) {
                 return
             }
             if (intent!!.extras!!.getString("tag") == "album") {
@@ -84,18 +79,26 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
                 setToolBarTitle("$directory (${1}/${album.count} items)")
                 files = pictureViewModel.getImagesInFile(pictureViewModel.getDirectory(album.path))!!
                 userList = pictureViewModel.getImages(files)
-            } else if (intent!!.extras!!.getString("tag") == "photos"){
+            } else if (intent!!.extras!!.getString("tag") == "photos") {
                 //userList = intent!!.extras!!.getSerializable("photos") as List<Album>
                 position = intent!!.extras!!.getInt("position")
                 userList = pictureViewModel.getAllImages(this)
                 album = userList[position]
                 setToolBarTitle(album.name)
-            }else{
+            } else {
                 album = intent!!.extras!!.getSerializable("album") as Album
-                setToolBarTitle(album.dateString)
-                position = intent!!.extras!!.getInt("position")
-                userList = pictureViewModel.getAllImages(this)
-                album = userList[position]
+                userList = pictureViewModel.getSpecificDateImages(this, album)
+                position = 0
+                userList.forEachIndexed { index, element ->
+                    if (element.albumUri == album.albumUri){
+                        position = index
+                    }
+                }
+                setToolBarTitle("${album.dateString} (${1}/${userList.size} items)")
+                if (userList.isNotEmpty()) {
+                    pictureViewModel.position.value = position
+                    album = userList[position]
+                }
 
             }
             //pictureViewModel.position.observe(this, Observer {    setAppBar("$directory (${viewpagerPhotos.currentItem} / ${album.count} items)") })
@@ -116,15 +119,19 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
     override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
         when (menuItem.itemId) {
             R.id.action_delete -> {
-                showConfirmationAlert("Delete", "Image will be deleted permanently. do you want to continue?", object: Utils.OnClickListener {
-                    override fun onClick(v: View) {
-                        val isDeleted = pictureViewModel.delete(context, album.file)
-                        if (isDeleted) {
-                            showMsg(navigation, "File Deleted!")
+                showConfirmationAlert(
+                    "Delete",
+                    "Image will be deleted permanently. do you want to continue?",
+                    object : Utils.OnClickListener {
+                        override fun onClick(v: View) {
+                            val isDeleted = pictureViewModel.delete(context, album.file)
+                            if (isDeleted) {
+                                showMsg(navigation, "File Deleted!")
+                            }
                         }
-                    }
 
-                }, object : Utils.OnClickListener {
+                    },
+                    object : Utils.OnClickListener {
                         override fun onClick(v: View) {
                         }
 
@@ -132,19 +139,39 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
 
             }
             R.id.action_share -> {
+                val apkURI = FileProvider.getUriForFile(
+                    context,
+                    context.applicationContext
+                        .packageName + ".provider", album.file
+                )
                 val shareIntent = Intent(Intent.ACTION_SEND)
                 shareIntent.type = "image/jpg"
-                shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(album.file))
+                shareIntent.putExtra(Intent.EXTRA_STREAM, apkURI)
                 startActivity(Intent.createChooser(shareIntent, "Share image using"))
             }
 
             R.id.action_edit -> {
+                val apkURI = FileProvider.getUriForFile(
+                    context,
+                    context.applicationContext
+                        .packageName + ".provider", album.file
+                )
+
+               /* val install = Intent(Intent.ACTION_EDIT)
+                install.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+
+// New Approach
+
+                install.setDataAndType(apkURI, mimeType.toString())
+                install.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+// End New Approach
+                context.startActivity(install)*/
                 val editIntent = Intent(Intent.ACTION_EDIT)
-                editIntent.setDataAndType(Uri.parse(album.albumUri), "image/*")
+                editIntent.setDataAndType(apkURI, "image/*")
                 editIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
                 startActivity(Intent.createChooser(editIntent, null))
-               /* val map = mapOf("album" to album)
-                startActivityputExtra(this, EditActivity::class.java, map)*/
+                /* val map = mapOf("album" to album)
+                 startActivityputExtra(this, EditActivity::class.java, map)*/
             }
             R.id.action_info -> {
                 val map = mapOf("album" to album)
@@ -187,58 +214,14 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
                 or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
     }
 
-    private fun hideSystemUISettings() {
-
-        // BEGIN_INCLUDE (get_current_ui_flags)
-        // The UI options currently enabled are represented by a bitfield.
-        // getSystemUiVisibility() gives us that bitfield.
-        val uiOptions = window.decorView.systemUiVisibility
-        var newUiOptions = uiOptions
-        // END_INCLUDE (get_current_ui_flags)
-        // BEGIN_INCLUDE (toggle_ui_flags)
-        val isImmersiveModeEnabled = uiOptions or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY == uiOptions
-        if (isImmersiveModeEnabled) {
-            Log.w(TAG, "Turning immersive mode mode off. ")
-        } else {
-            Log.w(TAG, "Turning immersive mode mode on.")
-        }
-
-        // Navigation bar hiding:  Backwards compatible to ICS.
-        if (Build.VERSION.SDK_INT >= 14) {
-            newUiOptions = newUiOptions xor View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-        }
-
-        // Status bar hiding: Backwards compatible to Jellybean
-        if (Build.VERSION.SDK_INT >= 16) {
-            newUiOptions = newUiOptions xor View.SYSTEM_UI_FLAG_FULLSCREEN
-        }
-
-        // Immersive mode: Backward compatible to KitKat.
-        // Note that this flag doesn't do anything by itself, it only augments the behavior
-        // of HIDE_NAVIGATION and FLAG_FULLSCREEN.  For the purposes of this sample
-        // all three flags are being toggled together.
-        // Note that there are two immersive mode UI flags, one of which is referred to as "sticky".
-        // Sticky immersive mode differs in that it makes the navigation and status bars
-        // semi-transparent, and the UI flag does not get cleared when the user interacts with
-        // the screen.
-        if (Build.VERSION.SDK_INT >= 18) {
-            newUiOptions = newUiOptions xor View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-        }
-
-        window.decorView.systemUiVisibility = newUiOptions
-        //END_INCLUDE (set_ui_flags)
-    }
 
 
     private fun showToolbar() {
         appBar.visibility = VISIBLE
         navigation.visibility = VISIBLE
-        //setBootomBarHeight()
+        setBootomBarHeight()
         showSystemUI()
         setToolBarHeight()
-        //setStatusBarVisibility(true)
-        // window!!.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
-
     }
 
     private fun hideToolbar() {
@@ -246,9 +229,6 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
         navigation.visibility = GONE
         //hideSystemUISettings()
         hideSystemUI()
-        /* window.setFlags(
-             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-           WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)*/
     }
 
     fun getNavBarHeight(c: Context): Int {
@@ -256,20 +236,20 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
         val hasMenuKey = ViewConfiguration.get(c).hasPermanentMenuKey()
         val hasBackKey = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK)
 
-        if (hasMenuKey&& hasBackKey) {
+        if (hasMenuKey || hasBackKey) {
             //The device has a navigation bar
             val resources = c.resources
 
             val orientation = resources.configuration.orientation
             val resourceId: Int
 
-            if (orientation == Configuration.ORIENTATION_PORTRAIT){
+            if (orientation == Configuration.ORIENTATION_PORTRAIT) {
                 resourceId = resources.getIdentifier(
                     "navigation_bar_height",
                     "dimen",
                     "android"
                 )
-            }else{
+            } else {
                 resourceId = 0
             }
 
@@ -346,7 +326,20 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
 
             override fun onPageSelected(i: Int) {
                 // here you will get the position of selected page
+                position = i
                 album = userList[i]
+                if (intent!!.extras!!.getString("tag") == "date") {
+                    try {
+                        setToolBarTitle("${album.dateString} (${i + 1}/${userList.size} items)")
+                    } catch (e: UninitializedPropertyAccessException) {
+
+                    } catch (e: Exception) {
+
+                    }
+                    return
+                }
+
+
                 try {
                     setToolBarTitle("$directory (${i + 1}/${userList.size} items)")
                 } catch (e: UninitializedPropertyAccessException) {

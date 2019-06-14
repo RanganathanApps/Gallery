@@ -16,6 +16,7 @@ import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.toolbar_home.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.fragment.app.Fragment
 import apps.ranganathan.gallery.ui.fragment.AlbumsFragment
 import apps.ranganathan.gallery.ui.fragment.MovieFragment
 import apps.ranganathan.gallery.ui.fragment.PhotosFragment
@@ -24,11 +25,14 @@ import apps.ranganathan.gallery.utils.BottomNavigationBehavior
 
 class HomeActivity : BaseActivity(),BottomNavigationView.OnNavigationItemSelectedListener {
 
+    private var sortBy: Int = 0
     private lateinit var homeVieModel: HomeViewModel
     private lateinit var albumsFragment: AlbumsFragment
     private lateinit var photosFragment: PhotosFragment
     private lateinit var movieFragment: MovieFragment
+    private lateinit var curentFragment: Fragment
     private  val DIRECTORY = "/GalleryImages"
+
 
 
 
@@ -56,6 +60,7 @@ class HomeActivity : BaseActivity(),BottomNavigationView.OnNavigationItemSelecte
             }
 
             override fun onGranted() {
+                sortBy = 0
                 moveToAllPhotos()
 
             }
@@ -65,17 +70,52 @@ class HomeActivity : BaseActivity(),BottomNavigationView.OnNavigationItemSelecte
     }
 
     private fun moveToDateWise() {
+        sortBy = 1
+
         if (!::movieFragment.isInitialized) {
             movieFragment = MovieFragment()
+
         }
+
+        if (curentFragment == movieFragment){
+            return
+        }
+
         supportFragmentManager.beginTransaction().replace(R.id.frameFragmentHolder, movieFragment, "Photos").commit()
+        curentFragment = movieFragment
     }
 
     private fun moveToAllPhotos() {
+
         if (!::photosFragment.isInitialized) {
             photosFragment = PhotosFragment.newInstance()
         }
+
+        if (::curentFragment.isInitialized && curentFragment == photosFragment){
+            return
+        }
+
+        if (sortBy==1){
+            moveToDateWise()
+            return
+        }
+
         supportFragmentManager.beginTransaction().replace(R.id.frameFragmentHolder, photosFragment, "Photos").commit()
+        curentFragment = photosFragment
+    }
+
+    private fun moveToAlbums() {
+
+
+        if (!::albumsFragment.isInitialized) {
+            albumsFragment = AlbumsFragment.newInstance()
+        }
+
+        if (curentFragment == albumsFragment){
+            return
+        }
+        supportFragmentManager.beginTransaction().replace(R.id.frameFragmentHolder, albumsFragment, "Albums").commit()
+        curentFragment = albumsFragment
     }
 
     override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
@@ -85,11 +125,7 @@ class HomeActivity : BaseActivity(),BottomNavigationView.OnNavigationItemSelecte
             }
             R.id.action_albums ->{
                 // initAlbum(homeVieModel.getAlbums(this@HomeActivity))
-                if (!::albumsFragment.isInitialized) {
-                    albumsFragment = AlbumsFragment.newInstance()
-                }
-
-                supportFragmentManager.beginTransaction().replace(R.id.frameFragmentHolder, albumsFragment, "Albums").commit()
+                moveToAlbums()
             }
 
             R.id.action_camera ->{
@@ -108,6 +144,8 @@ class HomeActivity : BaseActivity(),BottomNavigationView.OnNavigationItemSelecte
         }
         return true
     }
+
+
 
     private fun setNavigation() {
         navigation.setOnNavigationItemSelectedListener(this)
@@ -140,10 +178,12 @@ class HomeActivity : BaseActivity(),BottomNavigationView.OnNavigationItemSelecte
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
             R.id.menu_photos ->{
+                sortBy = 1
                 moveToDateWise()
                 return true
             }
             R.id.menu_all_photos ->{
+                sortBy = 0
                 moveToAllPhotos()
                 return true
             }

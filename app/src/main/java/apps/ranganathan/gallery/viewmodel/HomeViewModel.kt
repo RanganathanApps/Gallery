@@ -22,6 +22,8 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.text.DateFormat
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -29,6 +31,10 @@ import kotlin.collections.ArrayList
 
 open class HomeViewModel : BaseViewModel(){
 
+
+    val inputFormatSystem = SimpleDateFormat( "EEE MMM dd HH:mm:ss zzz yyyy", Locale.US )
+    val outputFormatDateWithDay = SimpleDateFormat("EEE dd MMM yyyy")
+    val outputFormatSystemDateOnly = SimpleDateFormat("dd-MM-yyyy")
 
     lateinit var uri: Uri
 
@@ -76,6 +82,8 @@ open class HomeViewModel : BaseViewModel(){
         return results
     }
 
+
+
     fun getAlbums(context: Context): List<Album> {
 
         val k =  getAlbumFileFromUri(context,uri)
@@ -84,11 +92,19 @@ open class HomeViewModel : BaseViewModel(){
         return k
     }
 
+    fun getSpecificDateImages(context: Context,album: Album): List<Album> {
+
+               val results = mutableListOf<Album>()
+        val k = getImageFileFromDate(context, MediaStore.Images.Media.EXTERNAL_CONTENT_URI,getFileDateOnlyString(album.date,inputFormatSystem,outputFormatSystemDateOnly),album)
+        results.addAll(k)
+        // results.addAll(getInternalStorageContent(context))
+        return results
+    }
+
+
 
 
     fun getAllImagesUnderFolder(context: Context, file: File): List<Album> = getImageFileFromUri(context, Uri.fromFile(file))
-
-    private fun getInternalStorageContent(context: Context): Collection<Album> = getImageFileFromUri(context, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
 
     private fun getExternalStorageContent(context: Context): Collection<Album> = getImageFileFromUri(context, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
 
@@ -110,7 +126,7 @@ open class HomeViewModel : BaseViewModel(){
                 album = Album()
                 album.count = ""
                 album.date = lastModified
-                album.dateString = getFileDateOnlyString(lastModified)
+                album.dateString = getFormattedDate(toCalendar(lastModified))
                 album.name = File(absolutePathOfImage).nameWithoutExtension
                 album.file = File(absolutePathOfImage)
                 album.albumUri = Uri.fromFile(File(absolutePathOfImage)).toString()
@@ -158,24 +174,78 @@ open class HomeViewModel : BaseViewModel(){
         }
     }
 
+    private fun getImageFileFromDate(context: Context, uri: Uri,date:String,albumfile: Album): List<Album> {
+        val albums = mutableListOf<Album>()
+        try {
+            var  album =Album()
+            var file : File
+            var currentDate = Date()
+            var lastModified = Date()
 
-    fun getFileDateOnlyString(date: Date): String {
+            val cursor = context.contentResolver.query(uri,projection,
+                null,null, "$orderBy DESC"
+            )
+            while (cursor.moveToNext()) {
+                absolutePathOfImage = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA))
+                file = File(absolutePathOfImage)
+                lastModified = getFileDateOnly(file)
+
+                if (getFileDateOnlyString(albumfile.date,inputFormatSystem,outputFormatSystemDateOnly).equals(getFileDateOnlyString(lastModified,inputFormatSystem,outputFormatSystemDateOnly))) {
+                    album = Album()
+                    album.count = ""
+                    album.date = lastModified
+                    album.dateString = getFormattedDate(toCalendar(lastModified))//getFileDateOnlyString(lastModified, inputFormatSystem, outputFormatDateWithDay)
+                    album.name = File(absolutePathOfImage).nameWithoutExtension
+                    album.file = File(absolutePathOfImage)
+                    album.albumUri = Uri.fromFile(File(absolutePathOfImage)).toString()
+                    albums.add(album)
+                }
+            }
+
+            cursor.close()
+
+            return albums
+        } catch (e: Exception) {
+            return albums
+        }
+    }
+
+    fun toCalendar(date: Date): Calendar {
+        val cal = Calendar.getInstance()
+        cal.time = date
+        return cal
+    }
+
+    fun getFileDateOnlyString(date: Date,input:SimpleDateFormat,output:SimpleDateFormat): String {
         var dateString: String = ""
         try {
             dateString = date.toString()
             Log.w("Date:", dateString)
-            val inputFormat = SimpleDateFormat(
-                "EEE MMM dd HH:mm:ss zzz yyyy", Locale.US
-            )
-            inputFormat.timeZone = TimeZone.getTimeZone("Etc/UTC")
-            var spf = SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT' yyy")
-            val newDate = inputFormat.parse(dateString)
-            spf = SimpleDateFormat("EEE dd MMM yyyy")
-            dateString = spf.format(newDate)
+            input.timeZone = TimeZone.getTimeZone("Etc/UTC")
+            val newDate = input.parse(dateString)
+            dateString = output.format(newDate)
         } catch (e: Exception) {
             return dateString
         } finally {
             return dateString
+        }
+    }
+    fun getFormattedDate(calendar: Calendar): String {
+
+
+        val now = Calendar.getInstance()
+
+        val timeFormatString = "h:mm aa"
+        val dateTimeFormatString = "EEEE, MMMM d, h:mm aa"
+        val HOURS = (60 * 60 * 60).toLong()
+        return if (now.get(Calendar.DATE) === calendar.get(Calendar.DATE)) {
+            "Today "
+        } else if (now.get(Calendar.DATE) - calendar.get(Calendar.DATE) === 1) {
+            "Yesterday "
+        } else if (now.get(Calendar.YEAR) === calendar.get(Calendar.YEAR)) {
+            getFileDateOnlyString(calendar.time,inputFormatSystem,outputFormatDateWithDay)
+        } else {
+            getFileDateOnlyString(calendar.time,inputFormatSystem,outputFormatDateWithDay)
         }
     }
     fun getFileDateOnly(file: File): Date {
@@ -232,10 +302,10 @@ open class HomeViewModel : BaseViewModel(){
 
 
             album = Album()
-            album.count = ""+cursorBucket.count
             album.file = File(imagePath)
-            album.name = bucket
             album.path = pathDirectory.toString()
+            album.count = ""+imageReader(getDirectory(album.path))!!.size
+            album.name = bucket
             album.albumUri = Uri.fromFile(File(imagePath)).toString()
 
             albums.add(album)

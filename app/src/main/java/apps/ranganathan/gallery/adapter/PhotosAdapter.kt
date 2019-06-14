@@ -74,13 +74,7 @@ class PhotosAdapter(activity: BaseActivity, val userList: List<Album>) :
             txtPhotoName.text = user.name
 
             if (imageAlbum.drawable == null) {
-                //imageAlbum.layoutParams.height = getRandomIntInRange(250, 250)
-                //imageAlbum.layoutParams.width = getRandomIntInRange(550, 350)
 
-                /*  Picasso.get().load(user.albumUri)
-                      .fit()
-                      .centerCrop()
-                      .into(imageAlbum)*/
                 activity.loadImage(
                     user.albumUri,
                     imageAlbum,

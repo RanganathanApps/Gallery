@@ -69,14 +69,14 @@ abstract class BaseMovieAdapter internal constructor(internal var movieList: Lis
             subheaderHolder.mArrow.setImageDrawable(
                 ContextCompat.getDrawable(
                     subheaderHolder.itemView.context,
-                    R.drawable.ic_arrow_back_black_24dp
+                    R.drawable.ic_keyboard_arrow_up_black_24dp
                 )
             )
         } else {
             subheaderHolder.mArrow.setImageDrawable(
                 ContextCompat.getDrawable(
                     subheaderHolder.itemView.context,
-                    R.drawable.ic_arrow_back_black_24dp
+                    R.drawable.ic_keyboard_arrow_down_black_24dp
                 )
             )
         }

@@ -3,6 +3,11 @@ package apps.ranganathan.gallery.adapter
 import apps.ranganathan.gallery.R
 import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.ui.activity.BaseActivity
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+import java.util.*
+import android.content.Context
+import java.text.DateFormat
 
 
 class MovieAdapterByGenre(activity1:BaseActivity,itemList: List<Album>) : BaseMovieAdapter(itemList) {
@@ -33,11 +38,8 @@ class MovieAdapterByGenre(activity1:BaseActivity,itemList: List<Album>) : BaseMo
         val nextMovie = movieList[nextItemPosition]
         val sectionSize = getSectionSize(getSectionIndex(subheaderHolder.adapterPosition))
         val dateString = nextMovie.dateString
-       /* val subheaderText = String.format(
-            context.getString(R.string.subheader),
-            genre,
-            context.resources.getQuantityString(R.plurals.item, sectionSize, sectionSize)
-        )*/
+
         subheaderHolder.mSubheaderText.text = dateString
     }
+
 }

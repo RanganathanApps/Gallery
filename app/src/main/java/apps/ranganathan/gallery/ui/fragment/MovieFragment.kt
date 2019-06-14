@@ -57,17 +57,7 @@ class MovieFragment : Fragment(), BaseMovieAdapter.OnItemClickListener {
         gridDividerDecoration = GridDividerDecoration(context)
         recyclerView!!.addItemDecoration(gridDividerDecoration!!)
 
-        val resources = resources
-        val names = resources.getStringArray(R.array.names)
-        val genres = resources.getStringArray(R.array.genres)
-        val years = resources.getIntArray(R.array.years)
 
-        mMovieList = ArrayList(20)
-
-       /* for (i in 0..19) {
-            val movie = Album(names[i], years[i], genres[i])
-            mMovieList!!.add(movie)
-        }*/
         mMovieList=  viewModel.getAllImages(activity!!.applicationContext)
 
 
@@ -81,7 +71,7 @@ class MovieFragment : Fragment(), BaseMovieAdapter.OnItemClickListener {
 
     private fun setAdapterByGenre() {
 
-        this.movieComparator = kotlin.Comparator { o1, o2 ->  o1.name!!.compareTo(o2.name!!)}
+        this.movieComparator = kotlin.Comparator { o1, o2 ->  o2.date!!.compareTo(o1.date!!)}
 
         Collections.sort(mMovieList, movieComparator)
         mSectionedRecyclerAdapter = MovieAdapterByGenre(activity  as BaseActivity,mMovieList!!)
@@ -97,7 +87,9 @@ class MovieFragment : Fragment(), BaseMovieAdapter.OnItemClickListener {
 
     override fun onItemClicked(album: Album, position: Int) {
 
-        val anotherMap = mapOf("tag" to "date","directory" to album.dateString,"position" to position,"count" to album.count,"album" to album)
+        val anotherMap = mapOf("tag" to "date",
+            "date" to album.dateString,"position" to position,"count" to album.count,
+            "album" to album)
         (activity as BaseActivity).startActivityputExtra(activity as BaseActivity, PictureViewActivity::class.java,anotherMap)
         /*val index = mMovieList!!.indexOf(album)
         mMovieList!!.remove(movie)

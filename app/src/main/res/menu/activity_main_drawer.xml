@@ -5,15 +5,7 @@
 
     <group android:checkableBehavior="single">
 
-        <item
-                android:id="@+id/nav_photos"
-                android:icon="@drawable/ic_info_outline_black_24dp"
-                android:title="Photos"/>
 
-        <item
-                android:id="@+id/nav_albums"
-                android:icon="@drawable/ic_info_outline_black_24dp"
-                android:title="Albums"/>
 
         <item
                 android:id="@+id/nav_favourites"
@@ -21,9 +13,9 @@
                 android:title="Favourites"/>
 
         <item
-                android:id="@+id/nav_camera"
-                android:icon="@drawable/ic_camera_alt_white_24dp"
-                android:title="Camera"/>
+                android:id="@+id/nav_about"
+                android:icon="@drawable/ic_info_outline_black_24dp"
+                android:title="About"/>
 
     </group>
 
