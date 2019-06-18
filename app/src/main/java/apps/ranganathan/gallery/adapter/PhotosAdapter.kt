@@ -15,6 +15,8 @@ import java.util.*
 
 
 
+
+
 class PhotosAdapter(activity: BaseActivity, val userList: List<Album>) :
     RecyclerView.Adapter<PhotosAdapter.ViewHolder>() {
 
@@ -51,9 +53,14 @@ class PhotosAdapter(activity: BaseActivity, val userList: List<Album>) :
         return userList.size
     }
 
-    override fun getItemViewType(position: Int): Int {
-        return userList.size
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
     }
+
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
+
 
     //the class is hodling the list view
     class ViewHolder(activity: BaseAppActivity, itemView: View) : RecyclerView.ViewHolder(itemView) {

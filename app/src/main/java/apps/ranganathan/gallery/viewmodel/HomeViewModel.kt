@@ -104,7 +104,6 @@ open class HomeViewModel : BaseViewModel(){
 
 
 
-    fun getAllImagesUnderFolder(context: Context, file: File): List<Album> = getImageFileFromUri(context, Uri.fromFile(file))
 
     private fun getExternalStorageContent(context: Context): Collection<Album> = getImageFileFromUri(context, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
 
@@ -131,39 +130,6 @@ open class HomeViewModel : BaseViewModel(){
                 album.file = File(absolutePathOfImage)
                 album.albumUri = Uri.fromFile(File(absolutePathOfImage)).toString()
                 albums.add(album)
-
-                /*val res = currentDate.compareTo(lastModified)
-                //  0 comes when two date are same,
-                //  1 comes when date1 is higher then date2
-                // -1 comes when date1 is lower then date2
-                when(res){
-                    0->{
-                        try {
-                            if (album.subfiles.isEmpty()){
-
-                            }
-                        } catch (e: UninitializedPropertyAccessException) {
-                            album.subfiles = ArrayList<File>()
-                        }
-
-                        album.count = ""
-                        album.name = File(absolutePathOfImage).nameWithoutExtension
-                        album.file = File(absolutePathOfImage)
-                        album.albumUri = Uri.fromFile(File(absolutePathOfImage)).toString()
-                        album.subfiles.add(file)
-                        albums.add(album)
-                    }
-                    1->{
-                        currentDate = lastModified
-                        album = Album()
-                        album.count = ""
-                        album.name = File(absolutePathOfImage).nameWithoutExtension
-                        album.file = File(absolutePathOfImage)
-                        album.albumUri = Uri.fromFile(File(absolutePathOfImage)).toString()
-                        albums.add(album)
-                    }
-                }*/
-
             }
 
             cursor.close()

@@ -33,6 +33,9 @@ import kotlinx.android.synthetic.main.content_picture_view.*
 import kotlinx.android.synthetic.main.toolbar_home.*
 import java.io.File
 import apps.ranganathan.configlibrary.utils.Utils.OnClickListener as OnClickListener1
+import android.content.res.Resources
+import android.graphics.Rect
+import android.util.DisplayMetrics
 
 
 class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
@@ -231,10 +234,24 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
         hideSystemUI()
     }
 
+    fun hasNavBar(resources: Resources): Boolean {
+        val id = resources.getIdentifier("config_showNavigationBar", "bool", "android")
+        var res= id > 0 && resources.getBoolean(id)
+        return res
+    }
+
+
+
+
+
     fun getNavBarHeight(c: Context): Int {
         val result = 0
         val hasMenuKey = ViewConfiguration.get(c).hasPermanentMenuKey()
         val hasBackKey = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK)
+
+       if ( !hasNavBar(c.resources)){
+           return result
+       }
 
         if (hasMenuKey || hasBackKey) {
             //The device has a navigation bar
