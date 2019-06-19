@@ -14,6 +14,11 @@ import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.ui.activity.BaseActivity
 import apps.ranganathan.gallery.ui.activity.HomeActivity
 import kotlinx.android.synthetic.main.albums_fragment.*
+import android.view.Menu
+import android.view.MenuInflater
+
+
+
 
 class AlbumsFragment : Fragment() {
 
@@ -24,6 +29,16 @@ class AlbumsFragment : Fragment() {
     private var contentView: View? = null
 
     private lateinit var viewModel: PhotosViewModel
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        super.onCreateOptionsMenu(menu, inflater)
+        menu!!.clear()
+    }
 
 
     override fun onCreateView(

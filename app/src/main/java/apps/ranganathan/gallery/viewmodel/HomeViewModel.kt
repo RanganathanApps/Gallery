@@ -53,7 +53,7 @@ open class HomeViewModel : BaseViewModel(){
     private lateinit var listOfAllImages: ArrayList<String>
 
     init {
-       uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+       uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
 
        /*projection = arrayOf(MediaStore.MediaColumns.DATA,
            MediaStore.MediaColumns.DATE_ADDED,
@@ -81,6 +81,7 @@ open class HomeViewModel : BaseViewModel(){
        // results.addAll(getInternalStorageContent(context))
         return results
     }
+
 
 
 
@@ -387,7 +388,7 @@ open class HomeViewModel : BaseViewModel(){
 
 
         val bytes = ByteArrayOutputStream()
-        myBitmap.compress(Bitmap.CompressFormat.PNG, 100,  bytes)
+
         val wallpaperDirectory = File(
             (Environment.getExternalStorageDirectory()).toString() + directory
         )
@@ -406,7 +407,9 @@ open class HomeViewModel : BaseViewModel(){
             )
             f.createNewFile()
             val fo = FileOutputStream(f)
-            fo.write(bytes.toByteArray())
+            myBitmap.compress(Bitmap.CompressFormat.PNG,  100,  fo)
+            fo.flush()
+            //fo.write(bytes.toByteArray())
             MediaScannerConnection.scanFile(
                 context,
                 arrayOf(f.path),
