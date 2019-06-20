@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.ContentValues
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -11,12 +12,15 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import apps.ranganathan.gallery.BuildConfig
+import apps.ranganathan.gallery.R
 import apps.ranganathan.gallery.ui.fragment.AlbumsFragment
 import apps.ranganathan.gallery.ui.fragment.MovieFragment
 import apps.ranganathan.gallery.ui.fragment.PhotosFragment
@@ -27,12 +31,11 @@ import kotlinx.android.synthetic.main.activity_drawer.*
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.toolbar_home.*
 import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
-import androidx.core.content.FileProvider.getUriForFile
-import apps.ranganathan.gallery.BuildConfig
-import apps.ranganathan.gallery.R
 
 
 class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
@@ -142,35 +145,90 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
             }
 
             R.id.action_camera -> {
-                //launchCamera()
+                onLaunchCamera()
+             /*   val camera = Intent(MediaStore.ACTION_IMAGE_CAPTURE )
+                startActivityForResult(camera, TAKE_PHOTO_REQUEST)*/
 
-                takePhoto(object : ImagePickerListener{
+                /*takePhoto(object : ImagePickerListener {
                     override fun onCancelled() {
                         showToast("Camera cancelled")
                     }
 
                     override fun onPicked(bitmap: Bitmap) {
-                        homeVieModel.saveImage(context,bitmap,DIRECTORY)
+                        homeVieModel.saveImage(context, bitmap, DIRECTORY)
 
                     }
-                })
+                })*/
             }
         }
         return true
     }
 
+    public fun Savefile(name: String, path: String) {
+        val direct = File(Environment.getExternalStorageDirectory(), "/MyAppFolder/MyApp/");
+        val file = File(Environment.getExternalStorageDirectory(), "/MyAppFolder/MyApp/$name.png")
+
+        if (!direct.exists()) {
+            direct.mkdir()
+        }
+
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+                val src = FileInputStream(path).channel
+                val dst = FileOutputStream(file).channel
+                dst.transferFrom(src, 0, src.size())
+                src.close()
+                dst.close()
+
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }
+    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == TAKE_PHOTO_REQUEST) {
-            val f = File(Environment.getExternalStorageDirectory().toString());
+            if (resultCode == RESULT_OK) {
+
+                if (photoFile!=null && ::photoFile.isInitialized)
+                photoFile.createNewFile()
+
+                /*val selectedImage = data!!.data
+                val filePathColumn = { MediaStore.Images.Media.DATA }
+                var projection: Array<String> = arrayOf(
+                    MediaStore.Images.ImageColumns.DATA
+                )
 
 
-                /*if (!photoFile.exists()) {
-                    photoFile.mkdir()
-                }*/
+                val cursor = contentResolver.query(selectedImage, projection, null, null, null);
+                cursor.moveToFirst()
+
+                val columnIndex = cursor.getColumnIndex(projection[0]);
+                //file path of captured image
+                val filePath = cursor.getString(columnIndex)
+                //file path of captured image
+                val f = File(filePath)
+                val filename = f.name
+
+                Toast.makeText(getApplicationContext(), "Your Path:" + filePath, Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Your Filename:" + filename, Toast.LENGTH_LONG).show();
+                cursor.close()
+
+                //Convert file path into bitmap image using below line.
+                val yourSelectedImage = BitmapFactory.decodeFile(filePath);
+                Toast.makeText(getApplicationContext(), "Your image" + yourSelectedImage, Toast.LENGTH_LONG).show()
+
+                //put bitmapimage in your imageview
+                //yourimgView.setImageBitmap(yourSelectedImage);
+
+                Savefile(filename, filePath);*/
+            }
+
         }
     }
+
     fun onLaunchCamera() {
         // create Intent to take a picture and return control to the calling application
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
@@ -180,8 +238,8 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
         // wrap File object into a content provider
         // required for API >= 24
         // See https://guides.codepath.com/android/Sharing-Content-with-Intents#sharing-files-with-api-24-or-higher
-        val fileProvider = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID+".provider", photoFile )
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile))
+        val fileProvider = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", photoFile)
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider)
 
         // If you call startActivityForResult() using an intent that no app can handle, your app will crash.
         // So as long as the result is not null, it's safe to use the intent.
@@ -194,15 +252,15 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
     // Returns the File for a photo stored on disk given the fileName
     fun getPhotoFileUri(fileName: String): File {
         val timeStamp = SimpleDateFormat("MMdd_HHmm").format(Date())
-        val imageFileName = "Capture_$fileName $timeStamp.png"
+        val imageFileName = "Capture_$fileName $timeStamp.jpg"
         // Get safe storage directory for photos
         // Use `getExternalFilesDir` on Context to access package-specific directories.
         // This way, we don't need to request external read/write runtime permissions.
-        val mediaStorageDir = File(Environment.getExternalStorageDirectory().toString()+ DIRECTORY)
+        val mediaStorageDir = File(Environment.getExternalStorageDirectory().toString() + DIRECTORY)
 
         // Create the storage directory if it does not exist
         if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {
-            makeLog( "failed to create directory")
+            makeLog("failed to create directory")
         }
 
         // Return the file target for the photo based on filename
@@ -210,6 +268,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
         val path = mediaStorageDir.path + File.separator + imageFileName
         return File(path)
     }
+
     @Throws(IOException::class)
     private fun createImageFile(): File {
         // Create an image file name
@@ -243,8 +302,8 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
     }
 
     private fun launchCamera() {
-       /* val i = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-      *//*  val dir =
+        /* val i = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+       *//*  val dir =
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)*//*
         val wallpaperDirectory = File(
             (Environment.getExternalStorageDirectory()).toString() + DIRECTORY
@@ -295,14 +354,18 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
 
         values.put(MediaStore.Images.Media.DATA, mediaStorageDir.getAbsolutePath());*/
         val fileUri = contentResolver
-            .insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                values)
+            .insert(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                values
+            )
 
- val result = context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+        val result = context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri)
-        takePictureIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION
-                or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+        takePictureIntent.addFlags(
+            Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+        )
         startActivityForResult(takePictureIntent, TAKE_PHOTO_REQUEST)
         /*val values = ContentValues(1)
         values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpg")
