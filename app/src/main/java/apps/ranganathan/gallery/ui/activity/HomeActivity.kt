@@ -23,6 +23,7 @@ import androidx.lifecycle.ViewModelProviders
 import apps.ranganathan.gallery.BuildConfig
 import apps.ranganathan.gallery.R
 import apps.ranganathan.gallery.ui.fragment.AlbumsFragment
+import apps.ranganathan.gallery.ui.fragment.CameraFragment
 import apps.ranganathan.gallery.ui.fragment.MovieFragment
 import apps.ranganathan.gallery.ui.fragment.PhotosFragment
 import apps.ranganathan.gallery.utils.BottomNavigationBehavior
@@ -48,6 +49,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
     private lateinit var homeVieModel: HomeViewModel
     private lateinit var albumsFragment: AlbumsFragment
     private lateinit var photosFragment: PhotosFragment
+    private lateinit var cameraFragment: CameraFragment
     private lateinit var movieFragment: MovieFragment
     private lateinit var curentFragment: Fragment
     private val DIRECTORY = "/GalleryImages"
@@ -135,6 +137,20 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
         curentFragment = albumsFragment
     }
 
+    private fun moveToCamera() {
+
+
+        if (!::cameraFragment.isInitialized) {
+            cameraFragment = CameraFragment.newInstance()
+        }
+
+        if (curentFragment == cameraFragment) {
+            return
+        }
+        supportFragmentManager.beginTransaction().replace(R.id.frameFragmentHolder, cameraFragment, "Albums").commit()
+        curentFragment = cameraFragment
+    }
+
     override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
         when (menuItem.itemId) {
             R.id.action_photos -> {
@@ -146,7 +162,8 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
             }
 
             R.id.action_camera -> {
-                onLaunchCamera()
+                moveToCamera()
+               // onLaunchCamera()
              /*   val camera = Intent(MediaStore.ACTION_IMAGE_CAPTURE )
                 startActivityForResult(camera, TAKE_PHOTO_REQUEST)*/
 
@@ -236,45 +253,9 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
         }
     }
 
-    fun onLaunchCamera() {
-        // create Intent to take a picture and return control to the calling application
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        // Create a File reference to access to future access
-        photoFile = getPhotoFileUri("photo")
 
-        // wrap File object into a content provider
-        // required for API >= 24
-        // See https://guides.codepath.com/android/Sharing-Content-with-Intents#sharing-files-with-api-24-or-higher
-        val fileProvider = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", photoFile)
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider)
 
-        // If you call startActivityForResult() using an intent that no app can handle, your app will crash.
-        // So as long as the result is not null, it's safe to use the intent.
-        if (intent.resolveActivity(packageManager) != null) {
-            // Start the image capture intent to take photo
-            startActivityForResult(intent, TAKE_PHOTO_REQUEST)
-        }
-    }
 
-    // Returns the File for a photo stored on disk given the fileName
-    fun getPhotoFileUri(fileName: String): File {
-        val timeStamp = SimpleDateFormat("MMdd_HHmm").format(Date())
-        val imageFileName = "Capture_$fileName $timeStamp.jpg"
-        // Get safe storage directory for photos
-        // Use `getExternalFilesDir` on Context to access package-specific directories.
-        // This way, we don't need to request external read/write runtime permissions.
-        val mediaStorageDir = File(Environment.getExternalStorageDirectory().toString() + DIRECTORY)
-
-        // Create the storage directory if it does not exist
-        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {
-            makeLog("failed to create directory")
-        }
-
-        // Return the file target for the photo based on filename
-
-        val path = mediaStorageDir.path + File.separator + imageFileName
-        return File(path)
-    }
 
     @Throws(IOException::class)
     private fun createImageFile(): File {

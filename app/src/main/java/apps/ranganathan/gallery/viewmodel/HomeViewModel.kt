@@ -31,7 +31,7 @@ import kotlin.collections.ArrayList
 
 open class HomeViewModel : BaseViewModel(){
 
-
+    private lateinit var albums: MutableList<Album>
     val inputFormatSystem = SimpleDateFormat( "EEE MMM dd HH:mm:ss zzz yyyy", Locale.US )
     val outputFormatDateWithDay = SimpleDateFormat("EEE dd MMM yyyy")
     val outputFormatSystemDateOnly = SimpleDateFormat("dd-MM-yyyy")
@@ -318,6 +318,9 @@ open class HomeViewModel : BaseViewModel(){
     fun getDirectory(folderName:String) :File{
         var externalStorageAbsolutePath: String = Environment.getExternalStorageDirectory()!!.absolutePath
         Log.w("albums AbsolutePath", " " + externalStorageAbsolutePath)
+        if (!folderName.contains(externalStorageAbsolutePath)){
+            return File( externalStorageAbsolutePath+folderName)
+        }
         val file = File( folderName)
         return  file
 
@@ -424,5 +427,18 @@ open class HomeViewModel : BaseViewModel(){
         }
 
         return ""
+    }
+
+    fun getImages(files:ArrayList<File>): MutableList<Album> {
+        albums = arrayListOf()
+        var album = Album()
+        for (file in files) {
+            album = Album()
+            album.name = file.nameWithoutExtension
+            album.file = file
+            album.albumUri = Uri.fromFile(file).toString()
+            albums.add(album)
+        }
+        return albums
     }
 }

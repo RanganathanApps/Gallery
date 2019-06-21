@@ -31,20 +31,9 @@ open class PictureViewModel : HomeViewModel(){
    }
 
 
-    private lateinit var albums: MutableList<Album>
 
-    fun getImages(files:ArrayList<File>): MutableList<Album> {
-        albums = arrayListOf()
-        var album = Album()
-        for (file in files) {
-            album = Album()
-            album.name = file.nameWithoutExtension
-            album.file = file
-            album.albumUri = Uri.fromFile(file).toString()
-            albums.add(album)
-        }
-        return albums
-    }
+
+
 
 
     fun delete(context: Context, file: File): Boolean {
