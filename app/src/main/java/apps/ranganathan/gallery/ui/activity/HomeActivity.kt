@@ -5,6 +5,7 @@ import android.content.ContentValues
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -194,6 +195,12 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
 
                 if (photoFile!=null && ::photoFile.isInitialized)
                 photoFile.createNewFile()
+                MediaScannerConnection.scanFile(
+                    context,
+                    arrayOf(photoFile.path),
+                    arrayOf("image/jpeg"), null
+                )
+                moveToAlbums()
 
                 /*val selectedImage = data!!.data
                 val filePathColumn = { MediaStore.Images.Media.DATA }
