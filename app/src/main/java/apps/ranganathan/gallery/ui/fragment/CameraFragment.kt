@@ -1,9 +1,13 @@
 package apps.ranganathan.gallery.ui.fragment
 
+import android.content.Context
 import android.content.Intent
+import android.media.MediaScannerConnection
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.*
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
@@ -11,20 +15,17 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import apps.ranganathan.gallery.BuildConfig
 import apps.ranganathan.gallery.R
-import apps.ranganathan.gallery.adapter.AlbumsAdapter
 import apps.ranganathan.gallery.adapter.PhotosAdapter
 import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.ui.activity.BaseActivity
-import apps.ranganathan.gallery.ui.activity.HomeActivity
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import kotlinx.android.synthetic.main.albums_fragment.*
 import kotlinx.android.synthetic.main.camera_fragment.*
-import kotlinx.android.synthetic.main.photos_fragment.*
 import kotlinx.android.synthetic.main.photos_fragment.recyclerPhotos
 import java.io.File
 
-class CameraFragment : Fragment() {
 
+class CameraFragment : Fragment(){
+
+    private val TAKE_PHOTO_REQUEST: Int = 12
     private val DIRECTORY = "/GalleryImages"
     private lateinit var photoFile: File
 
@@ -44,6 +45,7 @@ class CameraFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         super.onCreateOptionsMenu(menu, inflater)
         menu!!.clear()
+        inflater!!.inflate(R.menu.menu_camera_fragment, menu)
     }
 
 
@@ -51,7 +53,7 @@ class CameraFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        contentView = inflater.inflate(R.layout.photos_fragment, container, false)
+        contentView = inflater.inflate(R.layout.camera_fragment, container, false)
         return contentView
     }
 
@@ -59,33 +61,39 @@ class CameraFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(CameraViewModel::class.java)
         if (recyclerPhotos.adapter == null) {
-            val files = viewModel.getImagesInFile(viewModel.getDirectory(DIRECTORY))!!
-            initAlbums( viewModel.getImages(files))
+            loadFiles()
         }
-        fabCamera.setOnClickListener {
 
-        }
+        txtDirectory.text = "Directory : $DIRECTORY"
+
     }
 
-    /*fun onLaunchCamera() {
+    private fun loadFiles() {
+        val files = viewModel.getImagesInFile(viewModel.getDirectory(DIRECTORY))!!
+        initAlbums(viewModel.getImages(files))
+
+    }
+
+    fun onLaunchCamera() {
         // create Intent to take a picture and return control to the calling application
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         // Create a File reference to access to future access
-        photoFile = viewModel.getPhotoFileUri("photo",DIRECTORY)
+        photoFile = viewModel.getPhotoFileUri("photo", DIRECTORY)
 
         // wrap File object into a content provider
         // required for API >= 24
         // See https://guides.codepath.com/android/Sharing-Content-with-Intents#sharing-files-with-api-24-or-higher
-        val fileProvider = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", photoFile)
+        val fileProvider =
+            FileProvider.getUriForFile(activity as Context, BuildConfig.APPLICATION_ID + ".provider", photoFile)
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider)
 
         // If you call startActivityForResult() using an intent that no app can handle, your app will crash.
         // So as long as the result is not null, it's safe to use the intent.
-        if (intent.resolveActivity(packageManager) != null) {
+        if (intent.resolveActivity(activity!!.packageManager) != null) {
             // Start the image capture intent to take photo
             startActivityForResult(intent, TAKE_PHOTO_REQUEST)
         }
-    }*/
+    }
 
     private fun initAlbums(files: List<Album>) {
 
@@ -95,5 +103,35 @@ class CameraFragment : Fragment() {
         recyclerPhotos.adapter = adapter
 
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == TAKE_PHOTO_REQUEST) {
+            if (resultCode == AppCompatActivity.RESULT_OK) {
+
+                if (photoFile != null && ::photoFile.isInitialized)
+                    photoFile.createNewFile()
+                MediaScannerConnection.scanFile(
+                    context,
+                    arrayOf(photoFile.path),
+                    arrayOf("image/jpeg"), null
+                )
+                loadFiles()
+
+            }
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item!!.itemId) {
+            R.id.action_camera -> {
+                onLaunchCamera()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+
 
 }
