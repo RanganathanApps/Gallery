@@ -119,12 +119,15 @@ dependencies {
 
     /*sectioned grid recycler*/
     implementation ("com.github.zhukic:sectioned-recyclerview:1.2.3")
+    /*firebase*/
+    implementation(Libs.Firebase.remote_config)
 
 
 
 
 
 }
+apply(mapOf("plugin" to "com.google.gms.google-services"))
 
 repositories {
     mavenCentral()
