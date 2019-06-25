@@ -1,17 +1,11 @@
 package apps.ranganathan.gallery.ui.activity
 
 import android.os.Bundle
-import androidx.core.content.res.ResourcesCompat
-import androidx.lifecycle.ViewModelProviders
+import apps.ranganathan.configlibrary.utils.ForceUpdateChecker
 import apps.ranganathan.gallery.BuildConfig
 import apps.ranganathan.gallery.R
-import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.viewmodel.InfoViewModel
-import com.squareup.picasso.Callback
-import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.content_app_info.*
-import kotlinx.android.synthetic.main.content_info.*
-import java.io.File
 
 class AppInfoActivity : BaseActivity() {
 
@@ -23,9 +17,14 @@ class AppInfoActivity : BaseActivity() {
         setContentView(R.layout.content_app_info)
         setAppBar("")
         changeToolbarNavIconColor(R.color.colorWhite)
-        txtAppVersionAppInfo.text = "v "+BuildConfig.VERSION_NAME
+        txtAppVersionAppInfo.text = "v " + BuildConfig.VERSION_NAME
+
+        btnCheckForUpdate.setOnClickListener {
+            ForceUpdateChecker.with(this).onUpdateNeeded(this).check()
+        }
 
 
     }
+
 
 }

@@ -4,10 +4,13 @@
       tools:context="apps.ranganathan.gallery.ui.activity.HomeActivity">
     
 
-    <item android:id="@+id/action_info"
-          android:icon="@drawable/ic_info_outline_black_24dp"
+    <item android:id="@+id/action_menu_info"
           android:title="@string/action_info"
-          app:iconTint="@color/colorWhite"
           android:orderInCategory="100"
-          app:showAsAction="always"/>
+          app:showAsAction="never"/>
+
+    <item android:id="@+id/action_set_as"
+          android:title="@string/action_menu_set_as"
+          android:orderInCategory="100"
+          app:showAsAction="never"/>
 </menu>

@@ -57,7 +57,7 @@ object Versions {
     val firebase_messaging = "17.6.0"
     val firebase_database = "16.1.0"
     val firebase_storage = "16.1.0"
-    val firebase_remote_config = "16.5.0"
+    val firebase_remote_config = "18.0.0"
     val firebase_core = "16.0.8"
     val firebase_firestore = "18.2.0"
     val crashlytics_version = "2.9.9"

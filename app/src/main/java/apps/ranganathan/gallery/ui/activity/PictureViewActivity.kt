@@ -1,14 +1,12 @@
 package apps.ranganathan.gallery.ui.activity
 
-import android.R.attr.mimeType
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
+import android.content.res.Resources
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -33,9 +31,6 @@ import kotlinx.android.synthetic.main.content_picture_view.*
 import kotlinx.android.synthetic.main.toolbar_home.*
 import java.io.File
 import apps.ranganathan.configlibrary.utils.Utils.OnClickListener as OnClickListener1
-import android.content.res.Resources
-import android.graphics.Rect
-import android.util.DisplayMetrics
 
 
 class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
@@ -90,8 +85,9 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
                 setToolBarTitle(album.name)
             } else if (intent!!.extras!!.getString("tag") == "camera") {
                 directory = intent!!.extras!!.getString("directory")
+                position = intent!!.extras!!.getInt("position")
                 files = pictureViewModel.getImagesInFile(pictureViewModel.getDirectory(directory))!!
-                directory = ${intent!!.extras!!.getString("directory_ui")}
+                directory = intent!!.extras!!.getString("directory_ui")
                 userList = pictureViewModel.getImages(files)
                 album = userList[position]
                 setToolBarTitle("$directory (${1}/${userList.size} items)")
@@ -100,7 +96,7 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
                 userList = pictureViewModel.getSpecificDateImages(this, album)
                 position = 0
                 userList.forEachIndexed { index, element ->
-                    if (element.albumUri == album.albumUri){
+                    if (element.albumUri == album.albumUri) {
                         position = index
                     }
                 }
@@ -126,6 +122,17 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
         setNavigation()
     }
 
+    private fun setAs(uri: Uri) {
+        val intent = Intent(Intent.ACTION_ATTACH_DATA)
+            .apply {
+                addCategory(Intent.CATEGORY_DEFAULT)
+                setDataAndType(uri, "image/*")
+                putExtra("mimeType", "image/*")
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+        startActivity(Intent.createChooser(intent, "Set as:"))
+    }
+
     override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
         when (menuItem.itemId) {
             R.id.action_delete -> {
@@ -136,7 +143,8 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
                         override fun onClick(v: View) {
                             val isDeleted = pictureViewModel.delete(context, album.file)
                             if (isDeleted) {
-                                showMsg(navigation, "File Deleted!")
+                                showToast("File Deleted!")
+                                pictureViewModel.setMediaMounted(context ,userList[position].path)
                             }
                         }
 
@@ -167,15 +175,15 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
                         .packageName + ".provider", album.file
                 )
 
-               /* val install = Intent(Intent.ACTION_EDIT)
-                install.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                /* val install = Intent(Intent.ACTION_EDIT)
+                 install.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
 
-// New Approach
+ // New Approach
 
-                install.setDataAndType(apkURI, mimeType.toString())
-                install.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-// End New Approach
-                context.startActivity(install)*/
+                 install.setDataAndType(apkURI, mimeType.toString())
+                 install.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+ // End New Approach
+                 context.startActivity(install)*/
                 val editIntent = Intent(Intent.ACTION_EDIT)
                 editIntent.setDataAndType(apkURI, "image/*")
                 editIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
@@ -225,7 +233,6 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
     }
 
 
-
     private fun showToolbar() {
         appBar.visibility = VISIBLE
         navigation.visibility = VISIBLE
@@ -243,12 +250,9 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
 
     fun hasNavBar(resources: Resources): Boolean {
         val id = resources.getIdentifier("config_showNavigationBar", "bool", "android")
-        var res= id > 0 && resources.getBoolean(id)
+        var res = id > 0 && resources.getBoolean(id)
         return res
     }
-
-
-
 
 
     fun getNavBarHeight(c: Context): Int {
@@ -256,9 +260,9 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
         val hasMenuKey = ViewConfiguration.get(c).hasPermanentMenuKey()
         val hasBackKey = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK)
 
-       if ( !hasNavBar(c.resources)){
-           return result
-       }
+        if (!hasNavBar(c.resources)) {
+            return result
+        }
 
         if (hasMenuKey || hasBackKey) {
             //The device has a navigation bar
@@ -382,26 +386,21 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
     }
 
 
-    /*override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_picture_view, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.action_info -> {
-                val map = mapOf("album" to album)
-                startActivityputExtra(this, InfoActivity::class.java, map)
+            R.id.action_set_as -> {
+                setAs(Uri.parse(album.albumUri))
                 true
             }
 
             else -> super.onOptionsItemSelected(item)
 
         }
-    }*/
+    }
 
 }

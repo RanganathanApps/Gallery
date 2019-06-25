@@ -6,24 +6,17 @@ import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
-import android.text.format.DateUtils
 import android.util.Log
 import android.view.View
 import android.view.animation.TranslateAnimation
 import androidx.recyclerview.widget.RecyclerView
-import apps.ranganathan.configlibrary.base.BaseAppActivity
 import apps.ranganathan.gallery.adapter.ViewTypeAdapter
 import apps.ranganathan.gallery.model.Album
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import kotlinx.android.synthetic.main.activity_home.*
-import kotlinx.android.synthetic.main.content_home.*
-import kotlinx.android.synthetic.main.toolbar_home.*
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.text.DateFormat
-import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -100,6 +93,14 @@ open class HomeViewModel : BaseViewModel(){
         results.addAll(k)
         // results.addAll(getInternalStorageContent(context))
         return results
+    }
+
+    public fun setMediaMounted(context: Context, path: String){
+        MediaScannerConnection.scanFile(
+            context,
+            arrayOf(path),
+            arrayOf("image/jpeg"), null
+        )
     }
 
 

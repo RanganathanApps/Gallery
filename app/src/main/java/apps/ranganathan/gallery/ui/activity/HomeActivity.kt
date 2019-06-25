@@ -1,9 +1,9 @@
 package apps.ranganathan.gallery.ui.activity
 
 import android.Manifest
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -19,18 +19,15 @@ import apps.ranganathan.gallery.ui.fragment.PhotosFragment
 import apps.ranganathan.gallery.utils.BottomNavigationBehavior
 import apps.ranganathan.gallery.viewmodel.HomeViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.internal.NavigationMenu
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_drawer.*
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.toolbar_home.*
-import java.io.File
 
 
-class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelectedListener,NavigationView.OnNavigationItemSelectedListener {
+class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelectedListener,
+    NavigationView.OnNavigationItemSelectedListener {
 
-    private lateinit var photoFile: File
-    private val TAKE_PHOTO_REQUEST: Int = 12
     private var sortBy: Int = 0
     private lateinit var homeVieModel: HomeViewModel
     private lateinit var albumsFragment: AlbumsFragment
@@ -38,8 +35,8 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
     private lateinit var cameraFragment: CameraFragment
     private lateinit var movieFragment: MovieFragment
     private lateinit var curentFragment: Fragment
-    private val DIRECTORY = "/GalleryImages"
 
+    private var doubleBackToExitPressedOnce = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -143,46 +140,19 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
                 moveToAllPhotos()
             }
             R.id.action_albums -> {
-                // initAlbum(homeVieModel.getAlbums(this@HomeActivity))
                 moveToAlbums()
             }
 
             R.id.action_camera -> {
                 moveToCamera()
-                // onLaunchCamera()
-                /*   val camera = Intent(MediaStore.ACTION_IMAGE_CAPTURE )
-                   startActivityForResult(camera, TAKE_PHOTO_REQUEST)*/
-
-                /*takePhoto(object : ImagePickerListener {
-                    override fun onCancelled() {
-                        showToast("Camera cancelled")
-                    }
-
-                    override fun onPicked(bitmap: Bitmap) {
-                        homeVieModel.saveImage(context, bitmap, DIRECTORY)
-
-                    }
-                })*/
             }
-            R.id.nav_about ->{
-                startAppActivity(this,AppInfoActivity::class.java)
+            R.id.nav_about -> {
+                startAppActivity(this, AppInfoActivity::class.java)
                 return true
             }
 
         }
         return true
-    }
-
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == TAKE_PHOTO_REQUEST) {
-            if (resultCode == RESULT_OK) {
-
-
-            }
-
-        }
     }
 
 
@@ -213,9 +183,6 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
             R.id.menu_photos -> {
                 sortBy = 1
@@ -229,13 +196,28 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
             }
 
 
-
             else -> super.onOptionsItemSelected(item)
 
         }
     }
 
+    override fun onBackPressed() {
+        if (drawer_layout.isDrawerOpen(drawer_layout)) {
+            drawer_layout.closeDrawer(Gravity.LEFT)
+            return
+        }
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed()
+            return
+        }
+        this.doubleBackToExitPressedOnce = true
+        showMsg(nav_view, "click BACK again to exit")
+        vibrate(context)
 
+        Handler().postDelayed(Runnable {
+            doubleBackToExitPressedOnce = false
+        }, 2000)
+    }
 
 
 }

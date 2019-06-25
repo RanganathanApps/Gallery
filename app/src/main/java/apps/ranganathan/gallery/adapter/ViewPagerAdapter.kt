@@ -53,10 +53,6 @@ class ViewPagerAdapter(
             imgAlbum,
             R.drawable.ic_camera_alt_white_24dp)
 
-       /* Picasso.get().load(imgaeslist[position].albumUri)
-            .into(imgAlbum)*/
-
-
         imgAlbum.setOnClickListener {
             touchToggle.value = !touchToggle.value!!
 

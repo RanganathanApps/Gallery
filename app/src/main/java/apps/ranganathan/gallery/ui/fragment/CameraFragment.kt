@@ -2,12 +2,10 @@ package apps.ranganathan.gallery.ui.fragment
 
 import android.content.Context
 import android.content.Intent
-import android.media.MediaScannerConnection
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
@@ -103,7 +101,7 @@ class CameraFragment : Fragment(){
         val adapter =  PhotosAdapter(activity!! as BaseActivity, files,photoSelctedListener = object :
             PhotoSelectedListener {
             override fun onPhotoSelected(position: Int, list: List<Album>) {
-                val anotherMap = mapOf("position" to position, "tag" to "camera","directory" to DIRECTORY,"direcory_ui" to DIRECTORY_UI)
+                val anotherMap = mapOf("position" to position, "tag" to "camera","directory" to DIRECTORY,"directory_ui" to DIRECTORY_UI)
                 (activity as BaseActivity).startActivityputExtra(activity as BaseActivity, PictureViewActivity::class.java, anotherMap)
             }
         })
@@ -120,11 +118,7 @@ class CameraFragment : Fragment(){
 
                 if (photoFile != null && ::photoFile.isInitialized)
                     photoFile.createNewFile()
-                MediaScannerConnection.scanFile(
-                    context,
-                    arrayOf(photoFile.path),
-                    arrayOf("image/jpeg"), null
-                )
+               viewModel.setMediaMounted(activity as Context,photoFile.path)
                 loadFiles()
 
             }
