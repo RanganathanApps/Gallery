@@ -13,6 +13,8 @@ import apps.ranganathan.gallery.adapter.PhotosAdapter
 import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.ui.activity.BaseActivity
 import apps.ranganathan.gallery.ui.activity.HomeActivity
+import apps.ranganathan.gallery.ui.activity.PictureViewActivity
+import apps.ranganathan.gallery.utils.PhotoSelectedListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.photos_fragment.*
 
@@ -49,7 +51,13 @@ class PhotosFragment : Fragment() {
 
        //val k =  files.sortedWith(compareBy<Album> { it.file.lastModified() }.thenBy { it.file.lastModified() })
 
-        val adapter = PhotosAdapter(activity!! as BaseActivity, files)
+        val adapter = PhotosAdapter(activity!! as BaseActivity, files,photoSelctedListener = object :
+            PhotoSelectedListener {
+            override fun onPhotoSelected(position: Int, list: List<Album>) {
+                val anotherMap = mapOf("position" to position, "tag" to "photos")
+                (activity as BaseActivity).startActivityputExtra(activity as BaseActivity, PictureViewActivity::class.java, anotherMap)
+            }
+        })
         recyclerPhotos.layoutManager = GridLayoutManager(activity!! as BaseActivity, 3) as RecyclerView.LayoutManager?
         recyclerPhotos.setHasFixedSize(true)
         recyclerPhotos.adapter = adapter

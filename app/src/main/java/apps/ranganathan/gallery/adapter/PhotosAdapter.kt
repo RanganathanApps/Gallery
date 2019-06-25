@@ -11,16 +11,18 @@ import apps.ranganathan.gallery.R
 import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.ui.activity.BaseActivity
 import apps.ranganathan.gallery.ui.activity.PictureViewActivity
+import apps.ranganathan.gallery.utils.PhotoSelectedListener
 import java.util.*
 
 
 
 
 
-class PhotosAdapter(activity: BaseActivity, val userList: List<Album>) :
+class PhotosAdapter(activity: BaseActivity, val userList: List<Album>,photoSelctedListener:PhotoSelectedListener) :
     RecyclerView.Adapter<PhotosAdapter.ViewHolder>() {
 
     val activity = activity
+    val photoSelctedListener = photoSelctedListener
     private val mRandom = Random()
 
 
@@ -40,8 +42,8 @@ class PhotosAdapter(activity: BaseActivity, val userList: List<Album>) :
 
 
         holder.imageAlbum.setOnClickListener {
-            val anotherMap = mapOf("position" to position, "tag" to "photos")
-            activity.startActivityputExtra(activity, PictureViewActivity::class.java, anotherMap)
+            photoSelctedListener.onPhotoSelected(position,userList)
+
         }
         /* val layoutParams = holder.itemView.getLayoutParams() as StaggeredGridLayoutManager.LayoutParams
          layoutParams.isFullSpan = getRandomIntInRange(56,91)%2==0

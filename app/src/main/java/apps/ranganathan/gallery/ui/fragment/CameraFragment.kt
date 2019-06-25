@@ -18,6 +18,8 @@ import apps.ranganathan.gallery.R
 import apps.ranganathan.gallery.adapter.PhotosAdapter
 import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.ui.activity.BaseActivity
+import apps.ranganathan.gallery.ui.activity.PictureViewActivity
+import apps.ranganathan.gallery.utils.PhotoSelectedListener
 import kotlinx.android.synthetic.main.camera_fragment.*
 import kotlinx.android.synthetic.main.photos_fragment.recyclerPhotos
 import java.io.File
@@ -27,6 +29,7 @@ class CameraFragment : Fragment(){
 
     private val TAKE_PHOTO_REQUEST: Int = 12
     private val DIRECTORY = "/GalleryImages"
+    private val DIRECTORY_UI = "GalleryImages"
     private lateinit var photoFile: File
 
     companion object {
@@ -64,7 +67,7 @@ class CameraFragment : Fragment(){
             loadFiles()
         }
 
-        txtDirectory.text = "Directory : $DIRECTORY"
+        txtDirectory.text = "Directory : $DIRECTORY_UI"
 
     }
 
@@ -97,7 +100,13 @@ class CameraFragment : Fragment(){
 
     private fun initAlbums(files: List<Album>) {
 
-        val adapter = PhotosAdapter(activity!! as BaseActivity, files)
+        val adapter =  PhotosAdapter(activity!! as BaseActivity, files,photoSelctedListener = object :
+            PhotoSelectedListener {
+            override fun onPhotoSelected(position: Int, list: List<Album>) {
+                val anotherMap = mapOf("position" to position, "tag" to "camera","directory" to DIRECTORY,"direcory_ui" to DIRECTORY_UI)
+                (activity as BaseActivity).startActivityputExtra(activity as BaseActivity, PictureViewActivity::class.java, anotherMap)
+            }
+        })
         recyclerPhotos.layoutManager = GridLayoutManager(activity!! as BaseActivity, 3) as RecyclerView.LayoutManager?
         recyclerPhotos.setHasFixedSize(true)
         recyclerPhotos.adapter = adapter

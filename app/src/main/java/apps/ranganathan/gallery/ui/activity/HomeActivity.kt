@@ -2,6 +2,7 @@ package apps.ranganathan.gallery.ui.activity
 
 import android.Manifest
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -18,13 +19,15 @@ import apps.ranganathan.gallery.ui.fragment.PhotosFragment
 import apps.ranganathan.gallery.utils.BottomNavigationBehavior
 import apps.ranganathan.gallery.viewmodel.HomeViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.internal.NavigationMenu
+import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_drawer.*
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.toolbar_home.*
 import java.io.File
 
 
-class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
+class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelectedListener,NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var photoFile: File
     private val TAKE_PHOTO_REQUEST: Int = 12
@@ -161,6 +164,11 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
                     }
                 })*/
             }
+            R.id.nav_about ->{
+                startAppActivity(this,AppInfoActivity::class.java)
+                return true
+            }
+
         }
         return true
     }
@@ -180,6 +188,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
 
     private fun setNavigation() {
         navigation.setOnNavigationItemSelectedListener(this)
+        nav_view.setNavigationItemSelectedListener(this)
         val layoutParams = navigation.layoutParams as CoordinatorLayout.LayoutParams
         layoutParams.behavior = BottomNavigationBehavior()
     }
@@ -220,10 +229,13 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
             }
 
 
+
             else -> super.onOptionsItemSelected(item)
 
         }
     }
+
+
 
 
 }

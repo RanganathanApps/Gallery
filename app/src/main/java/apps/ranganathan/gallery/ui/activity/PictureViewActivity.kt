@@ -88,6 +88,13 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
                 userList = pictureViewModel.getAllImages(this)
                 album = userList[position]
                 setToolBarTitle(album.name)
+            } else if (intent!!.extras!!.getString("tag") == "camera") {
+                directory = intent!!.extras!!.getString("directory")
+                files = pictureViewModel.getImagesInFile(pictureViewModel.getDirectory(directory))!!
+                directory = ${intent!!.extras!!.getString("directory_ui")}
+                userList = pictureViewModel.getImages(files)
+                album = userList[position]
+                setToolBarTitle("$directory (${1}/${userList.size} items)")
             } else {
                 album = intent!!.extras!!.getSerializable("album") as Album
                 userList = pictureViewModel.getSpecificDateImages(this, album)
