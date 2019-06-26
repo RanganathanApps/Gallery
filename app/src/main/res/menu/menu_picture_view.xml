@@ -4,8 +4,8 @@
       tools:context="apps.ranganathan.gallery.ui.activity.HomeActivity">
     
 
-    <item android:id="@+id/action_menu_info"
-          android:title="@string/action_info"
+    <item android:id="@+id/action_menu_slideshow"
+          android:title="@string/action_slide_show"
           android:orderInCategory="100"
           app:showAsAction="never"/>
 

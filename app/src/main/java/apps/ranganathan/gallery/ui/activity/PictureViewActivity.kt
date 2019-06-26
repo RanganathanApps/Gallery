@@ -7,6 +7,7 @@ import android.content.res.Resources
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -30,12 +31,17 @@ import kotlinx.android.synthetic.main.activity_picture_view.*
 import kotlinx.android.synthetic.main.content_picture_view.*
 import kotlinx.android.synthetic.main.toolbar_home.*
 import java.io.File
+import java.util.*
 import apps.ranganathan.configlibrary.utils.Utils.OnClickListener as OnClickListener1
 
 
 class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
 
 
+    private var slideShowShecduled: Boolean = false
+    private lateinit var runnableUpdate: Runnable
+    private lateinit var handler: Handler
+    private lateinit var timer: Timer
     private val TAG = "App"
 
     private lateinit var pictureViewModel: PictureViewModel
@@ -116,6 +122,7 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
             } else {
                 hideToolbar()
             }
+
         })
 
         setUpViewPager()
@@ -144,7 +151,7 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
                             val isDeleted = pictureViewModel.delete(context, album.file)
                             if (isDeleted) {
                                 showToast("File Deleted!")
-                                pictureViewModel.setMediaMounted(context ,userList[position].path)
+                                pictureViewModel.setMediaMounted(context, userList[position].path)
                             }
                         }
 
@@ -239,6 +246,10 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
         setBootomBarHeight()
         showSystemUI()
         setToolBarHeight()
+        if (::timer.isInitialized && slideShowShecduled) {
+            timer.cancel()
+            slideShowShecduled = false
+        }
     }
 
     private fun hideToolbar() {
@@ -382,6 +393,13 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
 
             }
         })
+        handler = Handler()
+        runnableUpdate = Runnable {
+            if (position == userList.size - 1) {
+                position = 0
+            }
+            viewpagerPhotos.setCurrentItem(position++, true)
+        }
 
     }
 
@@ -397,10 +415,22 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
                 setAs(Uri.parse(album.albumUri))
                 true
             }
+            R.id.action_menu_slideshow -> {
+                timer = Timer() // This will create a new Thread
+                timer.schedule(object : TimerTask() {
+                    override fun run() {
+                        handler.post(runnableUpdate)
+                        slideShowShecduled = true
+                    } // task to be scheduled
+
+                }, 2000, 3000)
+                true
+            }
 
             else -> super.onOptionsItemSelected(item)
 
         }
     }
+
 
 }

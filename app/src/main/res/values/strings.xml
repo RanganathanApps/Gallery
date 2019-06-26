@@ -26,5 +26,6 @@
     <string name="action_check_update">Check for update</string>
     <string name="app_info_hint">Photos and gallery applications</string>
     <string name="action_menu_set_as">Use as</string>
+    <string name="action_slide_show">SlideShow</string>
 
 </resources>
