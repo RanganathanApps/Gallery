@@ -21,7 +21,7 @@ import android.text.method.Touch.onTouchEvent
 
 class ViewPagerAdapter(
     private val context: Context,
-    list: List<Album>,
+    list: MutableList<Album>,
     position1: MutableLiveData<Int>,
     touchToggle: MutableLiveData<Boolean>
 ) : PagerAdapter() {
@@ -38,6 +38,10 @@ class ViewPagerAdapter(
 
     override fun getCount(): Int {
         return imgaeslist.size
+    }
+
+    fun updateList(updatedList : MutableList<Album>) {
+        imgaeslist = updatedList
     }
 
 

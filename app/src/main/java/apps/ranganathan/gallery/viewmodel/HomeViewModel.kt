@@ -68,7 +68,7 @@ open class HomeViewModel : BaseViewModel(){
        return adapter
     }
 
-    fun getAllImages(context: Context): List<Album> {
+    fun getAllImages(context: Context): MutableList<Album> {
         val results = mutableListOf<Album>()
         results.addAll(getExternalStorageContent(context))
        // results.addAll(getInternalStorageContent(context))
@@ -86,7 +86,7 @@ open class HomeViewModel : BaseViewModel(){
         return k
     }
 
-    fun getSpecificDateImages(context: Context,album: Album): List<Album> {
+    fun getSpecificDateImages(context: Context,album: Album): MutableList<Album> {
 
                val results = mutableListOf<Album>()
         val k = getImageFileFromDate(context, MediaStore.Images.Media.EXTERNAL_CONTENT_URI,getFileDateOnlyString(album.date,inputFormatSystem,outputFormatSystemDateOnly),album)

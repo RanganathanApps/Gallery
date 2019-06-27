@@ -16,7 +16,7 @@ class CameraViewModel : HomeViewModel() {
 
     // Returns the File for a photo stored on disk given the fileName
     fun getPhotoFileUri(fileName: String,DIRECTORY:String): File {
-        val timeStamp = SimpleDateFormat("MMdd_HHmm").format(Date())
+        val timeStamp = SimpleDateFormat("MMdd_HHmmss").format(Date())
         val imageFileName = "Capture_$fileName $timeStamp.jpg"
         // Get safe storage directory for photos
         // Use `getExternalFilesDir` on Context to access package-specific directories.

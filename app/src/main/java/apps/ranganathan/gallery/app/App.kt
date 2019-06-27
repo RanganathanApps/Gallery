@@ -22,9 +22,9 @@ class MyApp : Application() {
             ).build())
     }
 
-    override fun attachBaseContext(newBase: Context) {
+    /*override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase))
     }
-
+*/
 
 }

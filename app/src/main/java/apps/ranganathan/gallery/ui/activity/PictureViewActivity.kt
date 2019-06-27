@@ -39,6 +39,7 @@ import apps.ranganathan.configlibrary.utils.Utils.OnClickListener as OnClickList
 class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
 
 
+    private lateinit var adapter: ViewPagerAdapter
     private var slideShowShecduled: Boolean = false
     private lateinit var runnableUpdate: Runnable
     private lateinit var handler: Handler
@@ -46,7 +47,7 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
     private val TAG = "App"
 
     private lateinit var pictureViewModel: PictureViewModel
-    lateinit var userList: List<Album>
+    lateinit var userList: MutableList<Album>
     private var position: Int = 0
 
 
@@ -142,6 +143,7 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
     }
 
     override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
+        stopSlideShow()
         when (menuItem.itemId) {
             R.id.action_delete -> {
                 showConfirmationAlert(
@@ -152,7 +154,20 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
                             val isDeleted = pictureViewModel.delete(context, album.file)
                             if (isDeleted) {
                                 showToast("File Deleted!")
-                                pictureViewModel.setMediaMounted(context, userList[position].path)
+                                userList.removeAt(position)
+                                adapter.updateList(userList)
+                                adapter.notifyDataSetChanged()
+                                viewpagerPhotos.adapter = adapter
+                                viewpagerPhotos.adapter!!.notifyDataSetChanged()
+
+                                if (position+1<userList.size) {
+                                    position += 1
+                                }else{
+                                    position = 0
+                                }
+                                viewpagerPhotos.currentItem = position
+                                // pictureViewModel.setMediaMounted(context, userList[position].file.absolutePath)
+
                             }
                         }
 
@@ -247,6 +262,10 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
         setBootomBarHeight()
         showSystemUI()
         setToolBarHeight()
+       stopSlideShow()
+    }
+
+    private fun stopSlideShow() {
         if (::timer.isInitialized && slideShowShecduled) {
             timer.cancel()
             slideShowShecduled = false
@@ -354,16 +373,13 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
 
     private fun setUpViewPager() {
 
-        viewpagerPhotos.adapter = ViewPagerAdapter(this, userList, pictureViewModel.position, touchToggle)
+        adapter = ViewPagerAdapter(this, userList, pictureViewModel.position, touchToggle)
+        viewpagerPhotos.adapter = adapter
         viewpagerPhotos.setCurrentItem(position, true)
 
         viewpagerPhotos.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(i: Int, v: Float, i2: Int) {
                 //Toast.makeText(MyActivity.this, i+"  Is Selected  "+data.size(), Toast.LENGTH_SHORT).show();
-            }
-
-            override fun onPageSelected(i: Int) {
-                // here you will get the position of selected page
                 position = i
                 album = userList[i]
                 if (intent!!.extras!!.getString("tag") == "date") {
@@ -385,6 +401,11 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
                 } catch (e: Exception) {
                     setToolBarTitle(userList[i].name)
                 }
+            }
+
+            override fun onPageSelected(i: Int) {
+                // here you will get the position of selected page
+
 
             }
 
