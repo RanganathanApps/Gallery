@@ -21,6 +21,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
 import apps.ranganathan.configlibrary.utils.Utils
+import apps.ranganathan.gallery.BuildConfig
 import apps.ranganathan.gallery.R
 import apps.ranganathan.gallery.adapter.ViewPagerAdapter
 import apps.ranganathan.gallery.model.Album
@@ -268,14 +269,12 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
 
     fun getNavBarHeight(c: Context): Int {
         val result = 0
-        val hasMenuKey = ViewConfiguration.get(c).hasPermanentMenuKey()
-        val hasBackKey = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK)
 
         if (!hasNavBar(c.resources)) {
             return result
         }
 
-        if (hasMenuKey || hasBackKey) {
+        if (hasNavBar(c.resources)) {
             //The device has a navigation bar
             val resources = c.resources
 
@@ -395,7 +394,7 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
         })
         handler = Handler()
         runnableUpdate = Runnable {
-            if (position == userList.size - 1) {
+            if (position == userList.size) {
                 position = 0
             }
             viewpagerPhotos.setCurrentItem(position++, true)
@@ -412,7 +411,8 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_set_as -> {
-                setAs(Uri.parse(album.albumUri))
+                val uri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider",album.file);
+                setAs(uri)
                 true
             }
             R.id.action_menu_slideshow -> {
@@ -423,7 +423,7 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
                         slideShowShecduled = true
                     } // task to be scheduled
 
-                }, 2000, 3000)
+                }, 1000, 2000)
                 true
             }
 

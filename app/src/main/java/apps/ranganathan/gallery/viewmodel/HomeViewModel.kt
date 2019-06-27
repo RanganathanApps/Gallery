@@ -288,28 +288,32 @@ open class HomeViewModel : BaseViewModel(){
         val a = ArrayList<File>()
         val files = root.listFiles()
 
-        files.sortWith(Comparator { file1, file2 ->
-            val k = file1.lastModified() - file2.lastModified()
-            if (k < 0) {
-                1
-            } else if (k == 0L) {
-                0
-            } else {
-                -1
-            }
-        })
+        try {
+            files.sortWith(Comparator { file1, file2 ->
+                val k = file1.lastModified() - file2.lastModified()
+                if (k < 0) {
+                    1
+                } else if (k == 0L) {
+                    0
+                } else {
+                    -1
+                }
+            })
 
-        if (files!=null) {
-            for (i in 0..files.size - 1) {
-                if (files[i].name.endsWith(".jpg")
-                    || files[i].name.endsWith(".png")
-                    || files[i].name.endsWith(".gif")
-                    || files[i].name.endsWith(".bmp")
-                    || files[i].name.endsWith(".WebP")
-                    || files[i].name.endsWith(".jpeg") ) {
-                    a.add(files[i])
+            if (files!=null) {
+                for (i in 0..files.size - 1) {
+                    if (files[i].name.endsWith(".jpg")
+                        || files[i].name.endsWith(".png")
+                        || files[i].name.endsWith(".gif")
+                        || files[i].name.endsWith(".bmp")
+                        || files[i].name.endsWith(".WebP")
+                        || files[i].name.endsWith(".jpeg") ) {
+                        a.add(files[i])
+                    }
                 }
             }
+        } catch (e: Exception) {
+
         }
 
 
@@ -319,7 +323,7 @@ open class HomeViewModel : BaseViewModel(){
     fun getDirectory(folderName:String) :File{
         var externalStorageAbsolutePath: String = Environment.getExternalStorageDirectory()!!.absolutePath
         Log.w("albums AbsolutePath", " " + externalStorageAbsolutePath)
-        if (!folderName.contains(externalStorageAbsolutePath)){
+        if (!folderName.contains("storage")){
             return File( externalStorageAbsolutePath+folderName)
         }
         val file = File( folderName)

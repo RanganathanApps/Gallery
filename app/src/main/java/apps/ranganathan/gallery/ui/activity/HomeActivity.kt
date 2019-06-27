@@ -9,6 +9,7 @@ import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
+import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import apps.ranganathan.gallery.R
@@ -148,11 +149,16 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
             }
             R.id.nav_about -> {
                 startAppActivity(this, AppInfoActivity::class.java)
+                closeDrawer()
                 return true
             }
 
         }
         return true
+    }
+
+    private fun closeDrawer() {
+        drawer_layout.closeDrawer(GravityCompat.START)
     }
 
 
@@ -202,21 +208,25 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
     }
 
     override fun onBackPressed() {
-        if (drawer_layout.isDrawerOpen(drawer_layout)) {
-            drawer_layout.closeDrawer(Gravity.LEFT)
-            return
-        }
-        if (doubleBackToExitPressedOnce) {
-            super.onBackPressed()
-            return
-        }
-        this.doubleBackToExitPressedOnce = true
-        showMsg(nav_view, "click BACK again to exit")
-        vibrate(context)
+        try {
+            if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
+                closeDrawer()
+                return
+            }
+            if (doubleBackToExitPressedOnce) {
+                super.onBackPressed()
+                return
+            }
+            this.doubleBackToExitPressedOnce = true
+            showMsg(nav_view, "click BACK again to exit")
+            vibrate(context)
 
-        Handler().postDelayed(Runnable {
-            doubleBackToExitPressedOnce = false
-        }, 2000)
+            Handler().postDelayed(Runnable {
+                doubleBackToExitPressedOnce = false
+            }, 2000)
+        } catch (e: Exception) {
+            makeLog("Exception",e.localizedMessage)
+        }
     }
 
 
