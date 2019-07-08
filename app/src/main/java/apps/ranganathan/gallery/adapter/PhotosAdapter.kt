@@ -2,52 +2,58 @@ package apps.ranganathan.gallery.adapter
 
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import apps.ranganathan.configlibrary.base.BaseAppActivity
 import apps.ranganathan.gallery.R
 import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.ui.activity.BaseActivity
-import apps.ranganathan.gallery.ui.activity.PictureViewActivity
 import apps.ranganathan.gallery.utils.PhotoSelectedListener
 import java.util.*
 
 
-
-
-
-class PhotosAdapter(activity: BaseActivity, val userList: List<Album>,photoSelctedListener:PhotoSelectedListener) :
+class PhotosAdapter(activity: BaseActivity, val userList: List<Album>, photoSelctedListener: PhotoSelectedListener) :
     RecyclerView.Adapter<PhotosAdapter.ViewHolder>() {
 
+    public var isSelection: Boolean = false
     val activity = activity
     val photoSelctedListener = photoSelctedListener
-    private val mRandom = Random()
 
 
     //this method is returning the view for each item in the list
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotosAdapter.ViewHolder {
         var itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_photos, parent, false)
-
-        return ViewHolder(activity,itemView)
-
+        return ViewHolder(activity, itemView, this)
     }
 
     //this method is binding the data on the list
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-
         holder.bindItems(userList[position])
-
-
-
         holder.imageAlbum.setOnClickListener {
-            photoSelctedListener.onPhotoSelected(position,userList)
+            if (isSelection) {
+                if (userList[position].isSelected) {
+                    this.userList[position].isSelected = false
+                } else {
+                    photoSelctedListener.onItemSelected(position, userList)
+                    this.userList[position].isSelected = true
+                }
+                notifyItemChanged(position)
+            } else {
+                photoSelctedListener.onPhotoSelected(position, userList)
+            }
+        }
+        holder.imageAlbum.setOnLongClickListener {
+            isSelection = true
+            photoSelctedListener.onItemSelected(position, userList)
+            userList[position].isSelected = true
+            notifyDataSetChanged()
+            true
 
         }
-        /* val layoutParams = holder.itemView.getLayoutParams() as StaggeredGridLayoutManager.LayoutParams
-         layoutParams.isFullSpan = getRandomIntInRange(56,91)%2==0
-         holder.itemView.layoutParams = layoutParams*/
     }
 
     //this method is giving the size of the list
@@ -65,42 +71,55 @@ class PhotosAdapter(activity: BaseActivity, val userList: List<Album>,photoSelct
 
 
     //the class is hodling the list view
-    class ViewHolder(activity: BaseAppActivity, itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ViewHolder(
+        activity: BaseAppActivity,
+        itemView: View,
+        photosAdapter: PhotosAdapter
+    ) : RecyclerView.ViewHolder(itemView) {
         private val mRandom = Random()
         val activity = activity
-        private val txtPhotoName = itemView.findViewById(R.id.txtPhotoName) as TextView
+        val photosAdapter = photosAdapter
         val imageAlbum = itemView.findViewById(R.id.imgAlbum) as AppCompatImageView
+        val imgAlbumSelectable = itemView.findViewById(R.id.imgAlbumSelectable) as AppCompatImageView
+        val imgAlbumSelected = itemView.findViewById(R.id.imgAlbumSelected) as AppCompatImageView
+        val imgAlbumOverlay = itemView.findViewById(R.id.imgAlbumOverlay) as AppCompatImageView
 
         fun bindItems(user: Album) {
-
-
-            /*val params = view.layoutParams
-            params.height = 60
-            view.layoutParams = params*/
-
-
-            activity.makeLog("Date : ", user.file.lastModified().toString())
-            txtPhotoName.text = user.name
-
             if (imageAlbum.drawable == null) {
-
                 activity.loadImage(
                     user.albumUri,
                     imageAlbum,
                     R.drawable.ic_camera_alt_white_24dp
                 )
             }
-        }
 
-        private fun getRandomIntInRange(max: Int, min: Int): Int {
-            return mRandom.nextInt(max - min + min) + min
+            if (photosAdapter.isSelection) {
+                imgAlbumSelectable.visibility = VISIBLE
+                imgAlbumSelected.setColorFilter(ContextCompat.getColor(activity.applicationContext, R.color.colorWhite))
+                imgAlbumOverlay.setBackgroundColor(
+                    ContextCompat.getColor(
+                        activity.applicationContext,
+                        R.color.colorTransLight
+                    )
+                )
+            } else {
+                imgAlbumSelectable.visibility = GONE
+            }
+            if (user.isSelected) {
+                imgAlbumSelected.visibility = VISIBLE
+                imgAlbumSelected.setColorFilter(ContextCompat.getColor(activity.applicationContext, R.color.colorWhite))
+                imgAlbumSelectable.visibility = GONE
+                imageAlbum.setPadding(25, 25, 25, 25)
+                imgAlbumOverlay.setBackgroundColor(
+                    ContextCompat.getColor(
+                        activity.applicationContext,
+                        R.color.colorTransSelected
+                    )
+                )
+            } else {
+                imgAlbumSelected.visibility = GONE
+            }
         }
     }
-
-    private fun getRandomIntInRange(max: Int, min: Int): Int {
-        return mRandom.nextInt(max - min + min) + min
-    }
-
-
 }
 

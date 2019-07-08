@@ -4,6 +4,8 @@
     <color name="colorPrimaryDark">#8c2370</color>
     <color name="colorAccent">#F27D72</color>
     <color name="colorTrans">#52000000</color>
+    <color name="colorTransLight">#41999292</color>
+    <color name="colorTransSelected">#54000000</color>
     <color name="colorRed">#CE0C0C</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorBlack">#000000</color>

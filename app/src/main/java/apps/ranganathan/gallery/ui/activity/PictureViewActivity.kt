@@ -31,6 +31,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_picture_view.*
 import kotlinx.android.synthetic.main.content_picture_view.*
 import kotlinx.android.synthetic.main.toolbar_home.*
+import kotlinx.coroutines.delay
 import java.io.File
 import java.util.*
 import apps.ranganathan.configlibrary.utils.Utils.OnClickListener as OnClickListener1
@@ -42,7 +43,9 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
     private lateinit var adapter: ViewPagerAdapter
     private var slideShowShecduled: Boolean = false
     private lateinit var runnableUpdate: Runnable
+    private lateinit var runnableAutoHide: Runnable
     private lateinit var handler: Handler
+    private lateinit var handlerAutoHide: Handler
     private lateinit var timer: Timer
     private val TAG = "App"
 
@@ -99,6 +102,22 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
                 userList = pictureViewModel.getImages(files)
                 album = userList[position]
                 setToolBarTitle("$directory (${1}/${userList.size} items)")
+            }else if (intent!!.extras!!.getString("tag") == "albums_list") {
+                album = intent!!.extras!!.getSerializable("album") as Album
+                files = pictureViewModel.getImagesInFile(pictureViewModel.getDirectory(album.path))!!
+                userList = pictureViewModel.getImages(files)
+                position = 0
+                userList.forEachIndexed { index, element ->
+                    if (element.albumUri == album.albumUri) {
+                        position = index
+                    }
+                }
+                setToolBarTitle("${album.bucket} (${1}/${userList.size} items)")
+                if (userList.isNotEmpty()) {
+                    pictureViewModel.position.value = position
+                    album = userList[position]
+                }
+
             } else {
                 album = intent!!.extras!!.getSerializable("album") as Album
                 userList = pictureViewModel.getSpecificDateImages(this, album)
@@ -129,6 +148,8 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
 
         setUpViewPager()
         setNavigation()
+
+
     }
 
     private fun setAs(uri: Uri) {
@@ -355,6 +376,7 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
         if (hasFocus) {
             showToolbar()
             touchToggle.value = true
+
         }
     }
 
@@ -372,7 +394,7 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
     }
 
     private fun setUpViewPager() {
-
+        touchToggle.value = false
         adapter = ViewPagerAdapter(this, userList, pictureViewModel.position, touchToggle)
         viewpagerPhotos.adapter = adapter
         viewpagerPhotos.setCurrentItem(position, true)
@@ -420,6 +442,15 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
             }
             viewpagerPhotos.setCurrentItem(position++, true)
         }
+
+
+        handlerAutoHide = Handler()
+        runnableAutoHide = Runnable {
+            /*initially hiding toolbar and bottom bar*/
+            touchToggle.value = false
+            hideToolbar()
+        }
+        handlerAutoHide.postDelayed(runnableAutoHide,1000)
 
     }
 

@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import android.graphics.Typeface
 import android.view.View
 import android.widget.ImageView
+import androidx.appcompat.widget.AppCompatImageView
 import apps.ranganathan.gallery.R
 import apps.ranganathan.gallery.model.Album
 import com.zhukic.sectionedrecyclerview.SectionedRecyclerViewAdapter
@@ -18,6 +19,7 @@ abstract class BaseMovieAdapter internal constructor(internal var movieList: Lis
     SectionedRecyclerViewAdapter<BaseMovieAdapter.SubheaderHolder, BaseMovieAdapter.MovieViewHolder>() {
 
     internal lateinit var onItemClickListener: OnItemClickListener
+    var isSelection: Boolean = false
 
     interface OnItemClickListener {
         fun onItemClicked(movie: Album, position: Int)
@@ -46,9 +48,15 @@ abstract class BaseMovieAdapter internal constructor(internal var movieList: Lis
     class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         var imgPhoto: ImageView
+        var imgAlbumSelectable: AppCompatImageView
+        var imgAlbumSelected: AppCompatImageView
+        var imgAlbumOverlay: AppCompatImageView
 
         init {
             this.imgPhoto = itemView.findViewById<ImageView>(R.id.imgAlbum)
+            imgAlbumSelectable = itemView.findViewById(R.id.imgAlbumSelectable) as AppCompatImageView
+            imgAlbumSelected = itemView.findViewById(R.id.imgAlbumSelected) as AppCompatImageView
+            imgAlbumOverlay = itemView.findViewById(R.id.imgAlbumOverlay) as AppCompatImageView
         }
     }
 

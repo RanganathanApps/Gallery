@@ -53,6 +53,10 @@ class PhotosFragment : Fragment() {
 
         val adapter = PhotosAdapter(activity!! as BaseActivity, files,photoSelctedListener = object :
             PhotoSelectedListener {
+            override fun onItemSelected(position: Int, list: List<Album>) {
+                
+            }
+
             override fun onPhotoSelected(position: Int, list: List<Album>) {
                 val anotherMap = mapOf("position" to position, "tag" to "photos")
                 (activity as BaseActivity).startActivityputExtra(activity as BaseActivity, PictureViewActivity::class.java, anotherMap)

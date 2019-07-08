@@ -8,7 +8,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 
-import java.util.ArrayList
 import java.util.Collections
 import java.util.Comparator
 import androidx.fragment.app.Fragment
@@ -16,22 +15,21 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import apps.ranganathan.configlibrary.base.BaseAppActivity
 import apps.ranganathan.gallery.R
+import apps.ranganathan.gallery.adapter.AlbumsAdapterByList
 import apps.ranganathan.gallery.adapter.BaseMovieAdapter
-import apps.ranganathan.gallery.adapter.MovieAdapterByGenre
 import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.ui.activity.BaseActivity
 import apps.ranganathan.gallery.ui.activity.PictureViewActivity
 import apps.ranganathan.gallery.utils.GridDividerDecoration
 
-class MovieFragment : Fragment(), BaseMovieAdapter.OnItemClickListener {
+class AlbumsListFragment : Fragment(), BaseMovieAdapter.OnItemClickListener {
 
 
     private lateinit var viewModel: PhotosViewModel
-    private var mMovieList: List<Album>? = null
+    private var mAlbumsList: List<Album>? = null
 
-    private var movieComparator: Comparator<Album>? = null
+    private var photosComparator: Comparator<Album>? = null
 
     private var recyclerView: RecyclerView? = null
 
@@ -43,6 +41,7 @@ class MovieFragment : Fragment(), BaseMovieAdapter.OnItemClickListener {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
     }
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.photos_fragment, container, false)
@@ -58,7 +57,7 @@ class MovieFragment : Fragment(), BaseMovieAdapter.OnItemClickListener {
         recyclerView!!.addItemDecoration(gridDividerDecoration!!)
 
 
-        mMovieList=  viewModel.getAllImages(activity!!.applicationContext)
+        mAlbumsList=  viewModel.getAllImages(activity!!.applicationContext)
 
 
         setAdapterWithGridLayout()
@@ -71,10 +70,10 @@ class MovieFragment : Fragment(), BaseMovieAdapter.OnItemClickListener {
 
     private fun setAdapterByGenre() {
 
-        this.movieComparator = kotlin.Comparator { o1, o2 ->  o2.date!!.compareTo(o1.date!!)}
+        this.photosComparator = kotlin.Comparator { o1, o2 ->  o1.bucket.capitalize()!!.compareTo(o2.bucket.capitalize()!!)}
 
-        Collections.sort(mMovieList, movieComparator)
-        mSectionedRecyclerAdapter = MovieAdapterByGenre(activity  as BaseActivity,mMovieList!!)
+        Collections.sort(mAlbumsList, photosComparator)
+        mSectionedRecyclerAdapter = AlbumsAdapterByList(activity  as BaseActivity,mAlbumsList!!)
     }
 
 
@@ -87,13 +86,12 @@ class MovieFragment : Fragment(), BaseMovieAdapter.OnItemClickListener {
 
     override fun onItemClicked(album: Album, position: Int) {
 
-        val anotherMap = mapOf("tag" to "date",
-            "date" to album.dateString,"position" to position,"count" to album.count,
+        val anotherMap = mapOf("tag" to "albums_list",
+            "bucket" to album.bucket,"position" to position,"count" to album.count,
             "album" to album)
         (activity as BaseActivity).startActivityputExtra(activity as BaseActivity, PictureViewActivity::class.java,anotherMap)
-        /*val index = mMovieList!!.indexOf(album)
-        mMovieList!!.remove(movie)
-        mSectionedRecyclerAdapter!!.notifyItemRemovedAtPosition(index)*/
+        /*val anotherMap = mapOf("position" to position, "tag" to "camera","directory" to "/${album.bucket}","directory_ui" to album.bucket)
+        (activity as BaseActivity).startActivityputExtra(activity as BaseActivity, PictureViewActivity::class.java,anotherMap)*/
     }
 
     override fun onSubheaderClicked(position: Int) {
@@ -106,6 +104,11 @@ class MovieFragment : Fragment(), BaseMovieAdapter.OnItemClickListener {
 
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        //Empty the old menu
+        menu!!.clear()
+
+        inflater!!.inflate(R.menu.menu_album_list, menu)
+        menu!!.findItem(R.id.menu_albums_list).isVisible = false
         super.onCreateOptionsMenu(menu, inflater)
     }
 

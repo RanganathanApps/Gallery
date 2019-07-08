@@ -13,9 +13,11 @@ open class Album : Serializable, Comparable<Album> {
     lateinit var count: String
     lateinit var albumUri: String
     lateinit var path: String
+    lateinit var bucket: String
     lateinit var date: Date
     lateinit var dateString: String
     lateinit var file: File
     lateinit var subfiles: ArrayList<File>
+    var isSelected: Boolean = false
 
 }

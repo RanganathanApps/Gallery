@@ -12,55 +12,68 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" android:id="@+id/frameLayout">
 
-        <RelativeLayout
 
+        <RelativeLayout
                 app:layout_constraintTop_toTopOf="parent"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:id="@+id/relativeLayout">
-            <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/_90sdp"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:scaleType="centerCrop"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:id="@+id/imgAlbum"/>
+                android:layout_height="wrap_content"
+                android:id="@+id/relativeLayout">
+            <RelativeLayout android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+                <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_90sdp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:scaleType="centerCrop"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        android:id="@+id/imgAlbum"/>
+                <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/imgAlbumOverlay"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_90sdp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"/>
+
+            </RelativeLayout>
+
+
+
 
 
         </RelativeLayout>
 
 
+
     </FrameLayout>
 
-    <LinearLayout
-            android:visibility="gone"
-            android:layout_gravity="center_vertical"
-            android:layout_width="match_parent"
+    <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@+id/frameLayout"
-            android:layout_marginTop="0dp"
-            android:padding="@dimen/_2sdp">
-        <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/txtPhotoName"
-                android:textColor="@color/colorGrey"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="@dimen/_9sdp"
-                android:gravity="center_vertical"
-                android:text="dfhefjhefjefefe"
-                android:layout_marginStart="@dimen/_3sdp"
+            app:layout_constraintTop_toTopOf="parent"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            android:src="@drawable/baseline_radio_button_unchecked_black_24"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:id="@+id/imgAlbumSelectable"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:layout_marginRight="@dimen/_6sdp"/>
 
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/relativeLayout"
-                android:layout_marginLeft="@dimen/_3sdp"/>
-
-
-
-
-    </LinearLayout>
+    <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            android:layout_marginEnd="@dimen/_6sdp"
+            android:layout_marginRight="@dimen/_6sdp"
+            android:src="@drawable/baseline_check_circle_white_24"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:id="@+id/imgAlbumSelected"
+            android:layout_marginTop="@dimen/_6sdp"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

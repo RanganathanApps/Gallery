@@ -3,7 +3,6 @@ package apps.ranganathan.gallery.ui.activity
 import android.Manifest
 import android.os.Bundle
 import android.os.Handler
-import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -13,10 +12,7 @@ import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import apps.ranganathan.gallery.R
-import apps.ranganathan.gallery.ui.fragment.AlbumsFragment
-import apps.ranganathan.gallery.ui.fragment.CameraFragment
-import apps.ranganathan.gallery.ui.fragment.MovieFragment
-import apps.ranganathan.gallery.ui.fragment.PhotosFragment
+import apps.ranganathan.gallery.ui.fragment.*
 import apps.ranganathan.gallery.utils.BottomNavigationBehavior
 import apps.ranganathan.gallery.viewmodel.HomeViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -34,7 +30,8 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
     private lateinit var albumsFragment: AlbumsFragment
     private lateinit var photosFragment: PhotosFragment
     private lateinit var cameraFragment: CameraFragment
-    private lateinit var movieFragment: MovieFragment
+    private lateinit var photosDateOrderFragment: PhotosDateOrderFragment
+    private lateinit var albumsListFragment: AlbumsListFragment
     private lateinit var curentFragment: Fragment
 
     private var doubleBackToExitPressedOnce = false
@@ -75,17 +72,17 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
     private fun moveToDateWise() {
         sortBy = 1
 
-        if (!::movieFragment.isInitialized) {
-            movieFragment = MovieFragment()
+        if (!::photosDateOrderFragment.isInitialized) {
+            photosDateOrderFragment = PhotosDateOrderFragment()
 
         }
 
-        if (curentFragment == movieFragment) {
+        if (curentFragment == photosDateOrderFragment) {
             return
         }
 
-        supportFragmentManager.beginTransaction().replace(R.id.frameFragmentHolder, movieFragment, "Photos").commit()
-        curentFragment = movieFragment
+        supportFragmentManager.beginTransaction().replace(R.id.frameFragmentHolder, photosDateOrderFragment, "Photos").commit()
+        curentFragment = photosDateOrderFragment
     }
 
     private fun moveToAllPhotos() {
@@ -105,6 +102,25 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
 
         supportFragmentManager.beginTransaction().replace(R.id.frameFragmentHolder, photosFragment, "Photos").commit()
         curentFragment = photosFragment
+    }
+
+    private fun moveToListAlbums() {
+
+        if (!::albumsListFragment.isInitialized) {
+            albumsListFragment = AlbumsListFragment()
+        }
+
+        if (::curentFragment.isInitialized && curentFragment == albumsListFragment) {
+            return
+        }
+
+        if (sortBy == 1) {
+            moveToDateWise()
+            return
+        }
+
+        supportFragmentManager.beginTransaction().replace(R.id.frameFragmentHolder, albumsListFragment, "Photos").commit()
+        curentFragment = albumsListFragment
     }
 
     private fun moveToAlbums() {
@@ -190,7 +206,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.menu_photos -> {
+            R.id.menu_sort_date -> {
                 sortBy = 1
                 moveToDateWise()
                 return true
@@ -198,6 +214,15 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
             R.id.menu_all_photos -> {
                 sortBy = 0
                 moveToAllPhotos()
+                return true
+            }
+            R.id.menu_albums_list -> {
+                sortBy = 0
+                moveToListAlbums()
+                return true
+            } R.id.menu_grid -> {
+                sortBy = 0
+                moveToAlbums()
                 return true
             }
 

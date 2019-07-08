@@ -37,7 +37,12 @@ class AlbumsFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         super.onCreateOptionsMenu(menu, inflater)
+        //Empty the old menu
         menu!!.clear()
+
+        inflater!!.inflate(R.menu.menu_album_list, menu)
+        menu!!.findItem(R.id.menu_grid).isVisible = false
+        super.onCreateOptionsMenu(menu, inflater)
     }
 
 

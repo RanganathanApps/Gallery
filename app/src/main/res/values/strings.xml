@@ -27,5 +27,9 @@
     <string name="app_info_hint">Photos and gallery applications</string>
     <string name="action_menu_set_as">Use as</string>
     <string name="action_slide_show">SlideShow</string>
+    <string name="menu_grid">Albums Grid</string>
+    <string name="menu_albums_list">Albums list</string>
+    <string name="menu_sort_by_date">Sort by Date</string>
+    <string name="all_photos">All photos</string>
 
 </resources>

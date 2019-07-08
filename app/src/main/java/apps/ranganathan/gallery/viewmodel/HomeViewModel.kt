@@ -121,6 +121,19 @@ open class HomeViewModel : BaseViewModel(){
                 null, null, "$orderBy DESC")
             while (cursor.moveToNext()) {
                 absolutePathOfImage = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA))
+
+                val folderName = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
+                val bucket = cursor.getString(folderName)
+                val filePathUri = Uri.parse(absolutePathOfImage)
+                val size = filePathUri.pathSegments.size -1
+                pathDirectory = StringBuffer()
+                for (i in 0 until size){
+                    pathDirectory.append("/")
+                    pathDirectory .append(filePathUri.pathSegments.get(i))
+
+                }
+
+
                 file = File(absolutePathOfImage)
                 lastModified = getFileDateOnly(file)
 
@@ -130,6 +143,8 @@ open class HomeViewModel : BaseViewModel(){
                 album.dateString = getFormattedDate(toCalendar(lastModified))
                 album.name = File(absolutePathOfImage).nameWithoutExtension
                 album.file = File(absolutePathOfImage)
+                album.bucket = bucket
+                album.path = pathDirectory.toString()
                 album.albumUri = Uri.fromFile(File(absolutePathOfImage)).toString()
                 albums.add(album)
             }
