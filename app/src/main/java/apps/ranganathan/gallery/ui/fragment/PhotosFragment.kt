@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
@@ -12,11 +13,12 @@ import apps.ranganathan.gallery.R
 import apps.ranganathan.gallery.adapter.PhotosAdapter
 import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.ui.activity.BaseActivity
-import apps.ranganathan.gallery.ui.activity.HomeActivity
 import apps.ranganathan.gallery.ui.activity.PictureViewActivity
 import apps.ranganathan.gallery.utils.PhotoSelectedListener
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.appbar.AppBarLayout
 import kotlinx.android.synthetic.main.photos_fragment.*
+import kotlinx.android.synthetic.main.toolbar_home.*
+
 
 class PhotosFragment : Fragment() {
 
@@ -27,9 +29,9 @@ class PhotosFragment : Fragment() {
 
     }
 
+    private lateinit var adapter: PhotosAdapter
     private var contentView: View? = null
     private lateinit var viewModel: PhotosViewModel
-
 
 
     override fun onCreateView(
@@ -49,17 +51,37 @@ class PhotosFragment : Fragment() {
 
     private fun initPhotos(files: List<Album>) {
 
-       //val k =  files.sortedWith(compareBy<Album> { it.file.lastModified() }.thenBy { it.file.lastModified() })
+        //val k =  files.sortedWith(compareBy<Album> { it.file.lastModified() }.thenBy { it.file.lastModified() })
 
-        val adapter = PhotosAdapter(activity!! as BaseActivity, files,photoSelctedListener = object :
+        adapter = PhotosAdapter(activity!! as BaseActivity, files, photoSelctedListener = object :
             PhotoSelectedListener {
             override fun onItemSelected(position: Int, list: List<Album>) {
-                
+                var count = 0
+                for (item in list) {
+                    if (item.isSelected) {
+                        count += 1
+                    }
+                }
+                (activity as BaseActivity).setToolBarTitle("" + count)
+                (activity as BaseActivity).toolbar.navigationIcon =
+                    ContextCompat.getDrawable(activity!!.applicationContext, R.drawable.ic_clear_white_24dp)
+                val params = (activity as BaseActivity).toolbar.getLayoutParams() as AppBarLayout.LayoutParams
+                params.scrollFlags = 0
+                (activity as BaseActivity).toolbar.setNavigationOnClickListener {
+                    adapter.isSelection = false
+                    adapter.notifyDataSetChanged()
+                    (activity as BaseActivity).setAppBar("Photos")
+                }
+               // params.scrollFlags =  AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
             }
 
             override fun onPhotoSelected(position: Int, list: List<Album>) {
                 val anotherMap = mapOf("position" to position, "tag" to "photos")
-                (activity as BaseActivity).startActivityputExtra(activity as BaseActivity, PictureViewActivity::class.java, anotherMap)
+                (activity as BaseActivity).startActivityputExtra(
+                    activity as BaseActivity,
+                    PictureViewActivity::class.java,
+                    anotherMap
+                )
             }
         })
         recyclerPhotos.layoutManager = GridLayoutManager(activity!! as BaseActivity, 3) as RecyclerView.LayoutManager?

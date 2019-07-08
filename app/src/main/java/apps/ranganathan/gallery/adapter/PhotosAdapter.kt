@@ -38,8 +38,8 @@ class PhotosAdapter(activity: BaseActivity, val userList: List<Album>, photoSelc
                 if (userList[position].isSelected) {
                     this.userList[position].isSelected = false
                 } else {
-                    photoSelctedListener.onItemSelected(position, userList)
                     this.userList[position].isSelected = true
+                    photoSelctedListener.onItemSelected(position, userList)
                 }
                 notifyItemChanged(position)
             } else {
@@ -48,8 +48,8 @@ class PhotosAdapter(activity: BaseActivity, val userList: List<Album>, photoSelc
         }
         holder.imageAlbum.setOnLongClickListener {
             isSelection = true
-            photoSelctedListener.onItemSelected(position, userList)
             userList[position].isSelected = true
+            photoSelctedListener.onItemSelected(position, userList)
             notifyDataSetChanged()
             true
 
@@ -102,23 +102,24 @@ class PhotosAdapter(activity: BaseActivity, val userList: List<Album>, photoSelc
                         R.color.colorTransLight
                     )
                 )
-            } else {
-                imgAlbumSelectable.visibility = GONE
-            }
-            if (user.isSelected) {
-                imgAlbumSelected.visibility = VISIBLE
-                imgAlbumSelected.setColorFilter(ContextCompat.getColor(activity.applicationContext, R.color.colorWhite))
-                imgAlbumSelectable.visibility = GONE
-                imageAlbum.setPadding(25, 25, 25, 25)
-                imgAlbumOverlay.setBackgroundColor(
-                    ContextCompat.getColor(
-                        activity.applicationContext,
-                        R.color.colorTransSelected
+                if (user.isSelected) {
+                    imgAlbumSelected.visibility = VISIBLE
+                    imgAlbumSelected.setColorFilter(ContextCompat.getColor(activity.applicationContext, R.color.colorWhite))
+                    imgAlbumSelectable.visibility = GONE
+                    imageAlbum.setPadding(25, 25, 25, 25)
+                    imgAlbumOverlay.setBackgroundColor(
+                        ContextCompat.getColor(
+                            activity.applicationContext,
+                            R.color.colorTransSelected
+                        )
                     )
-                )
+                } else {
+                    imgAlbumSelected.visibility = GONE
+                }
             } else {
-                imgAlbumSelected.visibility = GONE
+                imgAlbumSelectable.visibility = GONE
             }
+
         }
     }
 }
