@@ -20,10 +20,15 @@ import apps.ranganathan.gallery.adapter.AlbumsAdapterByList
 import apps.ranganathan.gallery.adapter.BaseMovieAdapter
 import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.ui.activity.BaseActivity
+import apps.ranganathan.gallery.ui.activity.HomeActivity
 import apps.ranganathan.gallery.ui.activity.PictureViewActivity
 import apps.ranganathan.gallery.utils.GridDividerDecoration
 
 class AlbumsListFragment : Fragment(), BaseMovieAdapter.OnItemClickListener {
+
+    override fun onItemSelected(albums: List<Album>, position: Int) {
+        (activity as HomeActivity).makeShareaDeleteToolbar(null,mSectionedRecyclerAdapter,mAlbumsList!!)
+    }
 
 
     private lateinit var viewModel: PhotosViewModel

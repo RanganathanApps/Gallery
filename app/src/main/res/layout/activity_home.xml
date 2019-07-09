@@ -8,11 +8,14 @@
         tools:context=".ui.activity.HomeActivity">
 
     <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBar"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:theme="@style/AppTheme.AppBarOverlay">
 
         <include layout="@layout/toolbar_home"/>
+
+        <include layout="@layout/toolbar_home_share_delete"/>
 
     </com.google.android.material.appbar.AppBarLayout>
 

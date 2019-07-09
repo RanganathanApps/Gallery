@@ -22,7 +22,8 @@ abstract class BaseMovieAdapter internal constructor(internal var movieList: Lis
     var isSelection: Boolean = false
 
     interface OnItemClickListener {
-        fun onItemClicked(movie: Album, position: Int)
+        fun onItemSelected(albums: List<Album>, position: Int)
+        fun onItemClicked(album: Album, position: Int)
         fun onSubheaderClicked(position: Int)
     }
 

@@ -61,6 +61,7 @@ class AlbumsAdapterByList(activity1:BaseActivity, itemList: List<Album>) : BaseM
         holder.imgPhoto.setOnClickListener {
             if (isSelection) {
                 this.movieList[position].isSelected = !this.movieList[position].isSelected
+                onItemClickListener.onItemSelected(movieList,position)
                 notifyItemChangedAtPosition(position)
             } else {
                 onItemClickListener.onItemClicked(album,position)
@@ -70,6 +71,7 @@ class AlbumsAdapterByList(activity1:BaseActivity, itemList: List<Album>) : BaseM
             isSelection = true
             this.movieList[position].isSelected = true
             notifyDataSetChanged()
+            onItemClickListener.onItemSelected(movieList, position)
             true
 
         }

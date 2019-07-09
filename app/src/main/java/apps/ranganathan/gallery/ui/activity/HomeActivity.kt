@@ -5,21 +5,30 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import apps.ranganathan.gallery.R
+import apps.ranganathan.gallery.adapter.BaseMovieAdapter
+import apps.ranganathan.gallery.adapter.PhotosAdapter
+import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.ui.fragment.*
 import apps.ranganathan.gallery.utils.BottomNavigationBehavior
 import apps.ranganathan.gallery.viewmodel.HomeViewModel
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_drawer.*
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.toolbar_home.*
+import kotlinx.android.synthetic.main.toolbar_home_share_delete.*
+
+
 
 
 class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelectedListener,
@@ -81,7 +90,8 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
             return
         }
 
-        supportFragmentManager.beginTransaction().replace(R.id.frameFragmentHolder, photosDateOrderFragment, "Photos").commit()
+        supportFragmentManager.beginTransaction().replace(R.id.frameFragmentHolder, photosDateOrderFragment, "Photos")
+            .commit()
         curentFragment = photosDateOrderFragment
     }
 
@@ -119,7 +129,8 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
             return
         }
 
-        supportFragmentManager.beginTransaction().replace(R.id.frameFragmentHolder, albumsListFragment, "Photos").commit()
+        supportFragmentManager.beginTransaction().replace(R.id.frameFragmentHolder, albumsListFragment, "Photos")
+            .commit()
         curentFragment = albumsListFragment
     }
 
@@ -152,6 +163,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
     }
 
     override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
+        resetToolbar()
         when (menuItem.itemId) {
             R.id.action_photos -> {
                 moveToAllPhotos()
@@ -186,7 +198,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
     }
 
     /*navigation bar Icons and drawer toogle*/
-    private fun setNavDrawer() {
+    internal fun setNavDrawer() {
 
         val toggle = ActionBarDrawerToggle(
             this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close
@@ -220,7 +232,8 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
                 sortBy = 0
                 moveToListAlbums()
                 return true
-            } R.id.menu_grid -> {
+            }
+            R.id.menu_grid -> {
                 sortBy = 0
                 moveToAlbums()
                 return true
@@ -233,7 +246,9 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
     }
 
     override fun onBackPressed() {
+
         try {
+            resetToolbar()
             if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
                 closeDrawer()
                 return
@@ -250,9 +265,67 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
                 doubleBackToExitPressedOnce = false
             }, 2000)
         } catch (e: Exception) {
-            makeLog("Exception",e.localizedMessage)
+            makeLog("Exception", e.localizedMessage)
         }
     }
 
+    fun makeReset(photosAdapter: PhotosAdapter?,baseMovieAdapter:BaseMovieAdapter?, list: List<Album>) {
+
+        for (item in list) {
+            if (item.isSelected) {
+                item.isSelected = !item.isSelected
+            }
+        }
+
+       resetToolbar()
+        if (photosAdapter!=null) {
+            photosAdapter.isSelection = false
+            photosAdapter.notifyDataSetChanged()
+        }else if (baseMovieAdapter!=null){
+            baseMovieAdapter.isSelection = false
+            baseMovieAdapter.notifyDataSetChanged()
+        }
+
+    }
+
+    private fun resetToolbar() {
+        toolbar.visibility = View.VISIBLE
+        toolbar_share_delete.visibility = View.GONE
+        enableDisableScrollFlags(toolbar,false)
+    }
+
+    fun makeShareaDeleteToolbar(
+        photosAdapter: PhotosAdapter?,
+        baseMovieAdapter:BaseMovieAdapter?, list: List<Album>) {
+
+        var count = 0
+        for (item in list) {
+            if (item.isSelected) {
+                count += 1
+            }
+        }
+        txtSelectionCountToolbar.text = "" + count
+
+        if (toolbar_share_delete.visibility == View.GONE) {
+            toolbar_share_delete.navigationIcon =
+                ContextCompat.getDrawable(applicationContext, R.drawable.ic_clear_white_24dp)
+            toolbar.visibility = View.GONE
+            toolbar_share_delete.visibility = View.VISIBLE
+            enableDisableScrollFlags(toolbar,true)
+            enableDisableScrollFlags(toolbar_share_delete,true)
+            toolbar_share_delete.setNavigationOnClickListener {
+                makeReset(photosAdapter,baseMovieAdapter, list)
+            }
+
+        }
+    }
+    private fun enableDisableScrollFlags(toolbar : Toolbar,flag :Boolean){
+        val params = toolbar.layoutParams as AppBarLayout.LayoutParams
+        if (flag) {
+            params.scrollFlags = 0
+        }else{
+            params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
+        }
+    }
 
 }

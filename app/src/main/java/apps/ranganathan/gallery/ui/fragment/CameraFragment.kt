@@ -16,6 +16,7 @@ import apps.ranganathan.gallery.R
 import apps.ranganathan.gallery.adapter.PhotosAdapter
 import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.ui.activity.BaseActivity
+import apps.ranganathan.gallery.ui.activity.HomeActivity
 import apps.ranganathan.gallery.ui.activity.PictureViewActivity
 import apps.ranganathan.gallery.utils.PhotoSelectedListener
 import kotlinx.android.synthetic.main.camera_fragment.*
@@ -25,6 +26,7 @@ import java.io.File
 
 class CameraFragment : Fragment(){
 
+    private lateinit var adapter: PhotosAdapter
     private val TAKE_PHOTO_REQUEST: Int = 12
     private val DIRECTORY = "/GalleryImages"
     private val DIRECTORY_UI = "GalleryImages"
@@ -98,10 +100,10 @@ class CameraFragment : Fragment(){
 
     private fun initAlbums(files: List<Album>) {
 
-        val adapter =  PhotosAdapter(activity!! as BaseActivity, files,photoSelctedListener = object :
+        adapter =  PhotosAdapter(activity!! as BaseActivity, files,photoSelctedListener = object :
             PhotoSelectedListener {
             override fun onItemSelected(position: Int, list: List<Album>) {
-
+                (activity as HomeActivity).makeShareaDeleteToolbar(adapter,null,list)
             }
 
             override fun onPhotoSelected(position: Int, list: List<Album>) {

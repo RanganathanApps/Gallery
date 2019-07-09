@@ -35,12 +35,8 @@ class PhotosAdapter(activity: BaseActivity, val userList: List<Album>, photoSelc
         holder.bindItems(userList[position])
         holder.imageAlbum.setOnClickListener {
             if (isSelection) {
-                if (userList[position].isSelected) {
-                    this.userList[position].isSelected = false
-                } else {
-                    this.userList[position].isSelected = true
-                    photoSelctedListener.onItemSelected(position, userList)
-                }
+                this.userList[position].isSelected = !userList[position].isSelected
+                photoSelctedListener.onItemSelected(position, userList)
                 notifyItemChanged(position)
             } else {
                 photoSelctedListener.onPhotoSelected(position, userList)
@@ -118,6 +114,14 @@ class PhotosAdapter(activity: BaseActivity, val userList: List<Album>, photoSelc
                 }
             } else {
                 imgAlbumSelectable.visibility = GONE
+                imgAlbumSelected.visibility = GONE
+                imageAlbum.setPadding(0, 0, 0, 0)
+                imgAlbumOverlay.setBackgroundColor(
+                    ContextCompat.getColor(
+                        activity.applicationContext,
+                        R.color.colorTransparent
+                    )
+                )
             }
 
         }

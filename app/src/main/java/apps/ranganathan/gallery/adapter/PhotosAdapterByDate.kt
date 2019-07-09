@@ -61,6 +61,7 @@ class PhotosAdapterByDate(activity1:BaseActivity, itemList: List<Album>) : BaseM
         holder.imgPhoto.setOnClickListener {
             if (isSelection) {
                 this.movieList[position].isSelected = !this.movieList[position].isSelected
+                onItemClickListener.onItemSelected(movieList,position)
                 notifyItemChangedAtPosition(position)
             } else {
                 onItemClickListener.onItemClicked(album,position)
@@ -70,6 +71,7 @@ class PhotosAdapterByDate(activity1:BaseActivity, itemList: List<Album>) : BaseM
             isSelection = true
             this.movieList[position].isSelected = true
             notifyDataSetChanged()
+            onItemClickListener.onItemSelected(movieList, position)
             true
 
         }
@@ -77,9 +79,7 @@ class PhotosAdapterByDate(activity1:BaseActivity, itemList: List<Album>) : BaseM
 
     override fun onBindSubheaderViewHolder(subheaderHolder: BaseMovieAdapter.SubheaderHolder, nextItemPosition: Int) {
         super.onBindSubheaderViewHolder(subheaderHolder, nextItemPosition)
-        val context = subheaderHolder.itemView.context
         val nextMovie = movieList[nextItemPosition]
-        val sectionSize = getSectionSize(getSectionIndex(subheaderHolder.adapterPosition))
         val dateString = nextMovie.dateString
 
         subheaderHolder.mSubheaderText.text = dateString

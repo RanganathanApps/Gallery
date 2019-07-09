@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.Toolbar
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/toolbar_share_delete" android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_collapseMode="pin"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:popupTheme="@style/AppTheme.PopupOverlay"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        android:background="?attr/colorPrimary">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/txtSelectionCountToolbar"
+                android:layout_width="match_parent"
+                android:text="@string/app_name"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/_12sdp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintHorizontal_bias="0.52"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imgShareToolbar"
+                android:layout_width="wrap_content"
+                android:text="@string/app_name"
+                android:layout_height="wrap_content"
+                app:tint="@color/colorWhite"
+                app:srcCompat="@drawable/ic_share_black_24dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintHorizontal_bias="0.801"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                app:layout_constraintEnd_toEndOf="parent" app:layout_constraintVertical_bias="0.531"/>
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imgDeleteToolbar"
+                android:layout_width="wrap_content"
+                android:text="@string/app_name"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/baseline_delete_outline_white_24"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintHorizontal_bias="0.953"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintVertical_bias="0.531"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.appcompat.widget.Toolbar>
