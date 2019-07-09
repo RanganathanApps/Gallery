@@ -46,10 +46,11 @@ class PhotosAdapter(activity: BaseActivity, var photos: ArrayList<Album>, photoS
             }
         }
         holder.imageAlbum.setOnLongClickListener {
-            isSelection = true
+          /*  isSelection = true
             photos[position].isSelected = true
-            photoSelctedListener.onItemSelected(position, photos)
-            notifyDataSetChanged()
+            photoSelctedListener.onItemSelected(position, photos)*/
+            photos.remove(photos[position])
+            notifyItemRemoved(position)
             true
 
         }
