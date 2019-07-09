@@ -24,7 +24,7 @@ import kotlin.collections.ArrayList
 
 open class HomeViewModel : BaseViewModel(){
 
-    private lateinit var albums: MutableList<Album>
+    private lateinit var albums: ArrayList<Album>
     val inputFormatSystem = SimpleDateFormat( "EEE MMM dd HH:mm:ss zzz yyyy", Locale.US )
     val outputFormatDateWithDay = SimpleDateFormat("EEE dd MMM yyyy")
     val outputFormatSystemDateOnly = SimpleDateFormat("dd-MM-yyyy")
@@ -68,8 +68,8 @@ open class HomeViewModel : BaseViewModel(){
        return adapter
     }
 
-    fun getAllImages(context: Context): MutableList<Album> {
-        val results = mutableListOf<Album>()
+    fun getAllImages(context: Context): ArrayList<Album> {
+        val results = ArrayList<Album>()
         results.addAll(getExternalStorageContent(context))
        // results.addAll(getInternalStorageContent(context))
         return results
@@ -449,8 +449,8 @@ open class HomeViewModel : BaseViewModel(){
         return ""
     }
 
-    fun getImages(files:ArrayList<File>): MutableList<Album> {
-        albums = arrayListOf()
+    fun getImages(files:ArrayList<File>): ArrayList<Album> {
+        albums = ArrayList<Album>()
         var album = Album()
         for (file in files) {
             album = Album()
@@ -460,5 +460,20 @@ open class HomeViewModel : BaseViewModel(){
             albums.add(album)
         }
         return albums
+    }
+
+    fun delete(context: Context, file: File): Boolean {
+        val where = MediaStore.MediaColumns.DATA + "=?"
+        val selectionArgs = arrayOf(file.absolutePath)
+        val contentResolver = context.contentResolver
+        val filesUri = MediaStore.Files.getContentUri("external")
+
+        contentResolver.delete(filesUri, where, selectionArgs)
+
+        if (file.exists()) {
+
+            contentResolver.delete(filesUri, where, selectionArgs)
+        }
+        return !file.exists()
     }
 }

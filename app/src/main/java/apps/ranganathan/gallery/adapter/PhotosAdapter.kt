@@ -14,11 +14,13 @@ import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.ui.activity.BaseActivity
 import apps.ranganathan.gallery.utils.PhotoSelectedListener
 import java.util.*
+import kotlin.collections.ArrayList
 
 
-class PhotosAdapter(activity: BaseActivity, val userList: List<Album>, photoSelctedListener: PhotoSelectedListener) :
+class PhotosAdapter(activity: BaseActivity, var photos: ArrayList<Album>, photoSelctedListener: PhotoSelectedListener) :
     RecyclerView.Adapter<PhotosAdapter.ViewHolder>() {
 
+    public lateinit var holder: ViewHolder
     public var isSelection: Boolean = false
     val activity = activity
     val photoSelctedListener = photoSelctedListener
@@ -27,25 +29,26 @@ class PhotosAdapter(activity: BaseActivity, val userList: List<Album>, photoSelc
     //this method is returning the view for each item in the list
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotosAdapter.ViewHolder {
         var itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_photos, parent, false)
-        return ViewHolder(activity, itemView, this)
+        holder = ViewHolder(activity, itemView, this)
+        return holder
     }
 
     //this method is binding the data on the list
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bindItems(userList[position])
+        holder.bindItems(getItem(position))
         holder.imageAlbum.setOnClickListener {
             if (isSelection) {
-                this.userList[position].isSelected = !userList[position].isSelected
-                photoSelctedListener.onItemSelected(position, userList)
+                this.photos[position].isSelected = !photos[position].isSelected
+                photoSelctedListener.onItemSelected(position, photos)
                 notifyItemChanged(position)
             } else {
-                photoSelctedListener.onPhotoSelected(position, userList)
+                photoSelctedListener.onPhotoSelected(position, photos)
             }
         }
         holder.imageAlbum.setOnLongClickListener {
             isSelection = true
-            userList[position].isSelected = true
-            photoSelctedListener.onItemSelected(position, userList)
+            photos[position].isSelected = true
+            photoSelctedListener.onItemSelected(position, photos)
             notifyDataSetChanged()
             true
 
@@ -54,7 +57,7 @@ class PhotosAdapter(activity: BaseActivity, val userList: List<Album>, photoSelc
 
     //this method is giving the size of the list
     override fun getItemCount(): Int {
-        return userList.size
+        return photos.size
     }
 
     override fun getItemId(position: Int): Long {
@@ -63,6 +66,22 @@ class PhotosAdapter(activity: BaseActivity, val userList: List<Album>, photoSelc
 
     override fun getItemViewType(position: Int): Int {
         return position
+    }
+
+    fun getItem(position: Int): Album {
+        return photos[position]
+    }
+
+    fun update(list: MutableList<Album>) {
+        photos.clear()
+        photos.addAll(list)
+        //photos = list
+        notifyDataSetChanged()
+    }
+
+    fun removeAt(position: Int) {
+        photos.removeAt(position)
+        notifyItemRemoved(position)
     }
 
 

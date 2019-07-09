@@ -25,7 +25,7 @@ class PhotosFragment : Fragment() {
 
     }
 
-    private lateinit var adapter: PhotosAdapter
+    internal lateinit var adapter: PhotosAdapter
     private var contentView: View? = null
     private lateinit var viewModel: PhotosViewModel
 
@@ -42,17 +42,25 @@ class PhotosFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(PhotosViewModel::class.java)
         if (recyclerPhotos.adapter == null)
-            initPhotos(viewModel.getAllImages(activity!!.applicationContext))
+            loadPhotos()
     }
 
-    private fun initPhotos(files: List<Album>) {
+    internal fun loadPhotos() {
+        initPhotos(viewModel.getAllImages(activity!!.applicationContext))
+    }
+
+    internal fun updatePhotos() {
+        initPhotos(viewModel.getAllImages(activity!!.applicationContext))
+    }
+
+    private fun initPhotos(files: ArrayList<Album>) {
 
         //val k =  files.sortedWith(compareBy<Album> { it.file.lastModified() }.thenBy { it.file.lastModified() })
 
         adapter = PhotosAdapter(activity!! as BaseActivity, files, photoSelctedListener = object :
             PhotoSelectedListener {
             override fun onItemSelected(position: Int, list: List<Album>) {
-                (activity as HomeActivity).makeShareaDeleteToolbar(adapter,null,list)
+                (activity as HomeActivity).makeShareaDeleteToolbar(adapter, null, list)
             }
 
             override fun onPhotoSelected(position: Int, list: List<Album>) {
@@ -69,6 +77,11 @@ class PhotosFragment : Fragment() {
         recyclerPhotos.adapter = adapter
 
 
+    }
+
+    internal fun updateFiles(photos:MutableList<Album>){
+
+        adapter.update(photos)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {

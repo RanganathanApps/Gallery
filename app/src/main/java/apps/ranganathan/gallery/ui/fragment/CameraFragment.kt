@@ -98,7 +98,7 @@ class CameraFragment : Fragment(){
         }
     }
 
-    private fun initAlbums(files: List<Album>) {
+    private fun initAlbums(files: ArrayList<Album>) {
 
         adapter =  PhotosAdapter(activity!! as BaseActivity, files,photoSelctedListener = object :
             PhotoSelectedListener {

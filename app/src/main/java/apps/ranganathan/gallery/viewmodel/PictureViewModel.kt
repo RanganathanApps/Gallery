@@ -36,19 +36,6 @@ open class PictureViewModel : HomeViewModel(){
 
 
 
-    fun delete(context: Context, file: File): Boolean {
-        val where = MediaStore.MediaColumns.DATA + "=?"
-        val selectionArgs = arrayOf(file.absolutePath)
-        val contentResolver = context.contentResolver
-        val filesUri = MediaStore.Files.getContentUri("external")
 
-        contentResolver.delete(filesUri, where, selectionArgs)
-
-        if (file.exists()) {
-
-            contentResolver.delete(filesUri, where, selectionArgs)
-        }
-        return !file.exists()
-    }
 
 }

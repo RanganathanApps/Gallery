@@ -181,11 +181,11 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
                                 viewpagerPhotos.adapter = adapter
                                 viewpagerPhotos.adapter!!.notifyDataSetChanged()
 
-                                if (position+1<userList.size) {
+                               /* if (position+1<userList.size) {
                                     position += 1
                                 }else{
                                     position = 0
-                                }
+                                }*/
                                 viewpagerPhotos.currentItem = position
                                 // pictureViewModel.setMediaMounted(context, userList[position].file.absolutePath)
 

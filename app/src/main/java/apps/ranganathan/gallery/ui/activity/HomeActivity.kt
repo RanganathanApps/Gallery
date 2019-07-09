@@ -1,6 +1,9 @@
 package apps.ranganathan.gallery.ui.activity
 
 import android.Manifest
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.view.Menu
@@ -10,9 +13,11 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import apps.ranganathan.configlibrary.utils.Utils
 import apps.ranganathan.gallery.R
 import apps.ranganathan.gallery.adapter.BaseMovieAdapter
 import apps.ranganathan.gallery.adapter.PhotosAdapter
@@ -25,10 +30,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_drawer.*
 import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.android.synthetic.main.content_picture_view.*
+import kotlinx.android.synthetic.main.photos_fragment.*
 import kotlinx.android.synthetic.main.toolbar_home.*
 import kotlinx.android.synthetic.main.toolbar_home_share_delete.*
-
-
+import java.net.URI
 
 
 class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelectedListener,
@@ -44,6 +50,9 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
     private lateinit var curentFragment: Fragment
 
     private var doubleBackToExitPressedOnce = false
+
+    var  photosAdapter: PhotosAdapter? = null
+    private var  baseAlbumsAdapter: BaseMovieAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,8 +84,106 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
             }
         }, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
+        imgShareToolbar.setOnClickListener {
+
+            if (photosAdapter!=null) {
+                shareMultileFiles(photosAdapter!!.photos)
+            }
+            if (baseAlbumsAdapter!=null) {
+                shareMultileFiles(baseAlbumsAdapter!!.movieList)
+            }
+        }
+        imgDeleteToolbar.setOnClickListener {
+            if (photosAdapter!=null) {
+                deleteMultileFiles(photosAdapter!!.photos)
+            }
+            if (baseAlbumsAdapter!=null) {
+                deleteMultileFiles(baseAlbumsAdapter!!.movieList)
+            }
+
+        }
+
 
     }
+
+    private fun deleteMultileFiles(list: List<Album>){
+        showConfirmationAlert(
+            "Delete",
+            "Image will be deleted permanently. do you want to continue?",
+            object : Utils.OnClickListener {
+                override fun onClick(v: View) {
+                    photosFragment.adapter.photos.remove(list[2])
+                    photosFragment.adapter!!.notifyItemRemoved(2)
+
+                   /* var ml = list as MutableList<Album>
+                    var removable = mutableListOf<Int>()
+                    val iterator = ml.iterator()
+                    var i = 0
+                    while(iterator.hasNext()){
+                        val item = iterator.next()
+                        i++
+                        if(item.isSelected){
+                            removable.add(i)
+                        }
+                    }
+                    for (position in removable) {
+                        photosFragment.adapter.photos.removeAt(position)
+                        recyclerPhotos.removeViewAt(position)
+                        recyclerPhotos.adapter!!.notifyItemRemoved(position)
+                    }
+
+                    showToast("Files Deleted!")
+                    when(curentFragment){
+                        is PhotosFragment->{
+                           // photosFragment.updateFiles(list)
+                        }
+                        is AlbumsFragment->{
+
+                        }
+                        is AlbumsListFragment->{
+                            moveToListAlbums()
+                        }
+                        is PhotosDateOrderFragment->{
+                            moveToDateWise()
+                        }
+                        is CameraFragment->{
+                            moveToCamera()
+                        }
+                    }*/
+
+
+
+                }
+
+            },
+            object : Utils.OnClickListener {
+                override fun onClick(v: View) {
+                }
+
+            })
+
+    }
+
+
+    private fun shareMultileFiles(list: List<Album>){
+        var uris = ArrayList<Uri> ()
+
+        for (item in list){
+            if (item.isSelected) {
+                val apkURI = FileProvider.getUriForFile(
+                    context,
+                    context.applicationContext
+                        .packageName + ".provider", item.file
+                )
+                uris.add(apkURI)
+            }
+        }
+        val shareIntent = Intent(Intent.ACTION_SEND_MULTIPLE)
+        shareIntent.type = "image/*"
+        shareIntent.putExtra(Intent.EXTRA_STREAM, uris)
+        startActivity(Intent.createChooser(shareIntent, "Share using"))
+    }
+
 
     private fun moveToDateWise() {
         sortBy = 1
@@ -296,8 +403,9 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
 
     fun makeShareaDeleteToolbar(
         photosAdapter: PhotosAdapter?,
-        baseMovieAdapter:BaseMovieAdapter?, list: List<Album>) {
-
+        baseAlbumsAdapter:BaseMovieAdapter?, list: List<Album>) {
+        this.photosAdapter = photosAdapter
+        this.baseAlbumsAdapter = baseAlbumsAdapter
         var count = 0
         for (item in list) {
             if (item.isSelected) {
@@ -314,7 +422,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
             enableDisableScrollFlags(toolbar,true)
             enableDisableScrollFlags(toolbar_share_delete,true)
             toolbar_share_delete.setNavigationOnClickListener {
-                makeReset(photosAdapter,baseMovieAdapter, list)
+                makeReset(photosAdapter,baseAlbumsAdapter, list)
             }
 
         }
