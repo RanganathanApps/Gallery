@@ -114,7 +114,6 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
             object : Utils.OnClickListener {
                 override fun onClick(v: View) {
                 }
-
             })
 
     }
