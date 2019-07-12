@@ -1,5 +1,6 @@
 package apps.ranganathan.gallery.adapter
 
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -17,14 +18,47 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class PhotosAdapter(activity: BaseActivity, var photos: ArrayList<Album>, photoSelctedListener: PhotoSelectedListener) :
-    RecyclerView.Adapter<PhotosAdapter.ViewHolder>() {
+class PhotosAdapter(activity: BaseActivity,  photoSelctedListener: PhotoSelectedListener) :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        holder as PhotosAdapter.ViewHolder
+        holder.bindItems(getItem(position))
+        holder.imageAlbum.setOnClickListener {
+            val album = getItem(position)
+            if (isSelection) {
+                album.isSelected = !album.isSelected
+                photoSelctedListener.onItemSelected(position, photos as List<Album>)
+                notifyItemChanged(position)
+            } else {
+                photoSelctedListener.onPhotoSelected(position, photos as List<Album>)
+            }
+        }
+        holder.imageAlbum.setOnLongClickListener {
+            /*  isSelection = true
+              photos[position].isSelected = true
+              photoSelctedListener.onItemSelected(position, photos)*/
+            (photos as MutableList<Any>).removeAt(position)
+            notifyItemRemoved(position)
+            Handler().postDelayed({
+                //doSomethingHere()
+                notifyDataSetChanged()
+            }, 1000)
+            true
+
+        }
+    }
 
     public lateinit var holder: ViewHolder
     public var isSelection: Boolean = false
     val activity = activity
     val photoSelctedListener = photoSelctedListener
 
+    lateinit var photos : List<Any>
+
+    fun setitems(list:List<Any>){
+        this.photos = list
+    }
 
     //this method is returning the view for each item in the list
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotosAdapter.ViewHolder {
@@ -34,57 +68,16 @@ class PhotosAdapter(activity: BaseActivity, var photos: ArrayList<Album>, photoS
     }
 
     //this method is binding the data on the list
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bindItems(getItem(position))
-        holder.imageAlbum.setOnClickListener {
-            if (isSelection) {
-                this.photos[position].isSelected = !photos[position].isSelected
-                photoSelctedListener.onItemSelected(position, photos)
-                notifyItemChanged(position)
-            } else {
-                photoSelctedListener.onPhotoSelected(position, photos)
-            }
-        }
-        holder.imageAlbum.setOnLongClickListener {
-          /*  isSelection = true
-            photos[position].isSelected = true
-            photoSelctedListener.onItemSelected(position, photos)*/
-            photos.remove(photos[position])
-            notifyItemRemoved(position)
-            true
 
-        }
-    }
 
     //this method is giving the size of the list
     override fun getItemCount(): Int {
-        return photos.size
-    }
-
-    override fun getItemId(position: Int): Long {
-        return position.toLong()
-    }
-
-    override fun getItemViewType(position: Int): Int {
-        return position
+        return this.photos.size
     }
 
     fun getItem(position: Int): Album {
-        return photos[position]
+        return ( this.photos[position] as  Album)
     }
-
-    fun update(list: MutableList<Album>) {
-        photos.clear()
-        photos.addAll(list)
-        //photos = list
-        notifyDataSetChanged()
-    }
-
-    fun removeAt(position: Int) {
-        photos.removeAt(position)
-        notifyItemRemoved(position)
-    }
-
 
     //the class is hodling the list view
     class ViewHolder(
@@ -92,7 +85,6 @@ class PhotosAdapter(activity: BaseActivity, var photos: ArrayList<Album>, photoS
         itemView: View,
         photosAdapter: PhotosAdapter
     ) : RecyclerView.ViewHolder(itemView) {
-        private val mRandom = Random()
         val activity = activity
         val photosAdapter = photosAdapter
         val imageAlbum = itemView.findViewById(R.id.imgAlbum) as AppCompatImageView

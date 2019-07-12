@@ -68,6 +68,7 @@
                   android:label="@string/app_name"
                   android:configChanges="orientation|screenSize|keyboardHidden"
                   android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".ui.activity.RecyclerListActivity"/>
 
 
     </application>

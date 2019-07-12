@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModelProviders
 import apps.ranganathan.configlibrary.utils.Utils
 import apps.ranganathan.gallery.R
 import apps.ranganathan.gallery.adapter.BaseMovieAdapter
+import apps.ranganathan.gallery.adapter.ListAdapter
 import apps.ranganathan.gallery.adapter.PhotosAdapter
 import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.ui.fragment.*
@@ -51,7 +52,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
 
     private var doubleBackToExitPressedOnce = false
 
-    var  photosAdapter: PhotosAdapter? = null
+    var  photosAdapter: ListAdapter? = null
     private var  baseAlbumsAdapter: BaseMovieAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -87,74 +88,28 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
         imgShareToolbar.setOnClickListener {
 
             if (photosAdapter!=null) {
-                shareMultileFiles(photosAdapter!!.photos)
+                shareMultileFiles(photosAdapter!!.listItems as List<Album>)
             }
             if (baseAlbumsAdapter!=null) {
                 shareMultileFiles(baseAlbumsAdapter!!.movieList)
             }
         }
         imgDeleteToolbar.setOnClickListener {
-            if (photosAdapter!=null) {
-                deleteMultileFiles(photosAdapter!!.photos)
-            }
-            if (baseAlbumsAdapter!=null) {
-                deleteMultileFiles(baseAlbumsAdapter!!.movieList)
-            }
+            deleteMultipleFiles()
 
         }
 
 
     }
 
-    private fun deleteMultileFiles(list: List<Album>){
+    private fun deleteMultipleFiles(){
         showConfirmationAlert(
             "Delete",
             "Image will be deleted permanently. do you want to continue?",
             object : Utils.OnClickListener {
                 override fun onClick(v: View) {
-                    photosFragment.adapter.photos.remove(list[2])
-                    photosFragment.adapter!!.notifyItemRemoved(2)
-
-                   /* var ml = list as MutableList<Album>
-                    var removable = mutableListOf<Int>()
-                    val iterator = ml.iterator()
-                    var i = 0
-                    while(iterator.hasNext()){
-                        val item = iterator.next()
-                        i++
-                        if(item.isSelected){
-                            removable.add(i)
-                        }
-                    }
-                    for (position in removable) {
-                        photosFragment.adapter.photos.removeAt(position)
-                        recyclerPhotos.removeViewAt(position)
-                        recyclerPhotos.adapter!!.notifyItemRemoved(position)
-                    }
-
-                    showToast("Files Deleted!")
-                    when(curentFragment){
-                        is PhotosFragment->{
-                           // photosFragment.updateFiles(list)
-                        }
-                        is AlbumsFragment->{
-
-                        }
-                        is AlbumsListFragment->{
-                            moveToListAlbums()
-                        }
-                        is PhotosDateOrderFragment->{
-                            moveToDateWise()
-                        }
-                        is CameraFragment->{
-                            moveToCamera()
-                        }
-                    }*/
-
-
-
+                    photosFragment.adapter.deleteItems(6)
                 }
-
             },
             object : Utils.OnClickListener {
                 override fun onClick(v: View) {
@@ -376,7 +331,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
         }
     }
 
-    fun makeReset(photosAdapter: PhotosAdapter?,baseMovieAdapter:BaseMovieAdapter?, list: List<Album>) {
+    fun makeReset(photosAdapter: ListAdapter?,baseMovieAdapter:BaseMovieAdapter?, list: List<Album>) {
 
         for (item in list) {
             if (item.isSelected) {
@@ -402,9 +357,8 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
     }
 
     fun makeShareaDeleteToolbar(
-        photosAdapter: PhotosAdapter?,
+        photosAdapter: ListAdapter?,
         baseAlbumsAdapter:BaseMovieAdapter?, list: List<Album>) {
-        this.photosAdapter = photosAdapter
         this.baseAlbumsAdapter = baseAlbumsAdapter
         var count = 0
         for (item in list) {

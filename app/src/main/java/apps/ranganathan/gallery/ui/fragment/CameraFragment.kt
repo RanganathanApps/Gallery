@@ -100,7 +100,7 @@ class CameraFragment : Fragment(){
 
     private fun initAlbums(files: ArrayList<Album>) {
 
-        adapter =  PhotosAdapter(activity!! as BaseActivity, files,photoSelctedListener = object :
+       /* adapter =  PhotosAdapter(activity!! as BaseActivity, photoSelctedListener = object :
             PhotoSelectedListener {
             override fun onItemSelected(position: Int, list: List<Album>) {
                 (activity as HomeActivity).makeShareaDeleteToolbar(adapter,null,list)
@@ -113,7 +113,8 @@ class CameraFragment : Fragment(){
         })
         recyclerPhotos.layoutManager = GridLayoutManager(activity!! as BaseActivity, 3) as RecyclerView.LayoutManager?
         recyclerPhotos.setHasFixedSize(true)
-        recyclerPhotos.adapter = adapter
+        adapter.setitems(files)
+        recyclerPhotos.adapter = adapter*/
 
     }
 
