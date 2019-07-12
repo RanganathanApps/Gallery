@@ -247,36 +247,9 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
         return true
     }
 
-    private fun closeDrawer() {
-        drawer_layout.closeDrawer(GravityCompat.START)
-    }
 
 
-    private fun setNavigation() {
-        navigation.setOnNavigationItemSelectedListener(this)
-        nav_view.setNavigationItemSelectedListener(this)
-        val layoutParams = navigation.layoutParams as CoordinatorLayout.LayoutParams
-        layoutParams.behavior = BottomNavigationBehavior()
-    }
 
-    /*navigation bar Icons and drawer toogle*/
-    internal fun setNavDrawer() {
-
-        val toggle = ActionBarDrawerToggle(
-            this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close
-        )
-        drawer_layout.addDrawerListener(toggle)
-        toggle.syncState()
-
-        toggle.drawerArrowDrawable.color = ContextCompat.getColor(context, R.color.colorWhite)
-    }
-
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
@@ -307,29 +280,6 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
         }
     }
 
-    override fun onBackPressed() {
-
-        try {
-            resetToolbar()
-            if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
-                closeDrawer()
-                return
-            }
-            if (doubleBackToExitPressedOnce) {
-                super.onBackPressed()
-                return
-            }
-            this.doubleBackToExitPressedOnce = true
-            showMsg(nav_view, "click BACK again to exit")
-            vibrate(context)
-
-            Handler().postDelayed(Runnable {
-                doubleBackToExitPressedOnce = false
-            }, 2000)
-        } catch (e: Exception) {
-            makeLog("Exception", e.localizedMessage)
-        }
-    }
 
     fun makeReset(photosAdapter: ListAdapter?,baseMovieAdapter:BaseMovieAdapter?, list: List<Album>) {
 
@@ -340,9 +290,9 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
         }
 
        resetToolbar()
-        if (photosAdapter!=null) {
-            photosAdapter.isSelection = false
-            photosAdapter.notifyDataSetChanged()
+        if (photosFragment.getAdapter()!=null) {
+            photosFragment.getAdapter().isSelection = false
+            photosFragment.getAdapter().notifyDataSetChanged()
         }else if (baseMovieAdapter!=null){
             baseMovieAdapter.isSelection = false
             baseMovieAdapter.notifyDataSetChanged()
@@ -387,6 +337,61 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
             params.scrollFlags = 0
         }else{
             params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
+        }
+    }
+
+    private fun closeDrawer() {
+        drawer_layout.closeDrawer(GravityCompat.START)
+    }
+
+
+    private fun setNavigation() {
+        navigation.setOnNavigationItemSelectedListener(this)
+        nav_view.setNavigationItemSelectedListener(this)
+        val layoutParams = navigation.layoutParams as CoordinatorLayout.LayoutParams
+        layoutParams.behavior = BottomNavigationBehavior()
+    }
+
+    /*navigation bar Icons and drawer toogle*/
+    internal fun setNavDrawer() {
+
+        val toggle = ActionBarDrawerToggle(
+            this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close
+        )
+        drawer_layout.addDrawerListener(toggle)
+        toggle.syncState()
+
+        toggle.drawerArrowDrawable.color = ContextCompat.getColor(context, R.color.colorWhite)
+    }
+
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onBackPressed() {
+
+        try {
+            resetToolbar()
+            if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
+                closeDrawer()
+                return
+            }
+            if (doubleBackToExitPressedOnce) {
+                super.onBackPressed()
+                return
+            }
+            this.doubleBackToExitPressedOnce = true
+            showMsg(nav_view, "click BACK again to exit")
+            vibrate(context)
+
+            Handler().postDelayed(Runnable {
+                doubleBackToExitPressedOnce = false
+            }, 2000)
+        } catch (e: Exception) {
+            makeLog("Exception", e.localizedMessage)
         }
     }
 

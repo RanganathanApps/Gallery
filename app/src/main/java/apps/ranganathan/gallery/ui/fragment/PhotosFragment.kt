@@ -33,6 +33,9 @@ class PhotosFragment : Fragment() {
     private var contentView: View? = null
     private lateinit var viewModel: PhotosViewModel
 
+    fun getAdapter():ListAdapter{
+        return adapter
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
