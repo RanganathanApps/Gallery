@@ -3,24 +3,14 @@ package apps.ranganathan.gallery.viewholders
 import android.view.View
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.RecyclerView
 import apps.ranganathan.gallery.R
 import apps.ranganathan.gallery.adapter.ListAdapter
 import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.ui.activity.BaseActivity
 
-class AlbumViewHolder : RecyclerView.ViewHolder, ListAdapter.Binder<Album> {
+class AlbumViewHolder : BaseViewHolder{
 
-    var activity: BaseActivity? = null
-    var adapter: ListAdapter? = null
-    internal var clickable: Clickable? = null
-
-    internal fun setActivity(activity : BaseActivity, adapter: ListAdapter, clickable: Clickable){
-        this.activity = activity
-        this.adapter = adapter
-        this.clickable = clickable
-    }
-
+    private lateinit var album: Album
     var photo: AppCompatImageView
     var imgAlbumSelectable: AppCompatImageView
     var imgAlbumSelected: AppCompatImageView
@@ -34,7 +24,8 @@ class AlbumViewHolder : RecyclerView.ViewHolder, ListAdapter.Binder<Album> {
 
     }
 
-    override fun bind(album: Album) {
+    override fun bind(data: Any) {
+        album = data as Album
         (activity as BaseActivity).loadImage(
             album.albumUri,
             photo,
@@ -50,23 +41,12 @@ class AlbumViewHolder : RecyclerView.ViewHolder, ListAdapter.Binder<Album> {
                 )
             )
             if (album.isSelected) {
-                imgAlbumSelected.visibility = View.VISIBLE
-                imgAlbumSelected.setColorFilter(ContextCompat.getColor(activity!!.applicationContext, R.color.colorWhite))
-                imgAlbumSelectable.visibility = View.GONE
-                photo.setPadding(25, 25, 25, 25)
-                imgAlbumOverlay.setBackgroundColor(
-                    ContextCompat.getColor(
-                        activity!!.applicationContext,
-                        R.color.colorTransSelected
-                    )
-                )
+                makeSelection()
             } else {
-                imgAlbumSelected.visibility = View.GONE
+                undoSelection()
             }
         } else {
-            imgAlbumSelectable.visibility = View.GONE
-            imgAlbumSelected.visibility = View.GONE
-            photo.setPadding(0, 0, 0, 0)
+            undoSelection()
             imgAlbumOverlay.setBackgroundColor(
                 ContextCompat.getColor(
                     activity!!.applicationContext,
@@ -76,17 +56,29 @@ class AlbumViewHolder : RecyclerView.ViewHolder, ListAdapter.Binder<Album> {
         }
     }
 
-    override fun clicked(adapter: ListAdapter, index: Int) {
-        clickable!!.clicked(adapter,index)
-    }
-    override fun onLongClicked(adapter: ListAdapter, index: Int) {
-        clickable!!.onLongClicked(adapter,index)
+    private fun makeSelection() {
+        imgAlbumSelected.visibility = View.VISIBLE
+        imgAlbumSelected.setColorFilter(
+            ContextCompat.getColor(
+                activity!!.applicationContext,
+                R.color.colorWhite
+            )
+        )
+        imgAlbumSelectable.visibility = View.GONE
+        photo.setPadding(25, 25, 25, 25)
+        imgAlbumOverlay.setBackgroundColor(
+            ContextCompat.getColor(
+                activity!!.applicationContext,
+                R.color.colorTransSelected
+            )
+        )
     }
 
-    /*interface for data binding*/
-    internal interface Clickable{
-        fun clicked(adapter:ListAdapter,index:Int)
-        fun onLongClicked(adapter:ListAdapter,index:Int)
+    private fun undoSelection() {
+        imgAlbumSelected.visibility = View.GONE
+        photo.setPadding(0, 0, 0, 0)
+
     }
+
 
 }

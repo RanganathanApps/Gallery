@@ -16,6 +16,7 @@ import apps.ranganathan.gallery.ui.activity.PictureViewActivity
 import apps.ranganathan.gallery.ui.activity.RecyclerListActivity
 import apps.ranganathan.gallery.utils.Movie
 import apps.ranganathan.gallery.viewholders.AlbumViewHolder
+import apps.ranganathan.gallery.viewholders.BaseViewHolder
 import kotlinx.android.synthetic.main.photos_fragment.*
 
 
@@ -99,14 +100,14 @@ class PhotosFragment : Fragment() {
                  when (viewType) {
                     R.layout.item_photos -> {
                        val hol=  AlbumViewHolder(view)
-                        hol.setActivity(activity as BaseActivity,adapter = adapter, clickable = object : AlbumViewHolder.Clickable {
+                        hol.setActivity(activity as BaseActivity,adapter = adapter, clickable = object : BaseViewHolder.Clickable {
 
                             override fun clicked(adapter: ListAdapter, index: Int) {
                                 var album =  adapter.listItems[index] as Album
                                 if (adapter.isSelection) {
                                     album.isSelected = !album.isSelected
-                                    (activity as HomeActivity).makeShareaDeleteToolbar(adapter, null, adapter.listItems as List<Album>)
                                     adapter.notifyItemChanged(index)
+                                    (activity as HomeActivity).makeShareaDeleteToolbar(adapter, null, adapter.listItems as List<Album>)
                                 } else {
                                     val anotherMap = mapOf("position" to index, "tag" to "photos")
                                     (activity as BaseActivity).startActivityputExtra(
