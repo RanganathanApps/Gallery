@@ -5,13 +5,20 @@ import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.ui.activity.BaseActivity
 import android.os.Handler
 import android.view.View
+import android.widget.ImageView
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
 
 
-class PhotosAdapterByDate(activity1:BaseActivity, itemList: List<Album>) : BaseSectionAdapter(itemList) {
+class PhotosAdapterByDate(activity1:BaseActivity) : BaseSectionAdapter() {
 
 
+   internal lateinit var itemsList:List<Album>
 
+    fun setDataList(data: List<Album>){
+        itemsList = data
+    }
 
     val activity = activity1
     override fun onPlaceSubheaderBetweenItems(position: Int): Boolean {
@@ -21,7 +28,7 @@ class PhotosAdapterByDate(activity1:BaseActivity, itemList: List<Album>) : BaseS
         return movieGenre != nextMovieGenre
     }
 
-    override fun onBindItemViewHolder(holder: BaseSectionAdapter.MovieViewHolder, position: Int) {
+    override fun onBindItemViewHolder(holder: MovieViewHolder, position: Int) {
         val album = itemsList[position]
 
         activity.loadImage(
@@ -56,24 +63,23 @@ class PhotosAdapterByDate(activity1:BaseActivity, itemList: List<Album>) : BaseS
         } else {
             holder.imgAlbumSelected.visibility = View.GONE
         }
-
-        holder.imgPhoto.setOnClickListener {
+        holder.itemView.setOnClickListener {
             if (isSelection) {
-                this.itemsList[position].isSelected = !this.itemsList[position].isSelected
-                onItemClickListener.onItemSelected(itemsList,position)
-                notifyItemChangedAtPosition(position)
-            } else {
-                onItemClickListener.onItemClicked(album,position)
+                onItemClickListener.onItemSelected(itemsList, position)
+            }else{
+                onItemClickListener.onItemClicked(itemsList[position], position)
             }
         }
-        holder.imgPhoto.setOnLongClickListener {
+        holder.itemView.setOnLongClickListener {
             isSelection = true
-            this.itemsList[position].isSelected = true
-            notifyDataSetChanged()
-            onItemClickListener.onItemSelected(itemsList, position)
+            itemsList[position].isSelected =  true
+            notifyItemChanged(position)
+           // onItemClickListener.onItemSelected(itemsList, position)
             true
 
         }
+
+
     }
 
     override fun onBindSubheaderViewHolder(subheaderHolder: BaseSectionAdapter.SubheaderHolder, nextItemPosition: Int) {
@@ -83,6 +89,20 @@ class PhotosAdapterByDate(activity1:BaseActivity, itemList: List<Album>) : BaseS
 
         subheaderHolder.mSubheaderText.text = dateString
     }
+
+    fun deleteItems() {
+        var temp = arrayListOf<Any>()
+        for (i in 0 until itemsList.size) {
+            if ((itemsList[i] as Album).isSelected)
+                temp.add(itemsList[i])
+        }
+        (this.itemsList as MutableList<Any>).removeAll(temp)
+        Handler().postDelayed({
+            //doSomethingHere()
+            notifyDataSetChanged()
+        }, 1000)
+    }
+
 
 
 }

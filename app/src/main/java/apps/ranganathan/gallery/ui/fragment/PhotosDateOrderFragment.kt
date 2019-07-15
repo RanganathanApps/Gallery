@@ -28,7 +28,18 @@ import apps.ranganathan.gallery.utils.GridDividerDecoration
 class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
 
     override fun onItemSelected(albums: List<Album>, position: Int) {
-        (activity as HomeActivity).makeShareaDeleteToolbar(null,mSectionedRecyclerAdapter,mPhotosList!!)
+        albums[position].isSelected = !albums[position].isSelected
+        getAdapter().notifyItemChanged(position)
+
+       /* itemView.setOnLongClickListener {
+            onItemClickListener.onItemSelected(itemsList, position)
+            isSelection = true
+            this.itemsList[position].isSelected = true
+            notifyDataSetChanged()
+            onItemClickListener.onItemSelected(itemsList, position)
+            true
+        }*/
+        (activity as HomeActivity).makeShareaDeleteToolbar(null,mSectionedRecyclerAdapter,getAdapter().itemsList!!)
     }
 
 
@@ -39,7 +50,7 @@ class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListen
 
     private var recyclerView: RecyclerView? = null
 
-    internal var mSectionedRecyclerAdapter: BaseSectionAdapter? = null
+    internal var mSectionedRecyclerAdapter: PhotosAdapterByDate? = null
 
     private var gridDividerDecoration: GridDividerDecoration? = null
 
@@ -75,7 +86,7 @@ class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListen
         recyclerView!!.adapter = mSectionedRecyclerAdapter
     }
 
-    fun getAdapter(): BaseSectionAdapter {
+    fun getAdapter(): PhotosAdapterByDate {
         return mSectionedRecyclerAdapter!!
     }
 
@@ -84,7 +95,10 @@ class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListen
         this.photosComparator = kotlin.Comparator { o1, o2 ->  o2.date!!.compareTo(o1.date!!)}
 
         Collections.sort(mPhotosList, photosComparator)
-        mSectionedRecyclerAdapter = PhotosAdapterByDate(activity  as BaseActivity,mPhotosList!!)
+        mSectionedRecyclerAdapter = PhotosAdapterByDate(activity  as BaseActivity)
+        mPhotosList?.let { mSectionedRecyclerAdapter!!.setData(it) }
+        mPhotosList?.let { mSectionedRecyclerAdapter!!.setDataList(it) }
+
     }
 
 

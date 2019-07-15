@@ -16,11 +16,17 @@ import apps.ranganathan.gallery.model.Album
 import com.zhukic.sectionedrecyclerview.SectionedRecyclerViewAdapter
 
 
-abstract class BaseSectionAdapter internal constructor(internal var itemsList: List<Album>) :
+abstract class BaseSectionAdapter  :
     SectionedRecyclerViewAdapter<BaseSectionAdapter.SubheaderHolder, BaseSectionAdapter.MovieViewHolder>() {
 
+    lateinit var listItems: List<Any>
+    fun setData(data: List<Any>){
+        listItems = data
+    }
+
     internal lateinit var onItemClickListener: OnItemClickListener
-    var isSelection: Boolean = false
+    public var isSelection: Boolean = false
+
 
     interface OnItemClickListener {
         fun onItemSelected(albums: List<Album>, position: Int)
@@ -47,23 +53,16 @@ abstract class BaseSectionAdapter internal constructor(internal var itemsList: L
 
     }
 
-    class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        var imgPhoto: ImageView
-        var imgAlbumSelectable: AppCompatImageView
-        var imgAlbumSelected: AppCompatImageView
-        var imgAlbumOverlay: AppCompatImageView
-
-        init {
-            this.imgPhoto = itemView.findViewById<ImageView>(R.id.imgAlbum)
-            imgAlbumSelectable = itemView.findViewById(R.id.imgAlbumSelectable) as AppCompatImageView
-            imgAlbumSelected = itemView.findViewById(R.id.imgAlbumSelected) as AppCompatImageView
-            imgAlbumOverlay = itemView.findViewById(R.id.imgAlbumOverlay) as AppCompatImageView
-        }
-    }
 
     override fun onCreateItemViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
-        return MovieViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_photos, parent, false))
+        return MovieViewHolder(
+            LayoutInflater.from(parent.context).inflate(
+                R.layout.item_photos,
+                parent,
+                false
+            )
+        )
     }
 
     override fun onCreateSubheaderViewHolder(parent: ViewGroup, viewType: Int): SubheaderHolder {
@@ -96,24 +95,36 @@ abstract class BaseSectionAdapter internal constructor(internal var itemsList: L
     }
 
     override fun getItemSize(): Int {
-        return itemsList.size
+        return listItems.size
     }
 
     fun setOnItemClickListener(onItemClickListener: OnItemClickListener) {
         this.onItemClickListener = onItemClickListener
     }
 
-    fun deleteItems() {
-        var temp = arrayListOf<Any>()
-        for (i in 0 until itemsList.size) {
-            if ((itemsList[i] as Album).isSelected)
-                temp.add(itemsList[i])
+    class MovieViewHolder(itemView: View) : BaseViewHolder(itemView) {
+
+        var imgPhoto: ImageView
+        var imgAlbumSelectable: AppCompatImageView
+        var imgAlbumSelected: AppCompatImageView
+        var imgAlbumOverlay: AppCompatImageView
+
+        init {
+            this.imgPhoto = itemView.findViewById<ImageView>(R.id.imgAlbum)
+            imgAlbumSelectable = itemView.findViewById(R.id.imgAlbumSelectable) as AppCompatImageView
+            imgAlbumSelected = itemView.findViewById(R.id.imgAlbumSelected) as AppCompatImageView
+            imgAlbumOverlay = itemView.findViewById(R.id.imgAlbumOverlay) as AppCompatImageView
+
+
         }
-        (this.itemsList as MutableList<Any>).removeAll(temp)
-        Handler().postDelayed({
-            //doSomethingHere()
-            notifyDataSetChanged()
-        }, 1000)
     }
+
+    open class BaseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+        init {
+
+        }
+    }
+
 
 }

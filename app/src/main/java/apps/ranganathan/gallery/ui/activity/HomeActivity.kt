@@ -82,12 +82,24 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
 
         imgShareToolbar.setOnClickListener {
 
+            if (::photosFragment.isInitialized && curentFragment == photosFragment) {
+                shareMultileFiles(photosFragment.adapter.listItems as List<Album>)
+            }
+            if (::cameraFragment.isInitialized && curentFragment == cameraFragment) {
+                shareMultileFiles(cameraFragment.adapter.listItems as List<Album>)
+            }
+            if (::photosDateOrderFragment.isInitialized && curentFragment == photosDateOrderFragment) {
+                shareMultileFiles(photosDateOrderFragment.getAdapter().itemsList as List<Album>)
+            }
+            if (::albumsListFragment.isInitialized && curentFragment == albumsListFragment) {
+                shareMultileFiles(photosDateOrderFragment.getAdapter().itemsList as List<Album>)
+            }
            when(curentFragment){
                photosFragment ->{
-                   shareMultileFiles(photosFragment.adapter.listItems as List<Album>)
+
                }
                cameraFragment ->{
-                   shareMultileFiles(cameraFragment.adapter.listItems as List<Album>)
+
                }
            }
         }
@@ -105,21 +117,19 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
             "Image will be deleted permanently. do you want to continue?",
             object : Utils.OnClickListener {
                 override fun onClick(v: View) {
-                    when(curentFragment){
-                        photosFragment ->{
-                            photosFragment.adapter.deleteItems()
-                        }
-                        cameraFragment ->{
-                            cameraFragment.adapter.deleteItems()
-                        }
-                        photosDateOrderFragment ->{
-                            photosDateOrderFragment.mSectionedRecyclerAdapter!!.deleteItems()
-                        }
-                        albumsListFragment ->{
-                            albumsListFragment.mSectionedRecyclerAdapter!!.deleteItems()
-                        }
-                    }
 
+                    if (::photosFragment.isInitialized && curentFragment == photosFragment) {
+                        photosFragment.adapter.deleteItems()
+                    }
+                    if (::cameraFragment.isInitialized && curentFragment == cameraFragment) {
+                        cameraFragment.adapter.deleteItems()
+                    }
+                    if (::photosDateOrderFragment.isInitialized && curentFragment == photosDateOrderFragment) {
+                        photosDateOrderFragment.mSectionedRecyclerAdapter!!.deleteItems()
+                    }
+                    if (::albumsListFragment.isInitialized && curentFragment == albumsListFragment) {
+                        //albumsListFragment.mSectionedRecyclerAdapter!!.deleteItems()
+                    }
                 }
             },
             object : Utils.OnClickListener {

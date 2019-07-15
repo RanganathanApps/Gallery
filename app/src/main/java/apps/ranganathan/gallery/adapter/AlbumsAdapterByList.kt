@@ -7,8 +7,9 @@ import android.view.View
 import androidx.core.content.ContextCompat
 
 
-class AlbumsAdapterByList(activity1:BaseActivity, itemList: List<Album>) : BaseSectionAdapter(itemList) {
+class AlbumsAdapterByList(activity1:BaseActivity, itemList1: List<Album>) : BaseSectionAdapter() {
 
+    var itemsList = itemList1
     val activity = activity1
     override fun onPlaceSubheaderBetweenItems(position: Int): Boolean {
         val movieGenre = itemsList[position].bucket
