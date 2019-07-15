@@ -3,7 +3,6 @@ package apps.ranganathan.gallery.ui.activity
 import android.Manifest
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.view.Menu
@@ -19,9 +18,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import apps.ranganathan.configlibrary.utils.Utils
 import apps.ranganathan.gallery.R
-import apps.ranganathan.gallery.adapter.BaseMovieAdapter
+import apps.ranganathan.gallery.adapter.BaseSectionAdapter
 import apps.ranganathan.gallery.adapter.ListAdapter
-import apps.ranganathan.gallery.adapter.PhotosAdapter
 import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.ui.fragment.*
 import apps.ranganathan.gallery.utils.BottomNavigationBehavior
@@ -31,11 +29,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_drawer.*
 import kotlinx.android.synthetic.main.activity_home.*
-import kotlinx.android.synthetic.main.content_picture_view.*
-import kotlinx.android.synthetic.main.photos_fragment.*
 import kotlinx.android.synthetic.main.toolbar_home.*
 import kotlinx.android.synthetic.main.toolbar_home_share_delete.*
-import java.net.URI
 
 
 class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelectedListener,
@@ -53,7 +48,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
     private var doubleBackToExitPressedOnce = false
 
     var  photosAdapter: ListAdapter? = null
-    private var  baseAlbumsAdapter: BaseMovieAdapter? = null
+    private var  baseAlbumsAdapter: BaseSectionAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,12 +82,26 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
 
         imgShareToolbar.setOnClickListener {
 
-            if (photosAdapter!=null) {
-                shareMultileFiles(photosAdapter!!.listItems as List<Album>)
+            if (::photosFragment.isInitialized && curentFragment == photosFragment) {
+                shareMultileFiles(photosFragment.adapter.listItems as List<Album>)
             }
-            if (baseAlbumsAdapter!=null) {
-                shareMultileFiles(baseAlbumsAdapter!!.movieList)
+            if (::cameraFragment.isInitialized && curentFragment == cameraFragment) {
+                shareMultileFiles(cameraFragment.adapter.listItems as List<Album>)
             }
+            if (::photosDateOrderFragment.isInitialized && curentFragment == photosDateOrderFragment) {
+                shareMultileFiles(photosDateOrderFragment.getAdapter().itemsList as List<Album>)
+            }
+            if (::albumsListFragment.isInitialized && curentFragment == albumsListFragment) {
+                shareMultileFiles(photosDateOrderFragment.getAdapter().itemsList as List<Album>)
+            }
+           when(curentFragment){
+               photosFragment ->{
+
+               }
+               cameraFragment ->{
+
+               }
+           }
         }
         imgDeleteToolbar.setOnClickListener {
             deleteMultipleFiles()
@@ -108,7 +117,19 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
             "Image will be deleted permanently. do you want to continue?",
             object : Utils.OnClickListener {
                 override fun onClick(v: View) {
-                    photosFragment.adapter.deleteItems(6)
+
+                    if (::photosFragment.isInitialized && curentFragment == photosFragment) {
+                        photosFragment.adapter.deleteItems()
+                    }
+                    if (::cameraFragment.isInitialized && curentFragment == cameraFragment) {
+                        cameraFragment.adapter.deleteItems()
+                    }
+                    if (::photosDateOrderFragment.isInitialized && curentFragment == photosDateOrderFragment) {
+                        photosDateOrderFragment.mSectionedRecyclerAdapter!!.deleteItems()
+                    }
+                    if (::albumsListFragment.isInitialized && curentFragment == albumsListFragment) {
+                        //albumsListFragment.mSectionedRecyclerAdapter!!.deleteItems()
+                    }
                 }
             },
             object : Utils.OnClickListener {
@@ -280,7 +301,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
     }
 
 
-    fun makeReset(photosAdapter: ListAdapter?,baseMovieAdapter:BaseMovieAdapter?, list: List<Album>) {
+    fun makeReset(photosAdapter: ListAdapter?, baseSectionAdapter:BaseSectionAdapter?, list: List<Album>) {
 
         for (item in list) {
             if (item.isSelected) {
@@ -292,9 +313,18 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
         if (photosFragment.getAdapter()!=null) {
             photosFragment.getAdapter().isSelection = false
             photosFragment.getAdapter().notifyDataSetChanged()
-        }else if (baseMovieAdapter!=null){
-            baseMovieAdapter.isSelection = false
-            baseMovieAdapter.notifyDataSetChanged()
+        }
+        if (::cameraFragment.isInitialized && cameraFragment.getAdapter()!=null){
+            cameraFragment.getAdapter().isSelection = false
+            cameraFragment.getAdapter().notifyDataSetChanged()
+        }
+        if (::photosDateOrderFragment.isInitialized && photosDateOrderFragment.getAdapter()!=null){
+            photosDateOrderFragment.getAdapter().isSelection = false
+            photosDateOrderFragment.getAdapter().notifyDataSetChanged()
+        }
+        if (::albumsListFragment.isInitialized && albumsListFragment.getAdapter()!=null){
+            albumsListFragment.getAdapter().isSelection = false
+            albumsListFragment.getAdapter().notifyDataSetChanged()
         }
 
     }
@@ -307,7 +337,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
 
     fun makeShareaDeleteToolbar(
         photosAdapter: ListAdapter?,
-        baseAlbumsAdapter:BaseMovieAdapter?, list: List<Album>) {
+        baseAlbumsAdapter:BaseSectionAdapter?, list: List<Album>) {
         this.baseAlbumsAdapter = baseAlbumsAdapter
         var count = 0
         for (item in list) {

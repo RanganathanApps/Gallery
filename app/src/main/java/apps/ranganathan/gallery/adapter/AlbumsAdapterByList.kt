@@ -3,27 +3,23 @@ package apps.ranganathan.gallery.adapter
 import apps.ranganathan.gallery.R
 import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.ui.activity.BaseActivity
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
-import java.util.*
-import android.content.Context
 import android.view.View
 import androidx.core.content.ContextCompat
-import java.text.DateFormat
 
 
-class AlbumsAdapterByList(activity1:BaseActivity, itemList: List<Album>) : BaseMovieAdapter(itemList) {
+class AlbumsAdapterByList(activity1:BaseActivity, itemList1: List<Album>) : BaseSectionAdapter() {
 
+    var itemsList = itemList1
     val activity = activity1
     override fun onPlaceSubheaderBetweenItems(position: Int): Boolean {
-        val movieGenre = movieList[position].bucket
-        val nextMovieGenre = movieList[position + 1].bucket
+        val movieGenre = itemsList[position].bucket
+        val nextMovieGenre = itemsList[position + 1].bucket
 
         return movieGenre != nextMovieGenre
     }
 
-    override fun onBindItemViewHolder(holder: BaseMovieAdapter.MovieViewHolder, position: Int) {
-        val album = movieList[position]
+    override fun onBindItemViewHolder(holder: BaseSectionAdapter.MovieViewHolder, position: Int) {
+        val album = itemsList[position]
 
         activity.loadImage(
             album.albumUri,
@@ -60,8 +56,8 @@ class AlbumsAdapterByList(activity1:BaseActivity, itemList: List<Album>) : BaseM
 
         holder.imgPhoto.setOnClickListener {
             if (isSelection) {
-                this.movieList[position].isSelected = !this.movieList[position].isSelected
-                onItemClickListener.onItemSelected(movieList,position)
+                this.itemsList[position].isSelected = !this.itemsList[position].isSelected
+                onItemClickListener.onItemSelected(itemsList,position)
                 notifyItemChangedAtPosition(position)
             } else {
                 onItemClickListener.onItemClicked(album,position)
@@ -69,18 +65,18 @@ class AlbumsAdapterByList(activity1:BaseActivity, itemList: List<Album>) : BaseM
         }
         holder.imgPhoto.setOnLongClickListener {
             isSelection = true
-            this.movieList[position].isSelected = true
+            this.itemsList[position].isSelected = true
             notifyDataSetChanged()
-            onItemClickListener.onItemSelected(movieList, position)
+            onItemClickListener.onItemSelected(itemsList, position)
             true
 
         }
     }
 
-    override fun onBindSubheaderViewHolder(subheaderHolder: BaseMovieAdapter.SubheaderHolder, nextItemPosition: Int) {
+    override fun onBindSubheaderViewHolder(subheaderHolder: BaseSectionAdapter.SubheaderHolder, nextItemPosition: Int) {
         super.onBindSubheaderViewHolder(subheaderHolder, nextItemPosition)
         val context = subheaderHolder.itemView.context
-        val nextMovie = movieList[nextItemPosition]
+        val nextMovie = itemsList[nextItemPosition]
         val sectionSize = getSectionSize(getSectionIndex(subheaderHolder.adapterPosition))
         val name = nextMovie.bucket
 

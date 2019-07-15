@@ -16,7 +16,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import apps.ranganathan.gallery.R
-import apps.ranganathan.gallery.adapter.BaseMovieAdapter
+import apps.ranganathan.gallery.adapter.BaseSectionAdapter
+import apps.ranganathan.gallery.adapter.ListAdapter
 import apps.ranganathan.gallery.adapter.PhotosAdapterByDate
 import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.ui.activity.BaseActivity
@@ -24,10 +25,21 @@ import apps.ranganathan.gallery.ui.activity.HomeActivity
 import apps.ranganathan.gallery.ui.activity.PictureViewActivity
 import apps.ranganathan.gallery.utils.GridDividerDecoration
 
-class PhotosDateOrderFragment : Fragment(), BaseMovieAdapter.OnItemClickListener {
+class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
 
     override fun onItemSelected(albums: List<Album>, position: Int) {
-        (activity as HomeActivity).makeShareaDeleteToolbar(null,mSectionedRecyclerAdapter,mPhotosList!!)
+        albums[position].isSelected = !albums[position].isSelected
+        getAdapter().notifyItemChanged(position)
+
+       /* itemView.setOnLongClickListener {
+            onItemClickListener.onItemSelected(itemsList, position)
+            isSelection = true
+            this.itemsList[position].isSelected = true
+            notifyDataSetChanged()
+            onItemClickListener.onItemSelected(itemsList, position)
+            true
+        }*/
+        (activity as HomeActivity).makeShareaDeleteToolbar(null,mSectionedRecyclerAdapter,getAdapter().itemsList!!)
     }
 
 
@@ -38,9 +50,12 @@ class PhotosDateOrderFragment : Fragment(), BaseMovieAdapter.OnItemClickListener
 
     private var recyclerView: RecyclerView? = null
 
-    private var mSectionedRecyclerAdapter: BaseMovieAdapter? = null
+    internal var mSectionedRecyclerAdapter: PhotosAdapterByDate? = null
 
     private var gridDividerDecoration: GridDividerDecoration? = null
+
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,13 +86,19 @@ class PhotosDateOrderFragment : Fragment(), BaseMovieAdapter.OnItemClickListener
         recyclerView!!.adapter = mSectionedRecyclerAdapter
     }
 
+    fun getAdapter(): PhotosAdapterByDate {
+        return mSectionedRecyclerAdapter!!
+    }
 
     private fun setAdapterByGenre() {
 
         this.photosComparator = kotlin.Comparator { o1, o2 ->  o2.date!!.compareTo(o1.date!!)}
 
         Collections.sort(mPhotosList, photosComparator)
-        mSectionedRecyclerAdapter = PhotosAdapterByDate(activity  as BaseActivity,mPhotosList!!)
+        mSectionedRecyclerAdapter = PhotosAdapterByDate(activity  as BaseActivity)
+        mPhotosList?.let { mSectionedRecyclerAdapter!!.setData(it) }
+        mPhotosList?.let { mSectionedRecyclerAdapter!!.setDataList(it) }
+
     }
 
 
