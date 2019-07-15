@@ -1,4 +1,7 @@
+import AppConfig.applicationId
+
 plugins {
+
     id("com.android.application")
     /* id("io.fabric")*/
     id("kotlin-android")
@@ -81,6 +84,7 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0")
     kapt(Libs.databinding)
 
+
     implementation(Libs.viewModelExt)
     implementation(Libs.coroutines)
     /*retrofit*/
@@ -122,10 +126,6 @@ dependencies {
     /*firebase*/
     implementation(Libs.Firebase.remote_config)
     implementation(Libs.Firebase.firebase_core)
-
-
-
-
 
 }
 apply(mapOf("plugin" to "com.google.gms.google-services"))
