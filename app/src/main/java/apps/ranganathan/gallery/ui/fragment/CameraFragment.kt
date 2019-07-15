@@ -13,12 +13,16 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import apps.ranganathan.gallery.BuildConfig
 import apps.ranganathan.gallery.R
+import apps.ranganathan.gallery.adapter.ListAdapter
 import apps.ranganathan.gallery.adapter.PhotosAdapter
 import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.ui.activity.BaseActivity
 import apps.ranganathan.gallery.ui.activity.HomeActivity
 import apps.ranganathan.gallery.ui.activity.PictureViewActivity
+import apps.ranganathan.gallery.ui.activity.RecyclerListActivity
 import apps.ranganathan.gallery.utils.PhotoSelectedListener
+import apps.ranganathan.gallery.viewholders.AlbumViewHolder
+import apps.ranganathan.gallery.viewholders.BaseViewHolder
 import kotlinx.android.synthetic.main.camera_fragment.*
 import kotlinx.android.synthetic.main.photos_fragment.recyclerPhotos
 import java.io.File
@@ -26,7 +30,7 @@ import java.io.File
 
 class CameraFragment : Fragment(){
 
-    private lateinit var adapter: PhotosAdapter
+    internal lateinit var adapter: ListAdapter
     private val TAKE_PHOTO_REQUEST: Int = 12
     private val DIRECTORY = "/GalleryImages"
     private val DIRECTORY_UI = "GalleryImages"
@@ -39,6 +43,10 @@ class CameraFragment : Fragment(){
     private var contentView: View? = null
 
     private lateinit var viewModel: CameraViewModel
+
+    fun getAdapter():ListAdapter{
+        return adapter
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -100,22 +108,74 @@ class CameraFragment : Fragment(){
 
     private fun initAlbums(files: ArrayList<Album>) {
 
-       /* adapter =  PhotosAdapter(activity!! as BaseActivity, photoSelctedListener = object :
-            PhotoSelectedListener {
-            override fun onItemSelected(position: Int, list: List<Album>) {
-                (activity as HomeActivity).makeShareaDeleteToolbar(adapter,null,list)
+        setDataToAdapter(files)
+
+    }
+
+    private fun setDataToAdapter(files: ArrayList<Album>) {
+
+        adapter = object : ListAdapter() {
+
+            override fun getLayoutId(position: Int, obj: Any): Int {
+                return when (obj) {
+                    is Album -> {
+                        R.layout.item_photos
+                    }
+                    else -> {
+                        R.layout.item_album
+                    }
+                }
             }
 
-            override fun onPhotoSelected(position: Int, list: List<Album>) {
-                val anotherMap = mapOf("position" to position, "tag" to "camera","directory" to DIRECTORY,"directory_ui" to DIRECTORY_UI)
-                (activity as BaseActivity).startActivityputExtra(activity as BaseActivity, PictureViewActivity::class.java, anotherMap)
-            }
-        })
-        recyclerPhotos.layoutManager = GridLayoutManager(activity!! as BaseActivity, 3) as RecyclerView.LayoutManager?
-        recyclerPhotos.setHasFixedSize(true)
-        adapter.setitems(files)
-        recyclerPhotos.adapter = adapter*/
+            override fun getViewHolder(view: View, viewType: Int): RecyclerView.ViewHolder {
+                when (viewType) {
+                    R.layout.item_photos -> {
+                        val hol=  AlbumViewHolder(view)
+                        hol.setActivity(activity as BaseActivity,adapter = adapter, clickable = object : BaseViewHolder.Clickable {
 
+                            override fun clicked(adapter: ListAdapter, index: Int) {
+                                var album =  adapter.listItems[index] as Album
+                                if (adapter.isSelection) {
+                                    album.isSelected = !album.isSelected
+                                    adapter.notifyItemChanged(index)
+                                    (activity as HomeActivity).makeShareaDeleteToolbar(adapter, null, adapter.listItems as List<Album>)
+                                } else {
+                                    val anotherMap = mapOf("position" to index, "tag" to "camera","directory_ui" to DIRECTORY_UI,"directory" to DIRECTORY)
+                                    (activity as BaseActivity).startActivityputExtra(
+                                        activity as BaseActivity,
+                                        PictureViewActivity::class.java,
+                                        anotherMap
+                                    )
+                                }
+                            }
+
+                            override fun onLongClicked(adapter: ListAdapter, index: Int) {
+                                var album =  adapter.listItems[index] as Album
+                                if (!adapter.isSelection){
+                                    adapter.isSelection = true
+                                    adapter.notifyDataSetChanged()
+                                }
+                                adapter.isSelection = true
+                                album.isSelected = true
+                                adapter.notifyItemChanged(index)
+                                (activity as HomeActivity).makeShareaDeleteToolbar(adapter, null, adapter.listItems as List<Album>)
+                            }
+
+                        })
+
+                        return hol
+                    }
+                    else -> {
+                        return RecyclerListActivity.MovieViewHolder(view)
+                    }
+                }
+            }
+        }
+
+        adapter.setItems(files)
+        recyclerPhotos.layoutManager = GridLayoutManager(activity, 3)
+        recyclerPhotos.hasFixedSize()
+        recyclerPhotos.adapter = adapter
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

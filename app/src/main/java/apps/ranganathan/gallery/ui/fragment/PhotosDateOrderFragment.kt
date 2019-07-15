@@ -16,7 +16,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import apps.ranganathan.gallery.R
-import apps.ranganathan.gallery.adapter.BaseMovieAdapter
+import apps.ranganathan.gallery.adapter.BaseSectionAdapter
+import apps.ranganathan.gallery.adapter.ListAdapter
 import apps.ranganathan.gallery.adapter.PhotosAdapterByDate
 import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.ui.activity.BaseActivity
@@ -24,7 +25,7 @@ import apps.ranganathan.gallery.ui.activity.HomeActivity
 import apps.ranganathan.gallery.ui.activity.PictureViewActivity
 import apps.ranganathan.gallery.utils.GridDividerDecoration
 
-class PhotosDateOrderFragment : Fragment(), BaseMovieAdapter.OnItemClickListener {
+class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
 
     override fun onItemSelected(albums: List<Album>, position: Int) {
         (activity as HomeActivity).makeShareaDeleteToolbar(null,mSectionedRecyclerAdapter,mPhotosList!!)
@@ -38,9 +39,12 @@ class PhotosDateOrderFragment : Fragment(), BaseMovieAdapter.OnItemClickListener
 
     private var recyclerView: RecyclerView? = null
 
-    private var mSectionedRecyclerAdapter: BaseMovieAdapter? = null
+    internal var mSectionedRecyclerAdapter: BaseSectionAdapter? = null
 
     private var gridDividerDecoration: GridDividerDecoration? = null
+
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,6 +75,9 @@ class PhotosDateOrderFragment : Fragment(), BaseMovieAdapter.OnItemClickListener
         recyclerView!!.adapter = mSectionedRecyclerAdapter
     }
 
+    fun getAdapter(): BaseSectionAdapter {
+        return mSectionedRecyclerAdapter!!
+    }
 
     private fun setAdapterByGenre() {
 

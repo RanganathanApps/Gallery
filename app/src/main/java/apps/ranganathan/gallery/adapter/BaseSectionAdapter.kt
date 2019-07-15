@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import android.graphics.Typeface
+import android.os.Handler
 import android.view.View
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
@@ -15,8 +16,8 @@ import apps.ranganathan.gallery.model.Album
 import com.zhukic.sectionedrecyclerview.SectionedRecyclerViewAdapter
 
 
-abstract class BaseMovieAdapter internal constructor(internal var movieList: List<Album>) :
-    SectionedRecyclerViewAdapter<BaseMovieAdapter.SubheaderHolder, BaseMovieAdapter.MovieViewHolder>() {
+abstract class BaseSectionAdapter internal constructor(internal var itemsList: List<Album>) :
+    SectionedRecyclerViewAdapter<BaseSectionAdapter.SubheaderHolder, BaseSectionAdapter.MovieViewHolder>() {
 
     internal lateinit var onItemClickListener: OnItemClickListener
     var isSelection: Boolean = false
@@ -95,11 +96,24 @@ abstract class BaseMovieAdapter internal constructor(internal var movieList: Lis
     }
 
     override fun getItemSize(): Int {
-        return movieList.size
+        return itemsList.size
     }
 
     fun setOnItemClickListener(onItemClickListener: OnItemClickListener) {
         this.onItemClickListener = onItemClickListener
+    }
+
+    fun deleteItems() {
+        var temp = arrayListOf<Any>()
+        for (i in 0 until itemsList.size) {
+            if ((itemsList[i] as Album).isSelected)
+                temp.add(itemsList[i])
+        }
+        (this.itemsList as MutableList<Any>).removeAll(temp)
+        Handler().postDelayed({
+            //doSomethingHere()
+            notifyDataSetChanged()
+        }, 1000)
     }
 
 }
