@@ -8,15 +8,14 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import apps.ranganathan.gallery.R
 import apps.ranganathan.gallery.adapter.ListAdapter
-import apps.ranganathan.gallery.adapter.PhotosAdapter
 import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.ui.activity.BaseActivity
 import apps.ranganathan.gallery.ui.activity.HomeActivity
 import apps.ranganathan.gallery.ui.activity.PictureViewActivity
 import apps.ranganathan.gallery.ui.activity.RecyclerListActivity
-import apps.ranganathan.gallery.utils.Movie
 import apps.ranganathan.gallery.viewholders.AlbumViewHolder
 import apps.ranganathan.gallery.viewholders.BaseViewHolder
+import apps.ranganathan.gallery.viewmodel.PhotosViewModel
 import kotlinx.android.synthetic.main.photos_fragment.*
 
 

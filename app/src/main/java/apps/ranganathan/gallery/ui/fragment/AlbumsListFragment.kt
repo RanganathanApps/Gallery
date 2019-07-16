@@ -23,6 +23,7 @@ import apps.ranganathan.gallery.ui.activity.BaseActivity
 import apps.ranganathan.gallery.ui.activity.HomeActivity
 import apps.ranganathan.gallery.ui.activity.PictureViewActivity
 import apps.ranganathan.gallery.utils.GridDividerDecoration
+import apps.ranganathan.gallery.viewmodel.PhotosViewModel
 
 class AlbumsListFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
 

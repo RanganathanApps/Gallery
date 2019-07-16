@@ -14,15 +14,14 @@ import androidx.recyclerview.widget.RecyclerView
 import apps.ranganathan.gallery.BuildConfig
 import apps.ranganathan.gallery.R
 import apps.ranganathan.gallery.adapter.ListAdapter
-import apps.ranganathan.gallery.adapter.PhotosAdapter
 import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.ui.activity.BaseActivity
 import apps.ranganathan.gallery.ui.activity.HomeActivity
 import apps.ranganathan.gallery.ui.activity.PictureViewActivity
 import apps.ranganathan.gallery.ui.activity.RecyclerListActivity
-import apps.ranganathan.gallery.utils.PhotoSelectedListener
 import apps.ranganathan.gallery.viewholders.AlbumViewHolder
 import apps.ranganathan.gallery.viewholders.BaseViewHolder
+import apps.ranganathan.gallery.viewmodel.CameraViewModel
 import kotlinx.android.synthetic.main.camera_fragment.*
 import kotlinx.android.synthetic.main.photos_fragment.recyclerPhotos
 import java.io.File

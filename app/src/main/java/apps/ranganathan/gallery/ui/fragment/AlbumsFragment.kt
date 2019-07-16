@@ -12,12 +12,10 @@ import apps.ranganathan.gallery.R
 import apps.ranganathan.gallery.adapter.AlbumsAdapter
 import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.ui.activity.BaseActivity
-import apps.ranganathan.gallery.ui.activity.HomeActivity
 import kotlinx.android.synthetic.main.albums_fragment.*
 import android.view.Menu
 import android.view.MenuInflater
-
-
+import apps.ranganathan.gallery.viewmodel.PhotosViewModel
 
 
 class AlbumsFragment : Fragment() {

@@ -1,4 +1,4 @@
-package apps.ranganathan.gallery.ui.fragment
+package apps.ranganathan.gallery.viewmodel
 
 import androidx.lifecycle.ViewModel;
 import apps.ranganathan.gallery.viewmodel.HomeViewModel

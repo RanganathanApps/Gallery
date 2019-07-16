@@ -1,15 +1,8 @@
-package apps.ranganathan.gallery.ui.fragment
+package apps.ranganathan.gallery.viewmodel
 
-import android.content.Intent
-import android.os.Environment
-import android.provider.MediaStore
 import android.view.View
-import androidx.core.content.FileProvider
-import androidx.lifecycle.ViewModel;
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import apps.ranganathan.configlibrary.base.BaseAppActivity.Companion.makeLog
-import apps.ranganathan.gallery.BuildConfig
 import apps.ranganathan.gallery.R
 import apps.ranganathan.gallery.adapter.ListAdapter
 import apps.ranganathan.gallery.model.Album
@@ -19,36 +12,14 @@ import apps.ranganathan.gallery.ui.activity.PictureViewActivity
 import apps.ranganathan.gallery.ui.activity.RecyclerListActivity
 import apps.ranganathan.gallery.viewholders.AlbumViewHolder
 import apps.ranganathan.gallery.viewholders.BaseViewHolder
-import apps.ranganathan.gallery.viewmodel.HomeViewModel
 import kotlinx.android.synthetic.main.photos_fragment.*
-import java.io.File
-import java.text.SimpleDateFormat
-import java.util.*
+import java.util.ArrayList
 
-class CameraViewModel : HomeViewModel() {
+class PhotosViewModel : HomeViewModel() {
 
     private lateinit var adapter: ListAdapter
 
-    // Returns the File for a photo stored on disk given the fileName
-    fun getPhotoFileUri(fileName: String,DIRECTORY:String): File {
-        val timeStamp = SimpleDateFormat("MMdd_HHmmss").format(Date())
-        val imageFileName = "Capture_$fileName $timeStamp.jpg"
-        // Get safe storage directory for photos
-        // Use `getExternalFilesDir` on Context to access package-specific directories.
-        // This way, we don't need to request external read/write runtime permissions.
-        val mediaStorageDir = File(Environment.getExternalStorageDirectory().toString() + DIRECTORY)
-
-        // Create the storage directory if it does not exist
-        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {
-            makeLog("failed to create directory")
-        }
-
-        // Return the file target for the photo based on filename
-
-        val path = mediaStorageDir.path + File.separator + imageFileName
-        return File(path)
-    }
-    internal fun setDataToAdapter(activity:BaseActivity, files: ArrayList<Album>) {
+    internal fun setDataToAdapter(activity: BaseActivity, files: ArrayList<Album>) {
 
         adapter = object : ListAdapter() {
 
@@ -109,8 +80,9 @@ class CameraViewModel : HomeViewModel() {
         }
 
         adapter.setItems(files)
-        activity.recyclerPhotos.layoutManager = GridLayoutManager(activity, 3) as RecyclerView.LayoutManager?
+        activity.recyclerPhotos.layoutManager = GridLayoutManager(activity, 4) as RecyclerView.LayoutManager?
         activity.recyclerPhotos.hasFixedSize()
         activity.recyclerPhotos.adapter = adapter
     }
+
 }
