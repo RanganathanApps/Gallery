@@ -4,15 +4,24 @@ import apps.ranganathan.gallery.R
 import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.ui.activity.BaseActivity
 import android.os.Handler
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import apps.ranganathan.gallery.viewholders.PhotosOrderByDateViewHolder
 
 
 class PhotosAdapterByDate(activity1:BaseActivity) : BaseSectionAdapter() {
 
+
+    /*interface for data binding*/
+    internal interface Binder<T> {
+        fun bind(data: T)
+        fun clicked(adapter: ListAdapter, index: Int)
+        fun onLongClicked(adapter: ListAdapter, index: Int)
+    }
 
    internal lateinit var itemsList:List<Album>
 
@@ -20,7 +29,8 @@ class PhotosAdapterByDate(activity1:BaseActivity) : BaseSectionAdapter() {
         itemsList = data
     }
 
-    val activity = activity1
+    var activity = activity1
+
     override fun onPlaceSubheaderBetweenItems(position: Int): Boolean {
         val movieGenre = itemsList[position].date
         val nextMovieGenre = itemsList[position + 1].date
@@ -28,12 +38,31 @@ class PhotosAdapterByDate(activity1:BaseActivity) : BaseSectionAdapter() {
         return movieGenre != nextMovieGenre
     }
 
-    override fun onBindItemViewHolder(holder: MovieViewHolder, position: Int) {
-        val album = itemsList[position]
+    override fun onBindItemViewHolder(holder: PhotosOrderByDateViewHolder, position: Int) {
+        (holder as ListAdapter.Binder<Any>).bind(listItems[position])
+        holder.itemView.setOnClickListener {
+            //holder.clicked(, position)
+            Log.w("Position:","$position ${itemsList[position].name}")
+            if (isSelection) {
+                itemsList[position].isSelected = !itemsList[position].isSelected
+                notifyItemChanged(position)
+                onItemClickListener.onItemSelected(position)
+            }else{
+                onItemClickListener.onItemClicked(itemsList[position], position)
+            }
+        }
+        holder.itemView.setOnLongClickListener {
+            //holder.onLongClicked(this, position)
+            isSelection = true
+            itemsList[position].isSelected =  true
+            notifyDataSetChanged()
+            true
+        }
+       /* val album = itemsList[position]
 
         activity.loadImage(
             album.albumUri,
-            holder.imgPhoto,
+            holder.photo,
             R.drawable.ic_camera_alt_white_24dp
         )
 
@@ -53,7 +82,7 @@ class PhotosAdapterByDate(activity1:BaseActivity) : BaseSectionAdapter() {
             holder.imgAlbumSelected.visibility = View.VISIBLE
             holder.imgAlbumSelected.setColorFilter(ContextCompat.getColor(activity.applicationContext, R.color.colorWhite))
             holder.imgAlbumSelectable.visibility = View.GONE
-            holder.imgPhoto.setPadding(25, 25, 25, 25)
+            holder.photo.setPadding(25, 25, 25, 25)
             holder.imgAlbumOverlay.setBackgroundColor(
                 ContextCompat.getColor(
                     activity.applicationContext,
@@ -64,8 +93,11 @@ class PhotosAdapterByDate(activity1:BaseActivity) : BaseSectionAdapter() {
             holder.imgAlbumSelected.visibility = View.GONE
         }
         holder.itemView.setOnClickListener {
+            Log.w("Position:","$position ${itemsList[position].name}")
             if (isSelection) {
-                onItemClickListener.onItemSelected(itemsList, position)
+                itemsList[position].isSelected = !itemsList[position].isSelected
+                notifyItemChanged(position)
+                onItemClickListener.onItemSelected(position)
             }else{
                 onItemClickListener.onItemClicked(itemsList[position], position)
             }
@@ -73,11 +105,11 @@ class PhotosAdapterByDate(activity1:BaseActivity) : BaseSectionAdapter() {
         holder.itemView.setOnLongClickListener {
             isSelection = true
             itemsList[position].isSelected =  true
-            notifyItemChanged(position)
+            notifyDataSetChanged()
            // onItemClickListener.onItemSelected(itemsList, position)
             true
 
-        }
+        }*/
 
 
     }

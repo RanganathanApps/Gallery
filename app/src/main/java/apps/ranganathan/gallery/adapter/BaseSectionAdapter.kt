@@ -1,5 +1,6 @@
 package apps.ranganathan.gallery.adapter
 
+import android.app.Activity
 import androidx.core.content.ContextCompat
 import androidx.annotation.CallSuper
 import android.view.LayoutInflater
@@ -13,15 +14,18 @@ import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
 import apps.ranganathan.gallery.R
 import apps.ranganathan.gallery.model.Album
+import apps.ranganathan.gallery.ui.activity.BaseActivity
+import apps.ranganathan.gallery.viewholders.PhotosOrderByDateViewHolder
 import com.zhukic.sectionedrecyclerview.SectionedRecyclerViewAdapter
 
 
-abstract class BaseSectionAdapter  :
-    SectionedRecyclerViewAdapter<BaseSectionAdapter.SubheaderHolder, BaseSectionAdapter.MovieViewHolder>() {
+abstract class BaseSectionAdapter  :SectionedRecyclerViewAdapter<BaseSectionAdapter.SubheaderHolder, PhotosOrderByDateViewHolder>() {
 
     lateinit var listItems: List<Any>
-    fun setData(data: List<Any>){
+    internal lateinit var baseActivity: Activity
+    fun setData(data: List<Any>,activity: Activity){
         listItems = data
+        this.baseActivity = activity
     }
 
     internal lateinit var onItemClickListener: OnItemClickListener
@@ -29,7 +33,7 @@ abstract class BaseSectionAdapter  :
 
 
     interface OnItemClickListener {
-        fun onItemSelected(albums: List<Album>, position: Int)
+        fun onItemSelected(position: Int)
         fun onItemClicked(album: Album, position: Int)
         fun onSubheaderClicked(position: Int)
     }
@@ -55,14 +59,17 @@ abstract class BaseSectionAdapter  :
 
 
 
-    override fun onCreateItemViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
-        return MovieViewHolder(
+    override fun onCreateItemViewHolder(parent: ViewGroup, viewType: Int): PhotosOrderByDateViewHolder {
+        var  holder = PhotosOrderByDateViewHolder(
             LayoutInflater.from(parent.context).inflate(
                 R.layout.item_photos,
                 parent,
                 false
             )
         )
+        holder.activity = baseActivity as BaseActivity
+        holder.baseSectionAdapter = this
+        return holder
     }
 
     override fun onCreateSubheaderViewHolder(parent: ViewGroup, viewType: Int): SubheaderHolder {
@@ -102,7 +109,7 @@ abstract class BaseSectionAdapter  :
         this.onItemClickListener = onItemClickListener
     }
 
-    class MovieViewHolder(itemView: View) : BaseViewHolder(itemView) {
+    class PhotosSortByDateViewHolder(itemView: View) : BaseViewHolder(itemView) {
 
         var imgPhoto: ImageView
         var imgAlbumSelectable: AppCompatImageView

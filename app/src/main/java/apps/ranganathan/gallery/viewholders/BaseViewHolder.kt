@@ -5,6 +5,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import apps.ranganathan.gallery.R
+import apps.ranganathan.gallery.adapter.BaseSectionAdapter
 import apps.ranganathan.gallery.adapter.ListAdapter
 import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.ui.activity.BaseActivity
@@ -13,6 +14,7 @@ abstract class BaseViewHolder : RecyclerView.ViewHolder, ListAdapter.Binder<Any>
 
     var activity: BaseActivity? = null
     var adapter: ListAdapter? = null
+    var baseSectionAdapter: BaseSectionAdapter? = null
     internal var clickable: Clickable? = null
 
     internal fun setActivity(activity : BaseActivity, adapter: ListAdapter, clickable: Clickable){
