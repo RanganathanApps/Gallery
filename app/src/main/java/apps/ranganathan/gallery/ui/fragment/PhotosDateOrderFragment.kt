@@ -97,6 +97,8 @@ class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListen
 
         Collections.sort(mPhotosList, photosComparator)
 
+        var data = arrayListOf<Album>()
+
         var dataModels = arrayListOf<ParentModel>()
         var iterate = mPhotosList!!.iterator()
         var lastDate = ""
@@ -104,6 +106,7 @@ class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListen
         var parentModel:ParentModel
         parentModel = ParentModel()
         parentModel.albums = arrayListOf()
+        parentModel.isHeader = true
         dataModels.add(parentModel)
         var  isDateChanged = true
         while (iterate.hasNext()) {
@@ -111,14 +114,21 @@ class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListen
             val album = iterate.next()
             parentModel.header = lastDate
             if (album.dateString.equals(lastDate)){
+                if (parentModel.albums.size==0){
+                    album.isSectionHeader = true
+                }
                 parentModel.albums.add(album)
+                parentModel.isHeader = false
 
             }else{
                 parentModel = ParentModel()
+                parentModel.isHeader = true
                 parentModel.albums = arrayListOf()
+                album.isSectionHeader = true
                 parentModel.albums.add(album)
                 dataModels.add(parentModel)
             }
+            data.add(album)
 
             lastDate = album.dateString
 
