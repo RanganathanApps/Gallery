@@ -73,18 +73,20 @@ class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListen
 
         recyclerView!!.layoutManager = LinearLayoutManager(context)
 
-        gridDividerDecoration = GridDividerDecoration(context)
-        recyclerView!!.addItemDecoration(gridDividerDecoration!!)
+       /* gridDividerDecoration = GridDividerDecoration(context)
+        recyclerView!!.addItemDecoration(gridDividerDecoration!!)*/
 
 
         mPhotosList=  viewModel.getAllImages(activity!!.applicationContext)
 
+        setAdapterByGenre()
 
-        setAdapterWithGridLayout()
+
+      /*  setAdapterWithGridLayout()
 
         mSectionedRecyclerAdapter!!.setOnItemClickListener(this)
 
-        recyclerView!!.adapter = mSectionedRecyclerAdapter
+        recyclerView!!.adapter = mSectionedRecyclerAdapter*/
     }
 
     fun getAdapter(): PhotosAdapterByDate {
@@ -133,11 +135,12 @@ class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListen
             lastDate = album.dateString
 
         }
+        viewModel.setDataToAdapter(activity as BaseActivity,data)
 
-        mSectionedRecyclerAdapter = PhotosAdapterByDate(activity  as BaseActivity)
+       /* mSectionedRecyclerAdapter = PhotosAdapterByDate(activity  as BaseActivity)
         mPhotosList?.let { mSectionedRecyclerAdapter!!.setData(it,activity as BaseActivity) }
         mPhotosList?.let { mSectionedRecyclerAdapter!!.setDataList(it) }
-        mPhotosList?.let { mSectionedRecyclerAdapter!!.activity = activity as BaseActivity }
+        mPhotosList?.let { mSectionedRecyclerAdapter!!.activity = activity as BaseActivity }*/
 
 
     }
