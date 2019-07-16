@@ -20,6 +20,7 @@ import apps.ranganathan.gallery.adapter.BaseSectionAdapter
 import apps.ranganathan.gallery.adapter.ListAdapter
 import apps.ranganathan.gallery.adapter.PhotosAdapterByDate
 import apps.ranganathan.gallery.model.Album
+import apps.ranganathan.gallery.model.ParentModel
 import apps.ranganathan.gallery.ui.activity.BaseActivity
 import apps.ranganathan.gallery.ui.activity.HomeActivity
 import apps.ranganathan.gallery.ui.activity.PictureViewActivity
@@ -27,9 +28,9 @@ import apps.ranganathan.gallery.utils.GridDividerDecoration
 
 class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
 
-    override fun onItemSelected(albums: List<Album>, position: Int) {
-        albums[position].isSelected = !albums[position].isSelected
-        getAdapter().notifyItemChanged(position)
+    override fun onItemSelected(position: Int) {
+
+
 
        /* itemView.setOnLongClickListener {
             onItemClickListener.onItemSelected(itemsList, position)
@@ -39,7 +40,7 @@ class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListen
             onItemClickListener.onItemSelected(itemsList, position)
             true
         }*/
-        (activity as HomeActivity).makeShareaDeleteToolbar(null,mSectionedRecyclerAdapter,getAdapter().itemsList!!)
+        //(activity as HomeActivity).makeShareaDeleteToolbar(null,mSectionedRecyclerAdapter,getAdapter().itemsList!!)
     }
 
 
@@ -95,9 +96,39 @@ class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListen
         this.photosComparator = kotlin.Comparator { o1, o2 ->  o2.date!!.compareTo(o1.date!!)}
 
         Collections.sort(mPhotosList, photosComparator)
+
+        var dataModels = arrayListOf<ParentModel>()
+        var iterate = mPhotosList!!.iterator()
+        var lastDate = ""
+        lastDate = mPhotosList!![0].dateString
+        var parentModel:ParentModel
+        parentModel = ParentModel()
+        parentModel.albums = arrayListOf()
+        dataModels.add(parentModel)
+        var  isDateChanged = true
+        while (iterate.hasNext()) {
+
+            val album = iterate.next()
+            parentModel.header = lastDate
+            if (album.dateString.equals(lastDate)){
+                parentModel.albums.add(album)
+
+            }else{
+                parentModel = ParentModel()
+                parentModel.albums = arrayListOf()
+                parentModel.albums.add(album)
+                dataModels.add(parentModel)
+            }
+
+            lastDate = album.dateString
+
+        }
+
         mSectionedRecyclerAdapter = PhotosAdapterByDate(activity  as BaseActivity)
-        mPhotosList?.let { mSectionedRecyclerAdapter!!.setData(it) }
+        mPhotosList?.let { mSectionedRecyclerAdapter!!.setData(it,activity as BaseActivity) }
         mPhotosList?.let { mSectionedRecyclerAdapter!!.setDataList(it) }
+        mPhotosList?.let { mSectionedRecyclerAdapter!!.activity = activity as BaseActivity }
+
 
     }
 

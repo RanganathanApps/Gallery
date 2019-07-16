@@ -26,7 +26,7 @@ import apps.ranganathan.gallery.utils.GridDividerDecoration
 
 class AlbumsListFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
 
-    override fun onItemSelected(albums: List<Album>, position: Int) {
+    override fun onItemSelected(position: Int) {
         (activity as HomeActivity).makeShareaDeleteToolbar(null,mSectionedRecyclerAdapter,mAlbumsList!!)
     }
 

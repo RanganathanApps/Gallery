@@ -5,6 +5,7 @@ import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.ui.activity.BaseActivity
 import android.view.View
 import androidx.core.content.ContextCompat
+import apps.ranganathan.gallery.viewholders.PhotosOrderByDateViewHolder
 
 
 class AlbumsAdapterByList(activity1:BaseActivity, itemList1: List<Album>) : BaseSectionAdapter() {
@@ -18,12 +19,12 @@ class AlbumsAdapterByList(activity1:BaseActivity, itemList1: List<Album>) : Base
         return movieGenre != nextMovieGenre
     }
 
-    override fun onBindItemViewHolder(holder: BaseSectionAdapter.MovieViewHolder, position: Int) {
+    override fun onBindItemViewHolder(holder: PhotosOrderByDateViewHolder, position: Int) {
         val album = itemsList[position]
 
         activity.loadImage(
             album.albumUri,
-            holder.imgPhoto,
+            holder.photo,
             R.drawable.ic_camera_alt_white_24dp
         )
 
@@ -43,7 +44,7 @@ class AlbumsAdapterByList(activity1:BaseActivity, itemList1: List<Album>) : Base
             holder.imgAlbumSelected.visibility = View.VISIBLE
             holder.imgAlbumSelected.setColorFilter(ContextCompat.getColor(activity.applicationContext, R.color.colorWhite))
             holder.imgAlbumSelectable.visibility = View.GONE
-            holder.imgPhoto.setPadding(25, 25, 25, 25)
+            holder.photo.setPadding(25, 25, 25, 25)
             holder.imgAlbumOverlay.setBackgroundColor(
                 ContextCompat.getColor(
                     activity.applicationContext,
@@ -54,20 +55,20 @@ class AlbumsAdapterByList(activity1:BaseActivity, itemList1: List<Album>) : Base
             holder.imgAlbumSelected.visibility = View.GONE
         }
 
-        holder.imgPhoto.setOnClickListener {
+        holder.photo.setOnClickListener {
             if (isSelection) {
                 this.itemsList[position].isSelected = !this.itemsList[position].isSelected
-                onItemClickListener.onItemSelected(itemsList,position)
+                onItemClickListener.onItemSelected(position)
                 notifyItemChangedAtPosition(position)
             } else {
                 onItemClickListener.onItemClicked(album,position)
             }
         }
-        holder.imgPhoto.setOnLongClickListener {
+        holder.photo.setOnLongClickListener {
             isSelection = true
             this.itemsList[position].isSelected = true
             notifyDataSetChanged()
-            onItemClickListener.onItemSelected(itemsList, position)
+            onItemClickListener.onItemSelected( position)
             true
 
         }
