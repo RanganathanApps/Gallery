@@ -24,6 +24,7 @@ import apps.ranganathan.gallery.ui.activity.BaseActivity
 import apps.ranganathan.gallery.ui.activity.PictureViewActivity
 import apps.ranganathan.gallery.utils.GridDividerDecoration
 import apps.ranganathan.gallery.viewmodel.PhotosViewModel
+import java.util.ArrayList
 
 class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
 
@@ -72,33 +73,25 @@ class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListen
 
         recyclerView!!.layoutManager = LinearLayoutManager(context)
 
-       /* gridDividerDecoration = GridDividerDecoration(context)
+        /*gridDividerDecoration = GridDividerDecoration(context)
         recyclerView!!.addItemDecoration(gridDividerDecoration!!)*/
 
 
         mPhotosList=  viewModel.getAllImages(activity!!.applicationContext)
 
-        setAdapterByGenre()
+        splitData()
 
 
-      /*  setAdapterWithGridLayout()
+
+       /* setAdapterWithGridLayout()
 
         mSectionedRecyclerAdapter!!.setOnItemClickListener(this)
 
         recyclerView!!.adapter = mSectionedRecyclerAdapter*/
     }
 
-    fun getAdapter(): PhotosAdapterByDate {
-        return mSectionedRecyclerAdapter!!
-    }
-
-    private fun setAdapterByGenre() {
-
-        this.photosComparator = kotlin.Comparator { o1, o2 ->  o2.date!!.compareTo(o1.date!!)}
-
-        Collections.sort(mPhotosList, photosComparator)
-
-        var data = arrayListOf<Album>()
+    private fun splitData() {
+         var data = arrayListOf<Album>()
 
         var dataModels = arrayListOf<ParentModel>()
         var iterate = mPhotosList!!.iterator()
@@ -110,14 +103,12 @@ class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListen
         parentModel.isHeader = true
         dataModels.add(parentModel)
         var  isDateChanged = true
+
         while (iterate.hasNext()) {
 
             val album = iterate.next()
             parentModel.header = lastDate
             if (album.dateString.equals(lastDate)){
-                if (parentModel.albums.size==0){
-                    album.isSectionHeader = true
-                }
                 parentModel.albums.add(album)
                 parentModel.isHeader = false
 
@@ -134,12 +125,27 @@ class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListen
             lastDate = album.dateString
 
         }
-        viewModel.setDataToAdapter(activity as BaseActivity,data)
 
-       /* mSectionedRecyclerAdapter = PhotosAdapterByDate(activity  as BaseActivity)
+        viewModel.setDataToAdapter(activity as BaseActivity,LinearLayoutManager(activity) as RecyclerView.LayoutManager,dataModels as ArrayList<Any>)
+       // viewModel.setDataToAdapter(activity as BaseActivity,GridLayoutManager(activity,3) as RecyclerView.LayoutManager,data as ArrayList<Any>)
+    }
+
+    fun getAdapter(): PhotosAdapterByDate {
+        return mSectionedRecyclerAdapter!!
+    }
+
+    private fun setAdapterByGenre() {
+
+        this.photosComparator = kotlin.Comparator { o1, o2 ->  o2.date!!.compareTo(o1.date!!)}
+
+        Collections.sort(mPhotosList, photosComparator)
+
+
+
+        mSectionedRecyclerAdapter = PhotosAdapterByDate(activity  as BaseActivity)
         mPhotosList?.let { mSectionedRecyclerAdapter!!.setData(it,activity as BaseActivity) }
         mPhotosList?.let { mSectionedRecyclerAdapter!!.setDataList(it) }
-        mPhotosList?.let { mSectionedRecyclerAdapter!!.activity = activity as BaseActivity }*/
+        mPhotosList?.let { mSectionedRecyclerAdapter!!.activity = activity as BaseActivity }
 
 
     }
