@@ -54,7 +54,7 @@ abstract class ListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        (holder as Binder<Any>).bind(listItems[position])
+        (holder as Binder<Any>).bind(holder,listItems[position])
 
         holder.itemView.setOnClickListener {
             holder.clicked(this, position)
@@ -72,7 +72,7 @@ abstract class ListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     /*interface for data binding*/
     internal interface Binder<T> {
-        fun bind(data: T)
+        fun bind(holder:RecyclerView.ViewHolder,data: T)
         fun clicked(adapter: ListAdapter, index: Int)
         fun onLongClicked(adapter: ListAdapter, index: Int)
     }

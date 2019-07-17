@@ -5,7 +5,7 @@ import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.ui.activity.BaseActivity
 import android.view.View
 import androidx.core.content.ContextCompat
-import apps.ranganathan.gallery.viewholders.PhotosOrderByDateViewHolder
+import apps.ranganathan.gallery.viewholders.AlbumViewHolder
 
 
 class AlbumsAdapterByList(activity1:BaseActivity, itemList1: List<Album>) : BaseSectionAdapter() {
@@ -19,7 +19,7 @@ class AlbumsAdapterByList(activity1:BaseActivity, itemList1: List<Album>) : Base
         return movieGenre != nextMovieGenre
     }
 
-    override fun onBindItemViewHolder(holder: PhotosOrderByDateViewHolder, position: Int) {
+    override fun onBindItemViewHolder(holder: AlbumViewHolder, position: Int) {
         val album = itemsList[position]
 
         activity.loadImage(

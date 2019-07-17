@@ -18,6 +18,8 @@ class HeaderViewHolder : BaseViewHolder {
     private lateinit var parentModel: ParentModel
     var txtAlbum: AppCompatTextView
     var childRecyclerView: RecyclerView
+    lateinit var adapter1 : ListAdapter
+    lateinit var hVHolder : HeaderViewHolder
 
     constructor(itemView: View) : super(itemView) {
         txtAlbum = itemView.findViewById(R.id.txtAlbum) as AppCompatTextView
@@ -25,35 +27,31 @@ class HeaderViewHolder : BaseViewHolder {
 
     }
 
-    override fun bind(data: Any) {
+    override fun bind(holder: RecyclerView.ViewHolder,data: Any) {
+
+        hVHolder = (holder as HeaderViewHolder)
         parentModel = data as ParentModel
         txtAlbum.text = parentModel.header
-        if (parentModel.albums != null && parentModel.albums.size > 0)
-            setDataToAdapter(
-                childRecyclerView,
-                GridLayoutManager(activity, 3) as RecyclerView.LayoutManager,
-                parentModel.albums as ArrayList<Any>
-            )
+
+        if (!::adapter1.isInitialized)
+            hVHolder.adapter1 = setDataToAdapter(holder,
+            childRecyclerView,
+            GridLayoutManager(activity, 3) as RecyclerView.LayoutManager,
+            parentModel.albums as ArrayList<Any>
+        )
+
 
 
     }
 
     internal fun setDataToAdapter(
-        childRecyclerView: RecyclerView,
-        layoutManager: RecyclerView.LayoutManager,
-        files: ArrayList<Any>
-    ): ListAdapter {
+        holder: RecyclerView.ViewHolder,childRecyclerView: RecyclerView, layoutManager: RecyclerView.LayoutManager,files: ArrayList<Any> ): ListAdapter {
 
-        val adapter = object : ListAdapter() {
+            (holder as HeaderViewHolder).adapter1  = object : ListAdapter() {
 
             override fun getLayoutId(position: Int, obj: Any): Int {
                 return when (obj) {
-                    is ParentModel -> {
-
-                        R.layout.item_header_photos
-                    }
                     is Album -> {
-
                         R.layout.item_photos
                     }
                     else -> {
@@ -66,7 +64,7 @@ class HeaderViewHolder : BaseViewHolder {
                 when (viewType) {
                     R.layout.item_photos -> {
                         val hol = AlbumViewHolder(view)
-                        adapter?.let {
+                        (holder as HeaderViewHolder).adapter1 ?.let {
                             hol.setActivity(
                                 activity as BaseActivity,
                                 adapter = it,
@@ -111,38 +109,18 @@ class HeaderViewHolder : BaseViewHolder {
 
                         return hol
                     }
-                    else -> {
 
-                        val hol = HeaderViewHolder(view)
-                        adapter?.let {
-                            hol.setActivity(
-                                activity as BaseActivity,
-                                adapter = it,
-                                clickable = object : BaseViewHolder.Clickable {
-
-                                    override fun clicked(adapter: ListAdapter, index: Int) {
-
-                                    }
-
-                                    override fun onLongClicked(adapter: ListAdapter, index: Int) {
-
-                                    }
-
-                                })
-                        }
-
-                        return hol
-                    }
                 }
+                return null!!
             }
         }
 
 
-        adapter.setItems(files)
+        (holder as HeaderViewHolder).adapter1 .setItems(files)
         childRecyclerView.layoutManager = layoutManager
         childRecyclerView.hasFixedSize()
-        childRecyclerView.adapter = adapter
-        return adapter
+        childRecyclerView.adapter = (holder as HeaderViewHolder).adapter1
+        return (holder as HeaderViewHolder).adapter1 !!
 
     }
 

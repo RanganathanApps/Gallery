@@ -13,8 +13,7 @@ import apps.ranganathan.gallery.ui.activity.BaseActivity
 abstract class BaseViewHolder : RecyclerView.ViewHolder, ListAdapter.Binder<Any> {
 
     var activity: BaseActivity? = null
-    var adapter: ListAdapter? = null
-    var baseSectionAdapter: BaseSectionAdapter? = null
+    internal lateinit var adapter: ListAdapter
     internal var clickable: Clickable? = null
 
     internal fun setActivity(activity : BaseActivity, adapter: ListAdapter, clickable: Clickable){
@@ -23,10 +22,7 @@ abstract class BaseViewHolder : RecyclerView.ViewHolder, ListAdapter.Binder<Any>
         this.clickable = clickable
     }
 
-
-    constructor(itemView: View) : super(itemView) {
-
-    }
+    constructor(itemView: View) : super(itemView)
 
     override fun clicked(adapter: ListAdapter, index: Int) {
         clickable!!.clicked(adapter,index)

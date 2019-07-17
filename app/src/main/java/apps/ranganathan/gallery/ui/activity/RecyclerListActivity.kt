@@ -89,7 +89,7 @@ class RecyclerListActivity : BaseActivity() {
 
         }
 
-        override fun bind(movie: Movie) {
+        override fun bind(holder:RecyclerView.ViewHolder,movie: Movie) {
             txtMovieName.text = movie.title
             txtMovieDirector.text = movie.genre
 

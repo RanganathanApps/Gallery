@@ -15,11 +15,11 @@ import androidx.appcompat.widget.AppCompatImageView
 import apps.ranganathan.gallery.R
 import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.ui.activity.BaseActivity
-import apps.ranganathan.gallery.viewholders.PhotosOrderByDateViewHolder
+import apps.ranganathan.gallery.viewholders.AlbumViewHolder
 import com.zhukic.sectionedrecyclerview.SectionedRecyclerViewAdapter
 
 
-abstract class BaseSectionAdapter  :SectionedRecyclerViewAdapter<BaseSectionAdapter.SubheaderHolder, PhotosOrderByDateViewHolder>() {
+abstract class BaseSectionAdapter  :SectionedRecyclerViewAdapter<BaseSectionAdapter.SubheaderHolder, AlbumViewHolder>() {
 
     lateinit var listItems: List<Any>
     internal lateinit var baseActivity: Activity
@@ -59,8 +59,8 @@ abstract class BaseSectionAdapter  :SectionedRecyclerViewAdapter<BaseSectionAdap
 
 
 
-    override fun onCreateItemViewHolder(parent: ViewGroup, viewType: Int): PhotosOrderByDateViewHolder {
-        var  holder = PhotosOrderByDateViewHolder(
+    override fun onCreateItemViewHolder(parent: ViewGroup, viewType: Int): AlbumViewHolder {
+        var  holder = AlbumViewHolder(
             LayoutInflater.from(parent.context).inflate(
                 R.layout.item_photos,
                 parent,
@@ -68,7 +68,6 @@ abstract class BaseSectionAdapter  :SectionedRecyclerViewAdapter<BaseSectionAdap
             )
         )
         holder.activity = baseActivity as BaseActivity
-        holder.baseSectionAdapter = this
         return holder
     }
 

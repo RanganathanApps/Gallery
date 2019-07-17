@@ -47,7 +47,6 @@ class PhotosViewModel : HomeViewModel() {
             override fun getViewHolder(view: View, viewType: Int): RecyclerView.ViewHolder {
                 when (viewType) {
                     R.layout.item_photos -> {
-                        GridLayoutManager(activity,1) as LayoutManager?
                         val hol=  AlbumViewHolder(view)
                         hol.setActivity(activity as BaseActivity,adapter = adapter, clickable = object : BaseViewHolder.Clickable {
 

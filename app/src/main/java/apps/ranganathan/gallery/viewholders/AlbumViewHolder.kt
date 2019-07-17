@@ -3,6 +3,7 @@ package apps.ranganathan.gallery.viewholders
 import android.view.View
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
 import apps.ranganathan.gallery.R
 import apps.ranganathan.gallery.adapter.ListAdapter
 import apps.ranganathan.gallery.model.Album
@@ -24,7 +25,7 @@ class AlbumViewHolder : BaseViewHolder{
 
     }
 
-    override fun bind(data: Any) {
+    override fun bind(holder:RecyclerView.ViewHolder,data: Any) {
         album = data as Album
         (activity as BaseActivity).loadImage(
             album.albumUri,
