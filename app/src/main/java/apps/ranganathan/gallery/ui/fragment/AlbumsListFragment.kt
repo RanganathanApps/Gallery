@@ -104,7 +104,7 @@ class AlbumsListFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
 
         var iterate = mPhotosList!!.iterator()
         var lastDate = ""
-        lastDate = mPhotosList!![0].dateString
+        lastDate = mPhotosList!![0].bucket
         var parentModel: ParentModel
         parentModel = ParentModel()
         parentModel.albums = arrayListOf()
@@ -131,7 +131,7 @@ class AlbumsListFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
 
             val album = iterate.next()
 
-            isDateChanged = album.dateString != lastDate
+            isDateChanged = album.bucket != lastDate
 
             if (!isDateChanged) {
                 parentModel.albums.add(album)
@@ -157,7 +157,7 @@ class AlbumsListFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
             }
             data.add(album)
             parentModel.header = lastDate
-            lastDate = album.dateString
+            lastDate = album.bucket
 
         }
 

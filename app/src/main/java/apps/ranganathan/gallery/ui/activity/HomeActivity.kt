@@ -105,7 +105,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
                 makeReset(photosDateOrderFragment.getAdapter().listItems as List<Album>)
             }
             if (::albumsListFragment.isInitialized && curentFragment == albumsListFragment) {
-                shareMultileFiles(photosDateOrderFragment.getAdapter().listItems as List<Album>)
+                shareMultileFiles(albumsListFragment.getAdapter().listItems as List<Album>)
                 makeReset(albumsListFragment.getAdapter().listItems as List<Album>)
             }
 
@@ -138,7 +138,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
                         makeReset(photosDateOrderFragment.getAdapter().listItems as List<Album>)
                     }
                     if (::albumsListFragment.isInitialized && curentFragment == albumsListFragment) {
-                        //albumsListFragment.mSectionedRecyclerAdapter!!.deleteItems()
+                        albumsListFragment.getAdapter().deleteItems()
                         makeReset(albumsListFragment.getAdapter().listItems as List<Album>)
                     }
 

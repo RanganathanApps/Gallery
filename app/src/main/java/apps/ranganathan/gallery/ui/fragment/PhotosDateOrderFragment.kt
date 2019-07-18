@@ -109,7 +109,7 @@ class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListen
         albumDuplicateInial.dateString = mPhotosList!![0].dateString
         albumDuplicateInial.date = mPhotosList!![0].date
         albumDuplicateInial.albumUri = mPhotosList!![0].albumUri
-        albumDuplicateInial.bucket = mPhotosList!![0].bucket
+        albumDuplicateInial.bucket = mPhotosList!![0].dateString
         albumDuplicateInial.isSectionHeader = true
 
         data.add(albumDuplicateInial)
@@ -138,7 +138,7 @@ class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListen
                 albumDuplicate.dateString = album.dateString
                 albumDuplicate.date = album.date
                 albumDuplicate.albumUri = album.albumUri
-                albumDuplicate.bucket = album.bucket
+               // albumDuplicate.bucket = album.bucket
                 albumDuplicate.isSectionHeader = true
                 data.add(albumDuplicate)
 
