@@ -95,31 +95,11 @@ class PhotosViewModel : HomeViewModel() {
                         hol.setActivity(activity as BaseActivity,adapter = adapter, clickable = object : BaseViewHolder.Clickable {
 
                             override fun clicked(adapter: ListAdapter, index: Int) {
-                                var album =  adapter.listItems[index] as Album
-                                if (adapter.isSelection) {
-                                    album.isSelected = !album.isSelected
-                                    adapter.notifyItemChanged(index)
-                                    (activity as HomeActivity).makeShareaDeleteToolbar(adapter, null, adapter.listItems as List<Album>)
-                                } else {
-                                    val anotherMap = mapOf("position" to index, "tag" to "photos")
-                                    (activity as BaseActivity).startActivityputExtra(
-                                        activity as BaseActivity,
-                                        PictureViewActivity::class.java,
-                                        anotherMap
-                                    )
-                                }
+
                             }
 
                             override fun onLongClicked(adapter: ListAdapter, index: Int) {
-                                var album =  adapter.listItems[index] as Album
-                                if (!adapter.isSelection){
-                                    adapter.isSelection = true
-                                    adapter.notifyDataSetChanged()
-                                }
-                                adapter.isSelection = true
-                                album.isSelected = true
-                                adapter.notifyItemChanged(index)
-                                (activity as HomeActivity).makeShareaDeleteToolbar(adapter, null, adapter.listItems as List<Album>)
+
                             }
 
                         })

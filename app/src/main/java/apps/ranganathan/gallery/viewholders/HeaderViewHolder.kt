@@ -30,6 +30,23 @@ class HeaderViewHolder : BaseViewHolder {
     }
 }
 
+class AlbumsDirectoryViewHolder : BaseViewHolder {
+
+    private lateinit var album: Album
+    var txtAlbum: AppCompatTextView
+
+    constructor(itemView: View) : super(itemView) {
+        txtAlbum = itemView.findViewById(R.id.txtAlbum) as AppCompatTextView
+
+    }
+
+    override fun bind(holder: RecyclerView.ViewHolder,data: Any) {
+
+        album = data as Album
+        txtAlbum.text = album.bucket
+    }
+}
+
 class ParentViewHolder : BaseViewHolder {
 
     private lateinit var parentModel: ParentModel

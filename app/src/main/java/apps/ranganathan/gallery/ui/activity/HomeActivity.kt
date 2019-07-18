@@ -183,7 +183,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
 
     }
 
-    class ApplicationSelectorReceiver(activity: BaseActivity) : BroadcastReceiver() {
+    class ApplicationSelectorReceiver : BroadcastReceiver() {
         @RequiresApi(Build.VERSION_CODES.KITKAT)
         override fun onReceive(context: Context, intent: Intent) {
             for (key in Objects.requireNonNull(intent.extras).keySet()) {
