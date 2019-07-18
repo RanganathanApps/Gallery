@@ -29,19 +29,22 @@ class PhotosViewModel : HomeViewModel() {
         adapter = object : ListAdapter() {
 
             override fun getLayoutId(position: Int, obj: Any): Int {
-                return when (obj) {
-                    is ParentModel -> {
-
+                return when ((obj as Album).isSectionHeader) {
+                    true -> {
                         R.layout.item_header_photos
-                    }
-                    is Album -> {
-
-                        R.layout.item_photos
                     }
                     else -> {
                         R.layout.item_photos
                     }
                 }
+                /*return when (obj) {
+                    is ParentModel -> {
+                        R.layout.item_header_photos
+                    }
+                    else -> {
+                        R.layout.item_photos
+                    }
+                }*/
             }
 
             override fun getViewHolder(view: View, viewType: Int): RecyclerView.ViewHolder {
@@ -57,7 +60,11 @@ class PhotosViewModel : HomeViewModel() {
                                     adapter.notifyItemChanged(index)
                                     (activity as HomeActivity).makeShareaDeleteToolbar(adapter, null, adapter.listItems as List<Album>)
                                 } else {
-                                    val anotherMap = mapOf("position" to index, "tag" to "photos")
+                                    val anotherMap = mapOf(
+                                        "tag" to "date",
+                                        "date" to album.dateString, "position" to index, "count" to album.count,
+                                        "album" to album
+                                    )
                                     (activity as BaseActivity).startActivityputExtra(
                                         activity as BaseActivity,
                                         PictureViewActivity::class.java,
@@ -125,11 +132,11 @@ class PhotosViewModel : HomeViewModel() {
 
 
         adapter.setItems(files)
-        activity.recyclerPhotos.layoutManager =  layoutManager
+        //activity.recyclerPhotos.layoutManager =  layoutManager
         activity.recyclerPhotos.hasFixedSize()
         activity.recyclerPhotos.adapter = adapter
-        return adapter
-       /* val glm = GridLayoutManager(activity, 3)
+
+        val glm = GridLayoutManager(activity, 3)
         glm.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
                 when (adapter.getItemViewType(position)) {
@@ -138,7 +145,8 @@ class PhotosViewModel : HomeViewModel() {
                 }
             }
         }
-        activity.recyclerPhotos.layoutManager = glm*/
+        activity.recyclerPhotos.layoutManager = glm
+        return adapter
     }
 
 }

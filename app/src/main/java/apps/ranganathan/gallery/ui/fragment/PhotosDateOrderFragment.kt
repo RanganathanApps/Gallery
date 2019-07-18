@@ -1,15 +1,7 @@
 package apps.ranganathan.gallery.ui.fragment
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
-
-import java.util.Collections
-import java.util.Comparator
+import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
@@ -17,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import apps.ranganathan.gallery.R
 import apps.ranganathan.gallery.adapter.BaseSectionAdapter
+import apps.ranganathan.gallery.adapter.ListAdapter
 import apps.ranganathan.gallery.adapter.PhotosAdapterByDate
 import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.model.ParentModel
@@ -24,26 +17,27 @@ import apps.ranganathan.gallery.ui.activity.BaseActivity
 import apps.ranganathan.gallery.ui.activity.PictureViewActivity
 import apps.ranganathan.gallery.utils.GridDividerDecoration
 import apps.ranganathan.gallery.viewmodel.PhotosViewModel
-import java.util.ArrayList
+import java.util.*
+import kotlin.collections.ArrayList
 
 class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
 
     override fun onItemSelected(position: Int) {
 
 
-
-       /* itemView.setOnLongClickListener {
-            onItemClickListener.onItemSelected(itemsList, position)
-            isSelection = true
-            this.itemsList[position].isSelected = true
-            notifyDataSetChanged()
-            onItemClickListener.onItemSelected(itemsList, position)
-            true
-        }*/
+        /* itemView.setOnLongClickListener {
+             onItemClickListener.onItemSelected(itemsList, position)
+             isSelection = true
+             this.itemsList[position].isSelected = true
+             notifyDataSetChanged()
+             onItemClickListener.onItemSelected(itemsList, position)
+             true
+         }*/
         //(activity as HomeActivity).makeShareaDeleteToolbar(null,mSectionedRecyclerAdapter,getAdapter().itemsList!!)
     }
 
 
+    private lateinit var data: ArrayList<Album>
     private lateinit var viewModel: PhotosViewModel
     private var mPhotosList: List<Album>? = null
 
@@ -52,10 +46,9 @@ class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListen
     private var recyclerView: RecyclerView? = null
 
     internal var mSectionedRecyclerAdapter: PhotosAdapterByDate? = null
+    internal var adapter: ListAdapter? = null
 
     private var gridDividerDecoration: GridDividerDecoration? = null
-
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,75 +70,114 @@ class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListen
         recyclerView!!.addItemDecoration(gridDividerDecoration!!)*/
 
 
-        mPhotosList=  viewModel.getAllImages(activity!!.applicationContext)
+        mPhotosList = viewModel.getAllImages(activity!!.applicationContext)
 
         splitData()
 
 
+        /* setAdapterWithGridLayout()
 
-       /* setAdapterWithGridLayout()
+         mSectionedRecyclerAdapter!!.setOnItemClickListener(this)
 
-        mSectionedRecyclerAdapter!!.setOnItemClickListener(this)
-
-        recyclerView!!.adapter = mSectionedRecyclerAdapter*/
+         recyclerView!!.adapter = mSectionedRecyclerAdapter*/
     }
 
     private fun splitData() {
-         var data = arrayListOf<Album>()
-
-        var dataModels = arrayListOf<ParentModel>()
-        var iterate = mPhotosList!!.iterator()
-        var lastDate = ""
-        lastDate = mPhotosList!![0].dateString
-        var parentModel:ParentModel
-        parentModel = ParentModel()
-        parentModel.albums = arrayListOf()
-        parentModel.isHeader = true
-        dataModels.add(parentModel)
-        var  isDateChanged = true
-
-        while (iterate.hasNext()) {
-
-            val album = iterate.next()
-            parentModel.header = lastDate
-            if (album.dateString.equals(lastDate)){
-                parentModel.albums.add(album)
-                parentModel.isHeader = false
-
-            }else{
-                parentModel = ParentModel()
-                parentModel.isHeader = true
-                parentModel.albums = arrayListOf()
-                album.isSectionHeader = true
-                parentModel.albums.add(album)
-                dataModels.add(parentModel)
-            }
-            data.add(album)
-
-            lastDate = album.dateString
-
-        }
-
-        viewModel.setDataToAdapter(activity as BaseActivity,LinearLayoutManager(activity) as RecyclerView.LayoutManager,dataModels as ArrayList<Any>)
-       // viewModel.setDataToAdapter(activity as BaseActivity,GridLayoutManager(activity,3) as RecyclerView.LayoutManager,data as ArrayList<Any>)
-    }
-
-    fun getAdapter(): PhotosAdapterByDate {
-        return mSectionedRecyclerAdapter!!
-    }
-
-    private fun setAdapterByGenre() {
-
-        this.photosComparator = kotlin.Comparator { o1, o2 ->  o2.date!!.compareTo(o1.date!!)}
+        this.photosComparator = kotlin.Comparator { o1, o2 -> o2.date!!.compareTo(o1.date!!) }
 
         Collections.sort(mPhotosList, photosComparator)
 
 
+        data = arrayListOf<Album>()
 
-        mSectionedRecyclerAdapter = PhotosAdapterByDate(activity  as BaseActivity)
-        mPhotosList?.let { mSectionedRecyclerAdapter!!.setData(it,activity as BaseActivity) }
-        mPhotosList?.let { mSectionedRecyclerAdapter!!.setDataList(it) }
-        mPhotosList?.let { mSectionedRecyclerAdapter!!.activity = activity as BaseActivity }
+        var dataModels = arrayListOf<ParentModel>()
+
+        var tempModels = arrayListOf<Album>()
+
+        var iterate = mPhotosList!!.iterator()
+        var lastDate = ""
+        lastDate = mPhotosList!![0].dateString
+        var parentModel: ParentModel
+        parentModel = ParentModel()
+        parentModel.albums = arrayListOf()
+        parentModel.isHeader = true
+        dataModels.add(parentModel)
+        tempModels.add(mPhotosList!![0])
+
+        val albumDuplicateInial = Album()
+        albumDuplicateInial.name = mPhotosList!![0].name
+        albumDuplicateInial.dateString = mPhotosList!![0].dateString
+        albumDuplicateInial.date = mPhotosList!![0].date
+        albumDuplicateInial.albumUri = mPhotosList!![0].albumUri
+        albumDuplicateInial.bucket = mPhotosList!![0].bucket
+        albumDuplicateInial.isSectionHeader = true
+
+        data.add(albumDuplicateInial)
+
+
+        var albumDuplicate = Album()
+
+        var isDateChanged = false
+
+        while (iterate.hasNext()) {
+
+            val album = iterate.next()
+
+            isDateChanged = album.dateString != lastDate
+
+            if (!isDateChanged) {
+                parentModel.albums.add(album)
+
+            }else{
+                parentModel = ParentModel()
+                parentModel.albums = arrayListOf()
+                album.isSectionHeader = false
+
+                albumDuplicate = Album()
+                albumDuplicate.name = album.name
+                albumDuplicate.dateString = album.dateString
+                albumDuplicate.date = album.date
+                albumDuplicate.albumUri = album.albumUri
+                albumDuplicate.bucket = album.bucket
+                albumDuplicate.isSectionHeader = true
+                data.add(albumDuplicate)
+
+                parentModel.albums.add(album)
+                dataModels.add(parentModel)
+
+                tempModels.add(albumDuplicate)
+            }
+            data.add(album)
+            parentModel.header = lastDate
+            lastDate = album.dateString
+
+        }
+
+
+        /*viewModel.setDataToAdapter(
+            activity as BaseActivity,
+            LinearLayoutManager(activity) as RecyclerView.LayoutManager,
+            dataModels as ArrayList<Any>
+        )*/
+        adapter = viewModel.setDataToAdapter(activity as BaseActivity,GridLayoutManager(activity,3) as RecyclerView.LayoutManager,data as ArrayList<Any>)
+    }
+
+    fun getAdapter(): ListAdapter {
+        return adapter!!
+    }
+
+    private fun setAdapterByGenre() {
+
+        this.photosComparator = kotlin.Comparator { o1, o2 -> o2.date!!.compareTo(o1.date!!) }
+
+        Collections.sort(data, photosComparator)
+
+
+
+        mSectionedRecyclerAdapter = PhotosAdapterByDate(activity as BaseActivity)
+        data?.let { mSectionedRecyclerAdapter!!.setData(it, activity as BaseActivity) }
+        data?.let { mSectionedRecyclerAdapter!!.setDataList(it) }
+        data?.let { mSectionedRecyclerAdapter!!.activity = activity as BaseActivity }
 
 
     }
@@ -160,10 +192,16 @@ class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListen
 
     override fun onItemClicked(album: Album, position: Int) {
 
-        val anotherMap = mapOf("tag" to "date",
-            "date" to album.dateString,"position" to position,"count" to album.count,
-            "album" to album)
-        (activity as BaseActivity).startActivityputExtra(activity as BaseActivity, PictureViewActivity::class.java,anotherMap)
+        val anotherMap = mapOf(
+            "tag" to "date",
+            "date" to album.dateString, "position" to position, "count" to album.count,
+            "album" to album
+        )
+        (activity as BaseActivity).startActivityputExtra(
+            activity as BaseActivity,
+            PictureViewActivity::class.java,
+            anotherMap
+        )
         /*val index = mPhotosList!!.indexOf(album)
         mPhotosList!!.remove(movie)
         mSectionedRecyclerAdapter!!.notifyItemRemovedAtPosition(index)*/

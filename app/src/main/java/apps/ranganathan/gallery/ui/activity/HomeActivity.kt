@@ -1,13 +1,21 @@
 package apps.ranganathan.gallery.ui.activity
 
 import android.Manifest
+import android.app.PendingIntent
+import android.content.BroadcastReceiver
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -31,6 +39,8 @@ import kotlinx.android.synthetic.main.activity_drawer.*
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.toolbar_home.*
 import kotlinx.android.synthetic.main.toolbar_home_share_delete.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelectedListener,
@@ -47,8 +57,8 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
 
     private var doubleBackToExitPressedOnce = false
 
-    var  photosAdapter: ListAdapter? = null
-    private var  baseAlbumsAdapter: BaseSectionAdapter? = null
+    var photosAdapter: ListAdapter? = null
+    private var baseAlbumsAdapter: BaseSectionAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,24 +94,21 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
 
             if (::photosFragment.isInitialized && curentFragment == photosFragment) {
                 shareMultileFiles(photosFragment.adapter.listItems as List<Album>)
+                makeReset(photosFragment.getAdapter().listItems as List<Album>)
             }
             if (::cameraFragment.isInitialized && curentFragment == cameraFragment) {
                 shareMultileFiles(cameraFragment.adapter.listItems as List<Album>)
+                makeReset(cameraFragment.getAdapter().listItems as List<Album>)
             }
             if (::photosDateOrderFragment.isInitialized && curentFragment == photosDateOrderFragment) {
-                shareMultileFiles(photosDateOrderFragment.getAdapter().itemsList as List<Album>)
+                shareMultileFiles(photosDateOrderFragment.getAdapter().listItems as List<Album>)
+                makeReset(photosDateOrderFragment.getAdapter().listItems as List<Album>)
             }
             if (::albumsListFragment.isInitialized && curentFragment == albumsListFragment) {
-                shareMultileFiles(photosDateOrderFragment.getAdapter().itemsList as List<Album>)
+                shareMultileFiles(photosDateOrderFragment.getAdapter().listItems as List<Album>)
+                makeReset(albumsListFragment.getAdapter().listItems as List<Album>)
             }
-           when(curentFragment){
-               photosFragment ->{
 
-               }
-               cameraFragment ->{
-
-               }
-           }
         }
         imgDeleteToolbar.setOnClickListener {
             deleteMultipleFiles()
@@ -111,7 +118,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
 
     }
 
-    private fun deleteMultipleFiles(){
+    private fun deleteMultipleFiles() {
         showConfirmationAlert(
             "Delete",
             "Image will be deleted permanently. do you want to continue?",
@@ -120,16 +127,21 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
 
                     if (::photosFragment.isInitialized && curentFragment == photosFragment) {
                         photosFragment.adapter.deleteItems()
+                        makeReset(photosFragment.adapter.listItems as List<Album>)
                     }
                     if (::cameraFragment.isInitialized && curentFragment == cameraFragment) {
                         cameraFragment.adapter.deleteItems()
+                        makeReset(cameraFragment.adapter.listItems as List<Album>)
                     }
                     if (::photosDateOrderFragment.isInitialized && curentFragment == photosDateOrderFragment) {
-                        photosDateOrderFragment.mSectionedRecyclerAdapter!!.deleteItems()
+                        photosDateOrderFragment.adapter!!.deleteItems()
+                        makeReset(photosDateOrderFragment.getAdapter().listItems as List<Album>)
                     }
                     if (::albumsListFragment.isInitialized && curentFragment == albumsListFragment) {
                         //albumsListFragment.mSectionedRecyclerAdapter!!.deleteItems()
+                        makeReset(albumsListFragment.getAdapter().listItems as List<Album>)
                     }
+
                 }
             },
             object : Utils.OnClickListener {
@@ -140,10 +152,10 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
     }
 
 
-    private fun shareMultileFiles(list: List<Album>){
-        var uris = ArrayList<Uri> ()
+    private fun shareMultileFiles(list: List<Album>) {
+        var uris = ArrayList<Uri>()
 
-        for (item in list){
+        for (item in list) {
             if (item.isSelected) {
                 val apkURI = FileProvider.getUriForFile(
                     context,
@@ -156,7 +168,43 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
         val shareIntent = Intent(Intent.ACTION_SEND_MULTIPLE)
         shareIntent.type = "image/*"
         shareIntent.putExtra(Intent.EXTRA_STREAM, uris)
-        startActivity(Intent.createChooser(shareIntent, "Share using"))
+
+
+        val receiver = Intent(this, ApplicationSelectorReceiver::class.java);
+        val pendingIntent = PendingIntent.getBroadcast(this, 0, receiver, PendingIntent.FLAG_UPDATE_CURRENT);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            val chooser = Intent.createChooser(shareIntent, null, pendingIntent.intentSender)
+            startActivity(chooser);
+        } else {
+            startActivity(Intent.createChooser(shareIntent, "Share using"))
+        };
+
+
+
+    }
+
+    class ApplicationSelectorReceiver(activity: BaseActivity) : BroadcastReceiver() {
+        @RequiresApi(Build.VERSION_CODES.KITKAT)
+        override fun onReceive(context: Context, intent: Intent) {
+            for (key in Objects.requireNonNull(intent.extras).keySet()) {
+                try {
+                    val componentInfo = intent.extras!!.get(key) as ComponentName
+                    val packageManager = context.getPackageManager()
+                    assert(componentInfo != null)
+                    val appName = packageManager.getApplicationLabel(
+                        packageManager.getApplicationInfo(
+                            componentInfo.packageName,
+                            PackageManager.GET_META_DATA
+                        )
+                    ) as String
+                    Log.w("Selected Name", appName)
+
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+
+            }
+        }
     }
 
 
@@ -268,9 +316,6 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
     }
 
 
-
-
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.menu_sort_date -> {
@@ -301,7 +346,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
     }
 
 
-    fun makeReset(photosAdapter: ListAdapter?, baseSectionAdapter:BaseSectionAdapter?, list: List<Album>) {
+    fun makeReset(list: List<Album>) {
 
         for (item in list) {
             if (item.isSelected) {
@@ -309,20 +354,20 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
             }
         }
 
-       resetToolbar()
-        if (photosFragment.getAdapter()!=null) {
+        resetToolbar()
+        if (photosFragment.getAdapter() != null) {
             photosFragment.getAdapter().isSelection = false
             photosFragment.getAdapter().notifyDataSetChanged()
         }
-        if (::cameraFragment.isInitialized && cameraFragment.getAdapter()!=null){
+        if (::cameraFragment.isInitialized && cameraFragment.getAdapter() != null) {
             cameraFragment.getAdapter().isSelection = false
             cameraFragment.getAdapter().notifyDataSetChanged()
         }
-        if (::photosDateOrderFragment.isInitialized && photosDateOrderFragment.getAdapter()!=null){
+        if (::photosDateOrderFragment.isInitialized && photosDateOrderFragment.getAdapter() != null) {
             photosDateOrderFragment.getAdapter().isSelection = false
             photosDateOrderFragment.getAdapter().notifyDataSetChanged()
         }
-        if (::albumsListFragment.isInitialized && albumsListFragment.getAdapter()!=null){
+        if (::albumsListFragment.isInitialized && albumsListFragment.getAdapter() != null) {
             albumsListFragment.getAdapter().isSelection = false
             albumsListFragment.getAdapter().notifyDataSetChanged()
         }
@@ -332,12 +377,13 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
     private fun resetToolbar() {
         toolbar.visibility = View.VISIBLE
         toolbar_share_delete.visibility = View.GONE
-        enableDisableScrollFlags(toolbar,false)
+        enableDisableScrollFlags(toolbar, false)
     }
 
     fun makeShareaDeleteToolbar(
         photosAdapter: ListAdapter?,
-        baseAlbumsAdapter:BaseSectionAdapter?, list: List<Album>) {
+        baseAlbumsAdapter: BaseSectionAdapter?, list: List<Album>
+    ) {
         this.baseAlbumsAdapter = baseAlbumsAdapter
         var count = 0
         for (item in list) {
@@ -352,20 +398,22 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
                 ContextCompat.getDrawable(applicationContext, R.drawable.ic_clear_white_24dp)
             toolbar.visibility = View.GONE
             toolbar_share_delete.visibility = View.VISIBLE
-            enableDisableScrollFlags(toolbar,true)
-            enableDisableScrollFlags(toolbar_share_delete,true)
+            enableDisableScrollFlags(toolbar, true)
+            enableDisableScrollFlags(toolbar_share_delete, true)
             toolbar_share_delete.setNavigationOnClickListener {
-                makeReset(photosAdapter,baseAlbumsAdapter, list)
+                makeReset(list)
             }
 
         }
     }
-    private fun enableDisableScrollFlags(toolbar : Toolbar,flag :Boolean){
+
+    private fun enableDisableScrollFlags(toolbar: Toolbar, flag: Boolean) {
         val params = toolbar.layoutParams as AppBarLayout.LayoutParams
         if (flag) {
             params.scrollFlags = 0
-        }else{
-            params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
+        } else {
+            params.scrollFlags =
+                AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
         }
     }
 

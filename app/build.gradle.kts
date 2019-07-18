@@ -127,6 +127,10 @@ dependencies {
     implementation(Libs.Firebase.remote_config)
     implementation(Libs.Firebase.firebase_core)
 
+    /*expandable recyclerview*/
+    implementation("com.thoughtbot:expandablerecyclerview:1.3")
+    implementation("com.thoughtbot:expandablecheckrecyclerview:1.4")
+
 }
 apply(mapOf("plugin" to "com.google.gms.google-services"))
 

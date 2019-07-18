@@ -32,7 +32,7 @@ class AlbumViewHolder : BaseViewHolder{
             photo,
             R.drawable.ic_camera_alt_white_24dp
         )
-        if (adapter!!.isSelection) {
+        if (adapter.isSelection) {
             imgAlbumSelectable.visibility = View.VISIBLE
             imgAlbumSelected.setColorFilter(ContextCompat.getColor(activity!!.applicationContext, R.color.colorWhite))
             imgAlbumOverlay.setBackgroundColor(
@@ -77,6 +77,7 @@ class AlbumViewHolder : BaseViewHolder{
 
     private fun undoSelection() {
         imgAlbumSelected.visibility = View.GONE
+        imgAlbumSelectable.visibility = View.GONE
         photo.setPadding(0, 0, 0, 0)
 
     }
