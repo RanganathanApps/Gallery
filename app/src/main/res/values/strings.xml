@@ -31,5 +31,9 @@
     <string name="menu_albums_list">Albums list</string>
     <string name="menu_sort_by_date">Sort by Date</string>
     <string name="all_photos">All photos</string>
+    <string name="app_nav_header_hint">Simple! made easy!</string>
+    <string name="label_lastModified_time">Time</string>
+    <string name="label_width">Width</string>
+    <string name="label_height">Height</string>
 
 </resources>

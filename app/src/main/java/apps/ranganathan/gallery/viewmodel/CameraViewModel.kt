@@ -11,9 +11,9 @@ import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.ui.activity.BaseActivity
 import apps.ranganathan.gallery.ui.activity.HomeActivity
 import apps.ranganathan.gallery.ui.activity.PictureViewActivity
-import apps.ranganathan.gallery.ui.activity.RecyclerListActivity
 import apps.ranganathan.gallery.viewholders.AlbumViewHolder
 import apps.ranganathan.gallery.viewholders.BaseViewHolder
+import apps.ranganathan.gallery.viewholders.HeaderViewHolder
 import kotlinx.android.synthetic.main.photos_fragment.*
 import java.io.File
 import java.text.SimpleDateFormat
@@ -96,7 +96,7 @@ class CameraViewModel : HomeViewModel() {
                         return hol
                     }
                     else -> {
-                        return RecyclerListActivity.MovieViewHolder(view)
+                        return HeaderViewHolder(view)
                     }
                 }
             }

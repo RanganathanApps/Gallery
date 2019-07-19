@@ -1,5 +1,6 @@
 package apps.ranganathan.gallery.ui.fragment
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -26,6 +27,7 @@ import apps.ranganathan.gallery.ui.activity.BaseActivity
 import apps.ranganathan.gallery.ui.activity.HomeActivity
 import apps.ranganathan.gallery.ui.activity.PictureViewActivity
 import apps.ranganathan.gallery.utils.GridDividerDecoration
+import apps.ranganathan.gallery.viewmodel.AlbumsDirectoryViewModel
 import apps.ranganathan.gallery.viewmodel.PhotosViewModel
 
 class AlbumsListFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
@@ -46,7 +48,7 @@ class AlbumsListFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
 
 
     private lateinit var data: ArrayList<Album>
-    private lateinit var viewModel: PhotosViewModel
+    private lateinit var viewModel: AlbumsDirectoryViewModel
     private var mPhotosList: List<Album>? = null
 
     private var photosComparator: Comparator<Album>? = null
@@ -58,6 +60,13 @@ class AlbumsListFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
 
     private var gridDividerDecoration: GridDividerDecoration? = null
 
+    fun deleteFile(context: Context){
+        for (i in 0 until adapter!!.listItems.size) {
+            if ((adapter!!.listItems[i] as Album).isSelected) {
+                viewModel.delete(context,(adapter!!.listItems[i] as Album).file)
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,7 +79,7 @@ class AlbumsListFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         recyclerView = view.findViewById<View>(R.id.recyclerPhotos) as RecyclerView
-        viewModel = ViewModelProviders.of(this).get(PhotosViewModel::class.java)
+        viewModel = ViewModelProviders.of(this).get(AlbumsDirectoryViewModel::class.java)
 
         recyclerView!!.layoutManager = LinearLayoutManager(context)
 
@@ -83,11 +92,7 @@ class AlbumsListFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
         splitData()
 
 
-        /* setAdapterWithGridLayout()
 
-         mSectionedRecyclerAdapter!!.setOnItemClickListener(this)
-
-         recyclerView!!.adapter = mSectionedRecyclerAdapter*/
     }
 
     private fun splitData() {
@@ -162,6 +167,7 @@ class AlbumsListFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
         }
 
 
+
         adapter = viewModel.setDataToAdapter(activity as BaseActivity,GridLayoutManager(activity,3) as RecyclerView.LayoutManager,data as ArrayList<Any>)
     }
 
@@ -220,6 +226,11 @@ class AlbumsListFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
 
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        //Empty the old menu
+        menu!!.clear()
+
+        inflater!!.inflate(R.menu.menu_album_list, menu)
+        menu!!.findItem(R.id.menu_albums_list).isVisible = false
         super.onCreateOptionsMenu(menu, inflater)
     }
 

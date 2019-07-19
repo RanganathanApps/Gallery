@@ -20,7 +20,7 @@ open class InfoViewModel : BaseViewModel() {
         return file.absolutePath
     }
 
-    fun getFileDate(file: File): String {
+    fun getFileDateAndTime(file: File): String {
         var dateString: String = ""
         try {
             val date = Date(file.lastModified())
@@ -33,6 +33,48 @@ open class InfoViewModel : BaseViewModel() {
             var spf = SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT' yyy")
             val newDate = inputFormat.parse(dateString)
             spf = SimpleDateFormat("dd MMM yyyy \nEEEE hh:mm a")
+            dateString = spf.format(newDate)
+        } catch (e: Exception) {
+            return dateString
+        } finally {
+            return dateString
+        }
+    }
+
+    fun getFileDate(file: File): String {
+        var dateString: String = ""
+        try {
+            val date = Date(file.lastModified())
+            dateString = date.toString()
+            Log.w("Date:", dateString)
+            val inputFormat = SimpleDateFormat(
+                "EEE MMM dd HH:mm:ss zzz yyyy", Locale.US
+            )
+            inputFormat.timeZone = TimeZone.getTimeZone("Etc/UTC")
+            var spf = SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT' yyy")
+            val newDate = inputFormat.parse(dateString)
+            spf = SimpleDateFormat("dd MMM yyyy EEEE")
+            dateString = spf.format(newDate)
+        } catch (e: Exception) {
+            return dateString
+        } finally {
+            return dateString
+        }
+    }
+
+    fun getFileTime(file: File): String {
+        var dateString: String = ""
+        try {
+            val date = Date(file.lastModified())
+            dateString = date.toString()
+            Log.w("Date:", dateString)
+            val inputFormat = SimpleDateFormat(
+                "EEE MMM dd HH:mm:ss zzz yyyy", Locale.US
+            )
+            inputFormat.timeZone = TimeZone.getTimeZone("Etc/UTC")
+            var spf = SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT' yyy")
+            val newDate = inputFormat.parse(dateString)
+            spf = SimpleDateFormat("hh:mm a")
             dateString = spf.format(newDate)
         } catch (e: Exception) {
             return dateString

@@ -126,18 +126,22 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
                 override fun onClick(v: View) {
 
                     if (::photosFragment.isInitialized && curentFragment == photosFragment) {
+                        photosFragment.deleteFile(this@HomeActivity)
                         photosFragment.adapter.deleteItems()
                         makeReset(photosFragment.adapter.listItems as List<Album>)
                     }
                     if (::cameraFragment.isInitialized && curentFragment == cameraFragment) {
+                        cameraFragment.deleteFile(this@HomeActivity)
                         cameraFragment.adapter.deleteItems()
                         makeReset(cameraFragment.adapter.listItems as List<Album>)
                     }
                     if (::photosDateOrderFragment.isInitialized && curentFragment == photosDateOrderFragment) {
+                        photosDateOrderFragment.deleteFile(this@HomeActivity)
                         photosDateOrderFragment.adapter!!.deleteItems()
                         makeReset(photosDateOrderFragment.getAdapter().listItems as List<Album>)
                     }
                     if (::albumsListFragment.isInitialized && curentFragment == albumsListFragment) {
+                        albumsListFragment.deleteFile(this@HomeActivity)
                         albumsListFragment.getAdapter().deleteItems()
                         makeReset(albumsListFragment.getAdapter().listItems as List<Album>)
                     }
@@ -178,7 +182,6 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
         } else {
             startActivity(Intent.createChooser(shareIntent, "Share using"))
         };
-
 
 
     }
@@ -294,6 +297,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
 
     override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
         resetToolbar()
+        closeDrawer()
         when (menuItem.itemId) {
             R.id.action_photos -> {
                 moveToAllPhotos()
@@ -307,7 +311,10 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
             }
             R.id.nav_about -> {
                 startAppActivity(this, AppInfoActivity::class.java)
-                closeDrawer()
+                return true
+            }
+            R.id.nav_help_feedback -> {
+                startAppActivity(this, HelpFeedbackActivity::class.java)
                 return true
             }
 
@@ -461,7 +468,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
                 return
             }
             this.doubleBackToExitPressedOnce = true
-            showMsg(nav_view, "click BACK again to exit")
+            showMsg(nav_view, "Press BACK again to exit!")
             vibrate(context)
 
             Handler().postDelayed(Runnable {

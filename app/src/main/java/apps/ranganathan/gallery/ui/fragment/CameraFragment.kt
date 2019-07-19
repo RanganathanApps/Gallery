@@ -18,9 +18,9 @@ import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.ui.activity.BaseActivity
 import apps.ranganathan.gallery.ui.activity.HomeActivity
 import apps.ranganathan.gallery.ui.activity.PictureViewActivity
-import apps.ranganathan.gallery.ui.activity.RecyclerListActivity
 import apps.ranganathan.gallery.viewholders.AlbumViewHolder
 import apps.ranganathan.gallery.viewholders.BaseViewHolder
+import apps.ranganathan.gallery.viewholders.HeaderViewHolder
 import apps.ranganathan.gallery.viewmodel.CameraViewModel
 import kotlinx.android.synthetic.main.camera_fragment.*
 import kotlinx.android.synthetic.main.photos_fragment.recyclerPhotos
@@ -42,6 +42,14 @@ class CameraFragment : Fragment(){
     private var contentView: View? = null
 
     private lateinit var viewModel: CameraViewModel
+
+    fun deleteFile(context:Context){
+        for (i in 0 until adapter.listItems.size) {
+            if ((adapter.listItems[i] as Album).isSelected) {
+                viewModel.delete(context,(adapter.listItems[i] as Album).file)
+            }
+        }
+    }
 
     fun getAdapter():ListAdapter{
         return adapter
@@ -165,7 +173,7 @@ class CameraFragment : Fragment(){
                         return hol
                     }
                     else -> {
-                        return RecyclerListActivity.MovieViewHolder(view)
+                        return HeaderViewHolder(view)
                     }
                 }
             }

@@ -10,6 +10,10 @@ import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.content_info.*
 import java.io.File
+import android.graphics.BitmapFactory
+import android.net.Uri
+
+
 
 class InfoActivity : BaseActivity() {
 
@@ -33,7 +37,9 @@ class InfoActivity : BaseActivity() {
 
         txtPath.text = infoViewModel.getFilePath(album.file)
         txtLastModified.text = infoViewModel.getFileDate(album.file)
+        txtLastModifiedTime.text = infoViewModel.getFileTime(album.file)
         txtSize.text = infoViewModel.getFileSize(album.file)
+        getIMGSize(album.file)
 
         Picasso.get().load(album.albumUri).into(imgInfo, object : Callback {
             override fun onError(e: Exception?) {
@@ -48,6 +54,17 @@ class InfoActivity : BaseActivity() {
 
 
         })
+
+    }
+    private fun getIMGSize(file: File) {
+        val options = BitmapFactory.Options()
+        options.inJustDecodeBounds = true
+        BitmapFactory.decodeFile(file.absolutePath, options)
+        val imageHeight = options.outHeight
+        val imageWidth = options.outWidth
+
+        txtWidth.text = ""+imageWidth
+        txtHeight.text = ""+imageHeight
 
     }
 

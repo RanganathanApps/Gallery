@@ -1,5 +1,6 @@
 package apps.ranganathan.gallery.ui.fragment
 
+import android.content.Context
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
@@ -183,6 +184,13 @@ class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListen
     }
 
 
+    fun deleteFile(context: Context){
+        for (i in 0 until adapter!!.listItems.size) {
+            if ((adapter!!.listItems[i] as Album).isSelected) {
+                viewModel.delete(context,(adapter!!.listItems[i] as Album).file)
+            }
+        }
+    }
     private fun setAdapterWithGridLayout() {
         setAdapterByGenre()
         val gridLayoutManager = GridLayoutManager(context, 3)
@@ -217,6 +225,10 @@ class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListen
 
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        menu!!.clear()
+
+        inflater!!.inflate(R.menu.menu_main, menu)
+        menu!!.findItem(R.id.menu_sort_date).isVisible = false
         super.onCreateOptionsMenu(menu, inflater)
     }
 

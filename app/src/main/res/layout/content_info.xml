@@ -7,6 +7,7 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:showIn="@layout/activity_info"
+        android:background="@color/colorWhite"
         tools:context=".ui.activity.InfoActivity">
 
 
@@ -128,6 +129,106 @@
                       android:textColor="@color/colorBlackLight"
                       android:textStyle="bold"/>
         </LinearLayout>
+
+        <LinearLayout
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+            <TextView android:layout_width="match_parent"
+                      android:layout_weight="1.5"
+                      android:layout_height="wrap_content"
+                      android:text="@string/label_lastModified_time"
+                      android:textSize="@dimen/_13sdp"
+                      tools:layout_editor_absoluteY="309dp"
+                      tools:layout_editor_absoluteX="33dp"/>
+
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text=" : "
+                      android:layout_marginEnd="@dimen/_10sdp"
+                      tools:layout_editor_absoluteY="309dp"
+                      tools:layout_editor_absoluteX="206dp"
+                      android:textColor="@color/colorBlackLight"
+                      android:textStyle="bold" android:layout_marginRight="@dimen/_10sdp"/>
+
+            <TextView android:layout_width="match_parent"
+                      android:layout_weight="1"
+                      android:layout_height="wrap_content"
+                      android:text="@string/action_photos"
+                      tools:layout_editor_absoluteY="309dp"
+                      tools:layout_editor_absoluteX="206dp"
+                      android:id="@+id/txtLastModifiedTime"
+                      android:textColor="@color/colorBlackLight"
+                      android:textStyle="bold"/>
+        </LinearLayout>
+
+        <LinearLayout
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+            <TextView android:layout_width="match_parent"
+                      android:layout_weight="1.5"
+                      android:layout_height="wrap_content"
+                      android:text="@string/label_width"
+                      android:textSize="@dimen/_13sdp"
+                      tools:layout_editor_absoluteY="309dp"
+                      tools:layout_editor_absoluteX="33dp"/>
+
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text=" : "
+                      android:layout_marginEnd="@dimen/_10sdp"
+                      tools:layout_editor_absoluteY="309dp"
+                      tools:layout_editor_absoluteX="206dp"
+                      android:textColor="@color/colorBlackLight"
+                      android:textStyle="bold" android:layout_marginRight="@dimen/_10sdp"/>
+
+            <TextView android:layout_width="match_parent"
+                      android:layout_weight="1"
+                      android:layout_height="wrap_content"
+                      android:text="@string/action_photos"
+                      tools:layout_editor_absoluteY="309dp"
+                      tools:layout_editor_absoluteX="206dp"
+                      android:id="@+id/txtWidth"
+                      android:textColor="@color/colorBlackLight"
+                      android:textStyle="bold"/>
+        </LinearLayout>
+
+        <LinearLayout
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+            <TextView android:layout_width="match_parent"
+                      android:layout_weight="1.5"
+                      android:layout_height="wrap_content"
+                      android:text="@string/label_height"
+                      android:textSize="@dimen/_13sdp"
+                      tools:layout_editor_absoluteY="309dp"
+                      tools:layout_editor_absoluteX="33dp"/>
+
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text=" : "
+                      android:layout_marginEnd="@dimen/_10sdp"
+                      tools:layout_editor_absoluteY="309dp"
+                      tools:layout_editor_absoluteX="206dp"
+                      android:textColor="@color/colorBlackLight"
+                      android:textStyle="bold" android:layout_marginRight="@dimen/_10sdp"/>
+
+            <TextView android:layout_width="match_parent"
+                      android:layout_weight="1"
+                      android:layout_height="wrap_content"
+                      android:text="@string/action_photos"
+                      tools:layout_editor_absoluteY="309dp"
+                      tools:layout_editor_absoluteX="206dp"
+                      android:id="@+id/txtHeight"
+                      android:textColor="@color/colorBlackLight"
+                      android:textStyle="bold"/>
+        </LinearLayout>
+
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

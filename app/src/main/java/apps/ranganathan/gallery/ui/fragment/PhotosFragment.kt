@@ -1,7 +1,9 @@
 package apps.ranganathan.gallery.ui.fragment
 
+import android.content.Context
 import android.os.Bundle
 import android.view.*
+import android.view.View.GONE
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
@@ -12,11 +14,12 @@ import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.ui.activity.BaseActivity
 import apps.ranganathan.gallery.ui.activity.HomeActivity
 import apps.ranganathan.gallery.ui.activity.PictureViewActivity
-import apps.ranganathan.gallery.ui.activity.RecyclerListActivity
 import apps.ranganathan.gallery.viewholders.AlbumViewHolder
 import apps.ranganathan.gallery.viewholders.BaseViewHolder
+import apps.ranganathan.gallery.viewholders.HeaderViewHolder
 import apps.ranganathan.gallery.viewmodel.PhotosViewModel
 import kotlinx.android.synthetic.main.photos_fragment.*
+import kotlinx.android.synthetic.main.progress_circle.*
 
 
 class PhotosFragment : Fragment() {
@@ -35,7 +38,18 @@ class PhotosFragment : Fragment() {
     fun getAdapter():ListAdapter{
         return adapter
     }
+    fun deleteFile(context:Context){
+        for (i in 0 until adapter.listItems.size) {
+            if ((adapter.listItems[i] as Album).isSelected) {
+                viewModel.delete(context,(adapter.listItems[i] as Album).file)
+            }
+        }
+    }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -47,8 +61,9 @@ class PhotosFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(PhotosViewModel::class.java)
-        if (recyclerPhotos.adapter == null)
+        if (recyclerPhotos.adapter == null) {
             loadPhotos()
+        }
     }
 
     internal fun loadPhotos() {
@@ -61,26 +76,6 @@ class PhotosFragment : Fragment() {
 
     private fun initPhotos(files: ArrayList<Album>) {
         setDataToAdapter(files)
-
-        /*adapter = PhotosAdapter(activity!! as BaseActivity,  photoSelctedListener = object :
-            PhotoSelectedListener {
-            override fun onItemSelected(position: Int, list: List<Album>) {
-                (activity as HomeActivity).makeShareaDeleteToolbar(adapter, null, list)
-            }
-
-            override fun onPhotoSelected(position: Int, list: List<Album>) {
-                val anotherMap = mapOf("position" to position, "tag" to "photos")
-                (activity as BaseActivity).startActivityputExtra(
-                    activity as BaseActivity,
-                    PictureViewActivity::class.java,
-                    anotherMap
-                )
-            }
-        })
-        recyclerPhotos.layoutManager = GridLayoutManager(activity!! as BaseActivity, 3) as RecyclerView.LayoutManager?
-        recyclerPhotos.setHasFixedSize(true)
-        adapter.setitems(files)
-        recyclerPhotos.adapter = adapter*/
     }
 
     private fun setDataToAdapter(files: ArrayList<Album>) {
@@ -137,7 +132,7 @@ class PhotosFragment : Fragment() {
                         return hol
                     }
                     else -> {
-                        return RecyclerListActivity.MovieViewHolder(view)
+                        return HeaderViewHolder(view)
                     }
                 }
             }
@@ -147,6 +142,7 @@ class PhotosFragment : Fragment() {
         recyclerPhotos.layoutManager = GridLayoutManager(activity, 3)
         recyclerPhotos.hasFixedSize()
         recyclerPhotos.adapter = adapter
+        progressCircular.visibility = GONE
     }
 
 
@@ -155,8 +151,8 @@ class PhotosFragment : Fragment() {
         //Empty the old menu
         menu!!.clear()
 
-        inflater!!.inflate(R.menu.menu_album_list, menu)
-        menu!!.findItem(R.id.menu_albums_list).isVisible = false
+        inflater!!.inflate(R.menu.menu_main, menu)
+        menu!!.findItem(R.id.menu_all_photos).isVisible = false
         super.onCreateOptionsMenu(menu, inflater)
     }
 
