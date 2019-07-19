@@ -15,6 +15,7 @@ import apps.ranganathan.gallery.viewholders.AlbumsDirectoryViewHolder
 import apps.ranganathan.gallery.viewholders.BaseViewHolder
 import apps.ranganathan.gallery.viewholders.HeaderViewHolder
 import kotlinx.android.synthetic.main.photos_fragment.*
+import kotlinx.android.synthetic.main.progress_circle.*
 import java.util.*
 
 
@@ -162,6 +163,7 @@ class PhotosViewModel : HomeViewModel() {
         //activity.recyclerPhotos.layoutManager =  layoutManager
         activity.recyclerPhotos.hasFixedSize()
         activity.recyclerPhotos.adapter = adapter
+        activity.progressCircular.visibility = View.GONE
 
         val glm = GridLayoutManager(activity, 3)
         glm.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {

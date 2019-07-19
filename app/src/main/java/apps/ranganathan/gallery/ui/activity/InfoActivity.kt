@@ -63,8 +63,7 @@ class InfoActivity : BaseActivity() {
         val imageHeight = options.outHeight
         val imageWidth = options.outWidth
 
-        txtWidth.text = ""+imageWidth
-        txtHeight.text = ""+imageHeight
+        txtWidth.text = "$imageWidth * $imageHeight"
 
     }
 

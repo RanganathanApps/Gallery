@@ -35,5 +35,7 @@
     <string name="label_lastModified_time">Time</string>
     <string name="label_width">Width</string>
     <string name="label_height">Height</string>
+    <string name="label_width_height">Width * Height</string>
+    <string name="label_dimention">Dimension</string>
 
 </resources>

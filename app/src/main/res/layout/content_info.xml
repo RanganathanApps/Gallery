@@ -171,7 +171,7 @@
             <TextView android:layout_width="match_parent"
                       android:layout_weight="1.5"
                       android:layout_height="wrap_content"
-                      android:text="@string/label_width"
+                      android:text="@string/label_dimention"
                       android:textSize="@dimen/_13sdp"
                       tools:layout_editor_absoluteY="309dp"
                       tools:layout_editor_absoluteX="33dp"/>
@@ -197,6 +197,7 @@
         </LinearLayout>
 
         <LinearLayout
+                android:visibility="gone"
                 android:layout_marginTop="@dimen/_10sdp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
