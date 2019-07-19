@@ -13,6 +13,10 @@
     <uses-feature android:name="android.hardware.camera"
                   android:required="true" />
 
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+
     <application
             android:name=".app.MyApp"
             android:allowBackup="true"
@@ -75,6 +79,13 @@
                   android:theme="@style/AppTheme.NoActionBar"/>
 
 
+        <service
+                android:name=".firebase.MyFirebaseMessagingService"
+                android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
 
         <receiver android:name=".ui.activity.HomeActivity$ApplicationSelectorReceiver"></receiver>
 

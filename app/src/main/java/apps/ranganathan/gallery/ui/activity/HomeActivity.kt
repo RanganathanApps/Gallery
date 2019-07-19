@@ -15,6 +15,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
@@ -32,9 +33,11 @@ import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.ui.fragment.*
 import apps.ranganathan.gallery.utils.BottomNavigationBehavior
 import apps.ranganathan.gallery.viewmodel.HomeViewModel
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.iid.FirebaseInstanceId
 import kotlinx.android.synthetic.main.activity_drawer.*
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.toolbar_home.*
@@ -73,6 +76,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
 
         setNavDrawer()
         setNavigation()
+        logFcmToken()
 
         getPermission(this, object : PermissionListener {
             override fun onDenied(deniedPermissions: List<String>) {
@@ -477,6 +481,23 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
         } catch (e: Exception) {
             makeLog("Exception", e.localizedMessage)
         }
+    }
+
+
+    fun logFcmToken(){
+        FirebaseInstanceId.getInstance().instanceId
+            .addOnCompleteListener(OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    makeLog( "FCM token getInstanceId failed"+ task.exception)
+                    return@OnCompleteListener
+                }
+
+                // Get new Instance ID token
+                val token = task.result?.token
+
+                // Log and toast
+                makeLog("FCM token: $token")
+            })
     }
 
 }

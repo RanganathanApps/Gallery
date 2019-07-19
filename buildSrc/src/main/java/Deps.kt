@@ -54,7 +54,7 @@ object Versions {
     val runner_version = "1.1.0-alpha4"
     val espresso_core_version = "3.1.0-alpha4"
     val firebase_auth = "16.2.1"
-    val firebase_messaging = "17.6.0"
+    val firebase_messaging = "19.0.1"
     val firebase_database = "16.1.0"
     val firebase_storage = "16.1.0"
     val firebase_remote_config = "18.0.0"

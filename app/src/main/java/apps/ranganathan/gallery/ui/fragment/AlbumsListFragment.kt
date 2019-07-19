@@ -7,6 +7,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
 
 import java.util.Collections
@@ -169,6 +170,7 @@ class AlbumsListFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
 
 
         adapter = viewModel.setDataToAdapter(activity as BaseActivity,GridLayoutManager(activity,3) as RecyclerView.LayoutManager,data as ArrayList<Any>)
+        view!!.findViewById<View>(R.id.progressCircular).visibility = GONE
     }
 
     fun getAdapter(): ListAdapter {

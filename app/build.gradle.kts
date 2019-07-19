@@ -3,7 +3,7 @@ import AppConfig.applicationId
 plugins {
 
     id("com.android.application")
-    /* id("io.fabric")*/
+    id("io.fabric")
     id("kotlin-android")
     id("kotlin-android-extensions")
     id("kotlin-kapt")
@@ -20,6 +20,7 @@ android {
         versionCode = AppConfig.versionCode
         versionName = AppConfig.versionName
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled = true
     }
     dataBinding {
         isEnabled = true
@@ -126,10 +127,14 @@ dependencies {
     /*firebase*/
     implementation(Libs.Firebase.remote_config)
     implementation(Libs.Firebase.firebase_core)
+    implementation(Libs.Firebase.crashlytics)
+    implementation(Libs.Firebase.messaging)
 
     /*expandable recyclerview*/
     implementation("com.thoughtbot:expandablerecyclerview:1.3")
     implementation("com.thoughtbot:expandablecheckrecyclerview:1.4")
+    /*multidex*/
+    implementation("com.android.support:multidex:1.0.3")
 
 }
 apply(mapOf("plugin" to "com.google.gms.google-services"))

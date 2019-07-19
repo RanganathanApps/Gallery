@@ -16,7 +16,9 @@ import apps.ranganathan.gallery.ui.activity.BaseActivity
 import kotlinx.android.synthetic.main.albums_fragment.*
 import android.view.Menu
 import android.view.MenuInflater
+import android.view.View.GONE
 import apps.ranganathan.gallery.viewmodel.PhotosViewModel
+import kotlinx.android.synthetic.main.progress_circle.*
 
 
 class AlbumsFragment : Fragment() {
@@ -57,8 +59,9 @@ class AlbumsFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(PhotosViewModel::class.java)
-        if (recyclerAlbums.adapter == null)
+        if (recyclerAlbums.adapter == null) {
             initAlbums(viewModel.getAlbums(activity!!.applicationContext))
+        }
     }
 
     private fun initAlbums(files: List<Album>) {
@@ -67,6 +70,7 @@ class AlbumsFragment : Fragment() {
         recyclerAlbums.layoutManager = GridLayoutManager(activity!! as BaseActivity, 3) as RecyclerView.LayoutManager?
         recyclerAlbums.setHasFixedSize(true)
         recyclerAlbums.adapter = adapter
+
 
         //viewModel.makeHideShow(recyclerAlbums, navigation = (activity as HomeActivity).getBottomNavigationView())
 
