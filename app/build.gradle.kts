@@ -135,6 +135,8 @@ dependencies {
     implementation("com.thoughtbot:expandablecheckrecyclerview:1.4")
     /*multidex*/
     implementation("com.android.support:multidex:1.0.3")
+    /*background task execution*/
+    implementation("org.jetbrains.anko:anko-common:0.9")
 
 }
 apply(mapOf("plugin" to "com.google.gms.google-services"))

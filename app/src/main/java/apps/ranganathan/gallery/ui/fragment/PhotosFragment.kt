@@ -20,6 +20,8 @@ import apps.ranganathan.gallery.viewholders.HeaderViewHolder
 import apps.ranganathan.gallery.viewmodel.PhotosViewModel
 import kotlinx.android.synthetic.main.photos_fragment.*
 import kotlinx.android.synthetic.main.progress_circle.*
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 
 
 class PhotosFragment : Fragment() {
@@ -31,6 +33,7 @@ class PhotosFragment : Fragment() {
 
     }
 
+    private lateinit var result: ArrayList<Album>
     internal lateinit var adapter: ListAdapter
     private var contentView: View? = null
     private lateinit var viewModel: PhotosViewModel
@@ -60,90 +63,41 @@ class PhotosFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(PhotosViewModel::class.java)
-        if (recyclerPhotos.adapter == null) {
-            loadPhotos()
+        if (!::viewModel.isInitialized) {
+            viewModel = ViewModelProviders.of(this).get(PhotosViewModel::class.java)
         }
+        if (!::adapter.isInitialized) {
+            loadPhotos()
+        }else{
+            initPhotos(result)
+        }
+        //viewModel.loadAndBind(activity as Context,progressCircular,recyclerPhotos)
     }
 
     internal fun loadPhotos() {
-        initPhotos(viewModel.getAllImages(activity!!.applicationContext))
-    }
-
-    internal fun updatePhotos() {
-        initPhotos(viewModel.getAllImages(activity!!.applicationContext))
-    }
-
-    private fun initPhotos(files: ArrayList<Album>) {
-        setDataToAdapter(files)
-    }
-
-    private fun setDataToAdapter(files: ArrayList<Album>) {
-
-        adapter = object : ListAdapter() {
-
-            override fun getLayoutId(position: Int, obj: Any): Int {
-                return when (obj) {
-                    is Album -> {
-                        R.layout.item_photos
-                    }
-                    else -> {
-                        R.layout.item_album
-                    }
-                }
-            }
-
-            override fun getViewHolder(view: View, viewType: Int): RecyclerView.ViewHolder {
-                 when (viewType) {
-                    R.layout.item_photos -> {
-                       val hol=  AlbumViewHolder(view)
-                        hol.setActivity(activity as BaseActivity,adapter = adapter, clickable = object : BaseViewHolder.Clickable {
-
-                            override fun clicked(adapter: ListAdapter, index: Int) {
-                                var album =  adapter.listItems[index] as Album
-                                if (adapter.isSelection) {
-                                    album.isSelected = !album.isSelected
-                                    adapter.notifyItemChanged(index)
-                                    (activity as HomeActivity).makeShareaDeleteToolbar(adapter, null, adapter.listItems as List<Album>)
-                                } else {
-                                    val anotherMap = mapOf("position" to index, "tag" to "photos")
-                                    (activity as BaseActivity).startActivityputExtra(
-                                        activity as BaseActivity,
-                                        PictureViewActivity::class.java,
-                                        anotherMap
-                                    )
-                                }
-                            }
-
-                            override fun onLongClicked(adapter: ListAdapter, index: Int) {
-                                var album =  adapter.listItems[index] as Album
-                                if (!adapter.isSelection){
-                                    adapter.isSelection = true
-                                    adapter.notifyDataSetChanged()
-                                }
-                                adapter.isSelection = true
-                                album.isSelected = true
-                                adapter.notifyItemChanged(index)
-                                (activity as HomeActivity).makeShareaDeleteToolbar(adapter, null, adapter.listItems as List<Album>)
-                            }
-
-                        })
-
-                        return hol
-                    }
-                    else -> {
-                        return HeaderViewHolder(view)
-                    }
-                }
+        doAsync {
+            result =  viewModel.getAllImages(activity!!.applicationContext)
+            uiThread {
+                initPhotos(result)
             }
         }
-
-        adapter.setItems(files)
-        recyclerPhotos.layoutManager = GridLayoutManager(activity, 3)
-        recyclerPhotos.hasFixedSize()
-        recyclerPhotos.adapter = adapter
-        progressCircular.visibility = GONE
     }
+
+
+
+    private fun initPhotos(files: ArrayList<Album>) {
+        if (activity!=null) {
+            adapter = viewModel.setDataToAdapter(activity as BaseActivity,progressCircular,files as ArrayList<Any>)
+            //viewModel.loadAndBind(activity as Context,progressCircular,recyclerPhotos)
+            adapter.setItems(files)
+            recyclerPhotos.layoutManager = GridLayoutManager(activity, 3)
+            recyclerPhotos.hasFixedSize()
+            recyclerPhotos.adapter = adapter
+            progressCircular.visibility = GONE
+        }
+    }
+
+
 
 
 

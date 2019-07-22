@@ -9,6 +9,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.View.GONE
 import android.view.ViewGroup
+import android.widget.ProgressBar
 
 import java.util.Collections
 import java.util.Comparator
@@ -18,18 +19,17 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import apps.ranganathan.gallery.R
-import apps.ranganathan.gallery.adapter.AlbumsAdapterByList
 import apps.ranganathan.gallery.adapter.BaseSectionAdapter
 import apps.ranganathan.gallery.adapter.ListAdapter
 import apps.ranganathan.gallery.adapter.PhotosAdapterByDate
 import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.model.ParentModel
 import apps.ranganathan.gallery.ui.activity.BaseActivity
-import apps.ranganathan.gallery.ui.activity.HomeActivity
 import apps.ranganathan.gallery.ui.activity.PictureViewActivity
 import apps.ranganathan.gallery.utils.GridDividerDecoration
 import apps.ranganathan.gallery.viewmodel.AlbumsDirectoryViewModel
-import apps.ranganathan.gallery.viewmodel.PhotosViewModel
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 
 class AlbumsListFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
 
@@ -55,9 +55,10 @@ class AlbumsListFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
     private var photosComparator: Comparator<Album>? = null
 
     private var recyclerView: RecyclerView? = null
+    private var progressCircular: ProgressBar? = null
 
     internal var mSectionedRecyclerAdapter: PhotosAdapterByDate? = null
-    internal var adapter: ListAdapter? = null
+    internal lateinit var adapter: ListAdapter
 
     private var gridDividerDecoration: GridDividerDecoration? = null
 
@@ -80,6 +81,7 @@ class AlbumsListFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         recyclerView = view.findViewById<View>(R.id.recyclerPhotos) as RecyclerView
+        progressCircular = view.findViewById<View>(R.id.progressCircular) as ProgressBar
         viewModel = ViewModelProviders.of(this).get(AlbumsDirectoryViewModel::class.java)
 
         recyclerView!!.layoutManager = LinearLayoutManager(context)
@@ -88,12 +90,30 @@ class AlbumsListFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
         recyclerView!!.addItemDecoration(gridDividerDecoration!!)*/
 
 
-        mPhotosList = viewModel.getAllImages(activity!!.applicationContext)
+        if (!::adapter.isInitialized) {
+            doAsync {
+                mPhotosList = viewModel.getAllImages(activity!!.applicationContext)
+                splitData()
+                uiThread {
+                    bindAdapter()
+                }
+            }
+        }else{
+            bindAdapter()
+        }
 
-        splitData()
 
 
 
+    }
+
+    private fun bindAdapter() {
+        adapter = viewModel.setDataToAdapter(
+            activity as BaseActivity,
+            GridLayoutManager(activity, 3) as RecyclerView.LayoutManager,
+            progressCircular!!,
+            data as ArrayList<Any>
+        )
     }
 
     private fun splitData() {
@@ -169,8 +189,7 @@ class AlbumsListFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
 
 
 
-        adapter = viewModel.setDataToAdapter(activity as BaseActivity,GridLayoutManager(activity,3) as RecyclerView.LayoutManager,data as ArrayList<Any>)
-        view!!.findViewById<View>(R.id.progressCircular).visibility = GONE
+
     }
 
     fun getAdapter(): ListAdapter {

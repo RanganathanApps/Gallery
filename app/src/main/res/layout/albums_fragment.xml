@@ -15,4 +15,6 @@
 
     </androidx.recyclerview.widget.RecyclerView>
 
+    <include layout="@layout/progress_circle"/>
+
 </FrameLayout>

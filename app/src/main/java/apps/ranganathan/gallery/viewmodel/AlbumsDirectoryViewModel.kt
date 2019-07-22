@@ -1,6 +1,7 @@
 package apps.ranganathan.gallery.viewmodel
 
 import android.view.View
+import android.widget.ProgressBar
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.LayoutManager
@@ -13,10 +14,9 @@ import apps.ranganathan.gallery.ui.activity.PictureViewActivity
 import apps.ranganathan.gallery.viewholders.AlbumViewHolder
 import apps.ranganathan.gallery.viewholders.AlbumsDirectoryViewHolder
 import apps.ranganathan.gallery.viewholders.BaseViewHolder
-import apps.ranganathan.gallery.viewholders.HeaderViewHolder
 import kotlinx.android.synthetic.main.photos_fragment.*
 import kotlinx.android.synthetic.main.progress_circle.*
-import java.util.*
+import java.util.ArrayList
 
 
 class AlbumsDirectoryViewModel : HomeViewModel() {
@@ -26,6 +26,7 @@ class AlbumsDirectoryViewModel : HomeViewModel() {
     internal fun setDataToAdapter(
         activity: BaseActivity,
         layoutManager: LayoutManager,
+        progressCircular: ProgressBar,
         files: ArrayList<Any>
     ): ListAdapter {
 
@@ -137,7 +138,7 @@ class AlbumsDirectoryViewModel : HomeViewModel() {
         //activity.recyclerPhotos.layoutManager =  layoutManager
         activity.recyclerPhotos.hasFixedSize()
         activity.recyclerPhotos.adapter = adapter
-        activity.progressCircular.visibility = View.GONE
+        progressCircular.visibility = View.GONE
 
         val glm = GridLayoutManager(activity, 3)
         glm.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {

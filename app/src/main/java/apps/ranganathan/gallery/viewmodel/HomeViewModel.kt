@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.RecyclerView
 import apps.ranganathan.gallery.adapter.ViewTypeAdapter
 import apps.ranganathan.gallery.model.Album
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -72,8 +74,10 @@ open class HomeViewModel : BaseViewModel(){
         val results = ArrayList<Album>()
         results.addAll(getExternalStorageContent(context))
        // results.addAll(getInternalStorageContent(context))
+
         return results
     }
+
 
 
 

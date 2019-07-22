@@ -3,6 +3,7 @@ package apps.ranganathan.gallery.ui.fragment
 import android.content.Context
 import android.os.Bundle
 import android.view.*
+import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
@@ -18,6 +19,9 @@ import apps.ranganathan.gallery.ui.activity.BaseActivity
 import apps.ranganathan.gallery.ui.activity.PictureViewActivity
 import apps.ranganathan.gallery.utils.GridDividerDecoration
 import apps.ranganathan.gallery.viewmodel.PhotosViewModel
+import kotlinx.android.synthetic.main.progress_circle.*
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -45,9 +49,11 @@ class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListen
     private var photosComparator: Comparator<Album>? = null
 
     private var recyclerView: RecyclerView? = null
+    private var progressCircular: ProgressBar? = null
+
+    internal lateinit var adapter: ListAdapter
 
     internal var mSectionedRecyclerAdapter: PhotosAdapterByDate? = null
-    internal var adapter: ListAdapter? = null
 
     private var gridDividerDecoration: GridDividerDecoration? = null
 
@@ -63,6 +69,7 @@ class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListen
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         recyclerView = view.findViewById<View>(R.id.recyclerPhotos) as RecyclerView
+        progressCircular = view.findViewById<View>(R.id.progressCircular) as ProgressBar
         viewModel = ViewModelProviders.of(this).get(PhotosViewModel::class.java)
 
         recyclerView!!.layoutManager = LinearLayoutManager(context)
@@ -70,10 +77,20 @@ class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListen
         /*gridDividerDecoration = GridDividerDecoration(context)
         recyclerView!!.addItemDecoration(gridDividerDecoration!!)*/
 
+        if (!::adapter.isInitialized) {
+            doAsync {
+                mPhotosList = viewModel.getAllImages(activity!!.applicationContext)
+                splitData()
+                uiThread {
+                   bindAdapter()
+                }
+            }
+        }else{
+            bindAdapter()
+        }
 
-        mPhotosList = viewModel.getAllImages(activity!!.applicationContext)
 
-        splitData()
+
 
 
         /* setAdapterWithGridLayout()
@@ -81,6 +98,14 @@ class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListen
          mSectionedRecyclerAdapter!!.setOnItemClickListener(this)
 
          recyclerView!!.adapter = mSectionedRecyclerAdapter*/
+    }
+
+    private fun bindAdapter() {
+        adapter = viewModel.setDataToAdapter(
+            activity as BaseActivity,
+            progressCircular!!,
+            data as ArrayList<Any>
+        )
     }
 
     private fun splitData() {
@@ -160,7 +185,7 @@ class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListen
             LinearLayoutManager(activity) as RecyclerView.LayoutManager,
             dataModels as ArrayList<Any>
         )*/
-        adapter = viewModel.setDataToAdapter(activity as BaseActivity,GridLayoutManager(activity,3) as RecyclerView.LayoutManager,data as ArrayList<Any>)
+
     }
 
     fun getAdapter(): ListAdapter {

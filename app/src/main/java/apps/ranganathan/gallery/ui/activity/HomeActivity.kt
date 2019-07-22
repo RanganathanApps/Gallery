@@ -50,6 +50,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
     NavigationView.OnNavigationItemSelectedListener {
 
     private var sortBy: Int = 0
+    private var sortByDirectory: Int = 0
     private lateinit var homeVieModel: HomeViewModel
     private lateinit var albumsFragment: AlbumsFragment
     private lateinit var photosFragment: PhotosFragment
@@ -261,11 +262,6 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
             return
         }
 
-        if (sortBy == 1) {
-            moveToDateWise()
-            return
-        }
-
         supportFragmentManager.beginTransaction().replace(R.id.frameFragmentHolder, albumsListFragment, "Photos")
             .commit()
         curentFragment = albumsListFragment
@@ -279,6 +275,10 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
         }
 
         if (curentFragment == albumsFragment) {
+            return
+        }
+        if (sortByDirectory == 1) {
+            moveToListAlbums()
             return
         }
         supportFragmentManager.beginTransaction().replace(R.id.frameFragmentHolder, albumsFragment, "Albums").commit()
@@ -341,11 +341,13 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
             }
             R.id.menu_albums_list -> {
                 sortBy = 0
+                sortByDirectory = 1
                 moveToListAlbums()
                 return true
             }
             R.id.menu_grid -> {
                 sortBy = 0
+                sortByDirectory = 0
                 moveToAlbums()
                 return true
             }

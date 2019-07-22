@@ -24,6 +24,8 @@ import apps.ranganathan.gallery.viewholders.HeaderViewHolder
 import apps.ranganathan.gallery.viewmodel.CameraViewModel
 import kotlinx.android.synthetic.main.camera_fragment.*
 import kotlinx.android.synthetic.main.photos_fragment.recyclerPhotos
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 import java.io.File
 
 
@@ -87,8 +89,14 @@ class CameraFragment : Fragment(){
     }
 
     private fun loadFiles() {
-        val files = viewModel.getImagesInFile(viewModel.getDirectory(DIRECTORY))!!
-        initAlbums(viewModel.getImages(files))
+        doAsync {
+            val files = viewModel.getImagesInFile(viewModel.getDirectory(DIRECTORY))!!
+            val images = viewModel.getImages(files)
+            uiThread {
+                initAlbums(images)
+            }
+        }
+
 
     }
 
