@@ -67,6 +67,7 @@ class AlbumsFragment : Fragment() {
         if (!::adapter.isInitialized) {
             // Calling the AsyncTask
             //SimpleAsyncTask(viewModel,activity as BaseActivity,contentView).execute()
+            view!!.findViewById<View>(R.id.progressCircular).visibility = VISIBLE
             doAsync {
                 result =  viewModel.getAlbums(activity!!.applicationContext)
                 uiThread {

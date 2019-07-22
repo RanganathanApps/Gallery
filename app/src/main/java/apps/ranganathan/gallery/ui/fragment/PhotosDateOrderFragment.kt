@@ -49,7 +49,7 @@ class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListen
     private var photosComparator: Comparator<Album>? = null
 
     private var recyclerView: RecyclerView? = null
-    private var progressCircular: ProgressBar? = null
+    private lateinit var progressCircular: View
 
     internal lateinit var adapter: ListAdapter
 
@@ -69,7 +69,7 @@ class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListen
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         recyclerView = view.findViewById<View>(R.id.recyclerPhotos) as RecyclerView
-        progressCircular = view.findViewById<View>(R.id.progressCircular) as ProgressBar
+        progressCircular = view.findViewById<View>(R.id.progressCircular)
         viewModel = ViewModelProviders.of(this).get(PhotosViewModel::class.java)
 
         recyclerView!!.layoutManager = LinearLayoutManager(context)
@@ -78,6 +78,7 @@ class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListen
         recyclerView!!.addItemDecoration(gridDividerDecoration!!)*/
 
         if (!::adapter.isInitialized) {
+            progressCircular.visibility = View.VISIBLE
             doAsync {
                 mPhotosList = viewModel.getAllImages(activity!!.applicationContext)
                 splitData()

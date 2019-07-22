@@ -439,6 +439,7 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
         runnableUpdate = Runnable {
             if (position == userList.size) {
                 position = 0
+                stopSlideShow()
             }
             viewpagerPhotos.setCurrentItem(position++, true)
         }

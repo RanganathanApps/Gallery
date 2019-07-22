@@ -8,6 +8,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.ProgressBar
 
@@ -55,7 +56,7 @@ class AlbumsListFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
     private var photosComparator: Comparator<Album>? = null
 
     private var recyclerView: RecyclerView? = null
-    private var progressCircular: ProgressBar? = null
+    private var progressCircular: View? = null
 
     internal var mSectionedRecyclerAdapter: PhotosAdapterByDate? = null
     internal lateinit var adapter: ListAdapter
@@ -81,7 +82,7 @@ class AlbumsListFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         recyclerView = view.findViewById<View>(R.id.recyclerPhotos) as RecyclerView
-        progressCircular = view.findViewById<View>(R.id.progressCircular) as ProgressBar
+        progressCircular = view.findViewById<View>(R.id.progressCircular) as View
         viewModel = ViewModelProviders.of(this).get(AlbumsDirectoryViewModel::class.java)
 
         recyclerView!!.layoutManager = LinearLayoutManager(context)
@@ -91,6 +92,7 @@ class AlbumsListFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
 
 
         if (!::adapter.isInitialized) {
+            view.findViewById<View>(R.id.progressCircular).visibility = VISIBLE
             doAsync {
                 mPhotosList = viewModel.getAllImages(activity!!.applicationContext)
                 splitData()

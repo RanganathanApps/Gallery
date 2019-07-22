@@ -46,7 +46,7 @@ class PhotosViewModel : HomeViewModel() {
         }
     }
 
-    private fun bindPhotos(context: Context,results: ArrayList<Album>,progressCircular: ProgressBar,
+    private fun bindPhotos(context: Context,results: ArrayList<Album>,progressCircular: View,
                            recyclerView: RecyclerView) {
 
         recyclerView.layoutManager = GridLayoutManager(context, 3)
@@ -123,7 +123,7 @@ class PhotosViewModel : HomeViewModel() {
 
     internal fun setDataToAdapter(
         activity: BaseActivity,
-        progressCircular: ProgressBar,
+        progressCircular: View,
         files: ArrayList<Any>
     ): ListAdapter {
 

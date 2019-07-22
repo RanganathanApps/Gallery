@@ -26,7 +26,7 @@ class AlbumsDirectoryViewModel : HomeViewModel() {
     internal fun setDataToAdapter(
         activity: BaseActivity,
         layoutManager: LayoutManager,
-        progressCircular: ProgressBar,
+        progressCircular: View,
         files: ArrayList<Any>
     ): ListAdapter {
 

@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.view.View.GONE
+import android.view.View.VISIBLE
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
@@ -75,6 +76,7 @@ class PhotosFragment : Fragment() {
     }
 
     internal fun loadPhotos() {
+        progressCircular.visibility = VISIBLE
         doAsync {
             result =  viewModel.getAllImages(activity!!.applicationContext)
             uiThread {
