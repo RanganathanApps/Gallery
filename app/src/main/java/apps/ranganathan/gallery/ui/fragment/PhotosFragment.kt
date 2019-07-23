@@ -72,11 +72,11 @@ class PhotosFragment : Fragment() {
         }else{
             initPhotos(result)
         }
-        //viewModel.loadAndBind(activity as Context,progressCircular,recyclerPhotos)
+        //viewModel.loadAndBind(activity as Context,progressCircularAccent,recyclerPhotos)
     }
 
     internal fun loadPhotos() {
-        progressCircular.visibility = VISIBLE
+        progressCircularAccent.visibility = VISIBLE
         doAsync {
             result =  viewModel.getAllImages(activity!!.applicationContext)
             uiThread {
@@ -89,13 +89,13 @@ class PhotosFragment : Fragment() {
 
     private fun initPhotos(files: ArrayList<Album>) {
         if (activity!=null) {
-            adapter = viewModel.setDataToAdapter(activity as BaseActivity,progressCircular,files as ArrayList<Any>)
-            //viewModel.loadAndBind(activity as Context,progressCircular,recyclerPhotos)
+            adapter = viewModel.setDataToAdapter(activity as BaseActivity,progressCircularAccent,files as ArrayList<Any>)
+            //viewModel.loadAndBind(activity as Context,progressCircularAccent,recyclerPhotos)
             adapter.setItems(files)
             recyclerPhotos.layoutManager = GridLayoutManager(activity, 3)
             recyclerPhotos.hasFixedSize()
             recyclerPhotos.adapter = adapter
-            progressCircular.visibility = GONE
+            progressCircularAccent.visibility = GONE
         }
     }
 

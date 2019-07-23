@@ -67,7 +67,7 @@ class AlbumsFragment : Fragment() {
         if (!::adapter.isInitialized) {
             // Calling the AsyncTask
             //SimpleAsyncTask(viewModel,activity as BaseActivity,contentView).execute()
-            view!!.findViewById<View>(R.id.progressCircular).visibility = VISIBLE
+            view!!.findViewById<View>(R.id.progressCircularAccent).visibility = VISIBLE
             doAsync {
                 result =  viewModel.getAlbums(activity!!.applicationContext)
                 uiThread {
@@ -88,7 +88,7 @@ class AlbumsFragment : Fragment() {
         AsyncTask<Void, Void, List<Album>>() {
         // do things with output
         override fun onPreExecute() {
-            contentView!!.findViewById<View>(R.id.progressCircular).visibility = VISIBLE
+            contentView!!.findViewById<View>(R.id.progressCircularAccent).visibility = VISIBLE
         }
         // Execute long task here
         override fun doInBackground(vararg voids: Void): List<Album> {
@@ -104,7 +104,7 @@ class AlbumsFragment : Fragment() {
             activity.recyclerAlbums.layoutManager = GridLayoutManager(activity!! as BaseActivity, 3) as RecyclerView.LayoutManager?
             activity.recyclerAlbums.setHasFixedSize(true)
             activity.recyclerAlbums.adapter = adapter
-            contentView!!.findViewById<View>(R.id.progressCircular).visibility = GONE
+            contentView!!.findViewById<View>(R.id.progressCircularAccent).visibility = GONE
         }
     }
 
@@ -117,7 +117,7 @@ class AlbumsFragment : Fragment() {
                 GridLayoutManager(activity!! as BaseActivity, 3) as RecyclerView.LayoutManager?
             recyclerAlbums.setHasFixedSize(true)
             recyclerAlbums.adapter = adapter
-            contentView!!.findViewById<View>(R.id.progressCircular).visibility = GONE
+            contentView!!.findViewById<View>(R.id.progressCircularAccent).visibility = GONE
         }
 
 

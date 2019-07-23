@@ -26,7 +26,7 @@ class AlbumsDirectoryViewModel : HomeViewModel() {
     internal fun setDataToAdapter(
         activity: BaseActivity,
         layoutManager: LayoutManager,
-        progressCircular: View,
+        progressCircularAccent: View,
         files: ArrayList<Any>
     ): ListAdapter {
 
@@ -138,7 +138,7 @@ class AlbumsDirectoryViewModel : HomeViewModel() {
         //activity.recyclerPhotos.layoutManager =  layoutManager
         activity.recyclerPhotos.hasFixedSize()
         activity.recyclerPhotos.adapter = adapter
-        progressCircular.visibility = View.GONE
+        progressCircularAccent.visibility = View.GONE
 
         val glm = GridLayoutManager(activity, 3)
         glm.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {

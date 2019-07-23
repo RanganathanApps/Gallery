@@ -56,7 +56,7 @@ class AlbumsListFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
     private var photosComparator: Comparator<Album>? = null
 
     private var recyclerView: RecyclerView? = null
-    private var progressCircular: View? = null
+    private var progressCircularAccent: View? = null
 
     internal var mSectionedRecyclerAdapter: PhotosAdapterByDate? = null
     internal lateinit var adapter: ListAdapter
@@ -82,7 +82,7 @@ class AlbumsListFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         recyclerView = view.findViewById<View>(R.id.recyclerPhotos) as RecyclerView
-        progressCircular = view.findViewById<View>(R.id.progressCircular) as View
+        progressCircularAccent = view.findViewById<View>(R.id.progressCircularAccent) as View
         viewModel = ViewModelProviders.of(this).get(AlbumsDirectoryViewModel::class.java)
 
         recyclerView!!.layoutManager = LinearLayoutManager(context)
@@ -92,7 +92,7 @@ class AlbumsListFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
 
 
         if (!::adapter.isInitialized) {
-            view.findViewById<View>(R.id.progressCircular).visibility = VISIBLE
+            view.findViewById<View>(R.id.progressCircularAccent).visibility = VISIBLE
             doAsync {
                 mPhotosList = viewModel.getAllImages(activity!!.applicationContext)
                 splitData()
@@ -113,7 +113,7 @@ class AlbumsListFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
         adapter = viewModel.setDataToAdapter(
             activity as BaseActivity,
             GridLayoutManager(activity, 3) as RecyclerView.LayoutManager,
-            progressCircular!!,
+            progressCircularAccent!!,
             data as ArrayList<Any>
         )
     }

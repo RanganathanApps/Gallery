@@ -38,5 +38,10 @@
     <string name="label_width_height">Width * Height</string>
     <string name="label_dimention">Dimension</string>
     <string name="default_notification_channel_id">gallery_fcm_id</string>
+    <string name="feedback">Feedback</string>
+    <string name="feedback_hint">write your suggesstions to make service you better in feature.</string>
+    <string name="action_submit_feedback">Submit feeback</string>
+    <string name="email_hint">your email address</string>
+    <string name="email_mandatory">Email address is mandatory!</string>
 
 </resources>

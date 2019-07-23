@@ -89,7 +89,7 @@ class CameraFragment : Fragment(){
     }
 
     private fun loadFiles() {
-        view!!.findViewById<View>(R.id.progressCircular).visibility = View.VISIBLE
+        view!!.findViewById<View>(R.id.progressCircularAccent).visibility = View.VISIBLE
         doAsync {
             val files = viewModel.getImagesInFile(viewModel.getDirectory(DIRECTORY))!!
             val images = viewModel.getImages(files)
@@ -192,7 +192,7 @@ class CameraFragment : Fragment(){
         recyclerPhotos.layoutManager = GridLayoutManager(activity, 3)
         recyclerPhotos.hasFixedSize()
         recyclerPhotos.adapter = adapter
-        view!!.findViewById<View>(R.id.progressCircular).visibility = View.GONE
+        view!!.findViewById<View>(R.id.progressCircularAccent).visibility = View.GONE
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

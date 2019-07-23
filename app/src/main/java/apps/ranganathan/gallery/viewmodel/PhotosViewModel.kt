@@ -30,7 +30,7 @@ class PhotosViewModel : HomeViewModel() {
     private lateinit var adapter: ListAdapter
 
     fun loadAndBind(context: Context,
-                    progressCircular: ProgressBar,
+                    progressCircularAccent: ProgressBar,
                     recyclerView: RecyclerView){
         if (!::resultPhotos.isInitialized) {
             doAsync {
@@ -38,21 +38,21 @@ class PhotosViewModel : HomeViewModel() {
                 uiThread {
                     setPhotosToAdapter(context,resultPhotos)
                     adapter.setItems(resultPhotos)
-                    bindPhotos(context, resultPhotos, progressCircular, recyclerView)
+                    bindPhotos(context, resultPhotos, progressCircularAccent, recyclerView)
                 }
             }
         }else{
-            bindPhotos(context, resultPhotos, progressCircular, recyclerView)
+            bindPhotos(context, resultPhotos, progressCircularAccent, recyclerView)
         }
     }
 
-    private fun bindPhotos(context: Context,results: ArrayList<Album>,progressCircular: View,
+    private fun bindPhotos(context: Context,results: ArrayList<Album>,progressCircularAccent: View,
                            recyclerView: RecyclerView) {
 
         recyclerView.layoutManager = GridLayoutManager(context, 3)
         recyclerView.hasFixedSize()
         recyclerView.adapter = adapter
-        progressCircular.visibility = View.GONE
+        progressCircularAccent.visibility = View.GONE
     }
 
     private fun setPhotosToAdapter(activity:Context,files: ArrayList<Album>) :ListAdapter {
@@ -123,7 +123,7 @@ class PhotosViewModel : HomeViewModel() {
 
     internal fun setDataToAdapter(
         activity: BaseActivity,
-        progressCircular: View,
+        progressCircularAccent: View,
         files: ArrayList<Any>
     ): ListAdapter {
 
@@ -262,7 +262,7 @@ class PhotosViewModel : HomeViewModel() {
         adapter.setItems(files)
         activity.recyclerPhotos.hasFixedSize()
         activity.recyclerPhotos.adapter = adapter
-        progressCircular.visibility = View.GONE
+        progressCircularAccent.visibility = View.GONE
 
         val glm = GridLayoutManager(activity, 3)
         glm.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
