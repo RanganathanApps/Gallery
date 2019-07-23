@@ -99,20 +99,17 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
 
             if (::photosFragment.isInitialized && curentFragment == photosFragment) {
                 shareMultileFiles(photosFragment.adapter.listItems as List<Album>)
-                makeReset(photosFragment.getAdapter().listItems as List<Album>)
             }
             if (::cameraFragment.isInitialized && curentFragment == cameraFragment) {
                 shareMultileFiles(cameraFragment.adapter.listItems as List<Album>)
-                makeReset(cameraFragment.getAdapter().listItems as List<Album>)
             }
             if (::photosDateOrderFragment.isInitialized && curentFragment == photosDateOrderFragment) {
                 shareMultileFiles(photosDateOrderFragment.getAdapter().listItems as List<Album>)
-                makeReset(photosDateOrderFragment.getAdapter().listItems as List<Album>)
             }
             if (::albumsListFragment.isInitialized && curentFragment == albumsListFragment) {
                 shareMultileFiles(albumsListFragment.getAdapter().listItems as List<Album>)
-                makeReset(albumsListFragment.getAdapter().listItems as List<Album>)
             }
+            releaseSelctions()
 
         }
         imgDeleteToolbar.setOnClickListener {
@@ -133,23 +130,20 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
                     if (::photosFragment.isInitialized && curentFragment == photosFragment) {
                         photosFragment.deleteFile(this@HomeActivity)
                         photosFragment.adapter.deleteItems()
-                        makeReset(photosFragment.adapter.listItems as List<Album>)
                     }
                     if (::cameraFragment.isInitialized && curentFragment == cameraFragment) {
                         cameraFragment.deleteFile(this@HomeActivity)
                         cameraFragment.adapter.deleteItems()
-                        makeReset(cameraFragment.adapter.listItems as List<Album>)
                     }
                     if (::photosDateOrderFragment.isInitialized && curentFragment == photosDateOrderFragment) {
                         photosDateOrderFragment.deleteFile(this@HomeActivity)
                         photosDateOrderFragment.adapter!!.deleteItems()
-                        makeReset(photosDateOrderFragment.getAdapter().listItems as List<Album>)
                     }
                     if (::albumsListFragment.isInitialized && curentFragment == albumsListFragment) {
                         albumsListFragment.deleteFile(this@HomeActivity)
                         albumsListFragment.getAdapter().deleteItems()
-                        makeReset(albumsListFragment.getAdapter().listItems as List<Album>)
                     }
+                    releaseSelctions()
 
                 }
             },
@@ -158,6 +152,22 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
                 }
             })
 
+    }
+
+    private fun releaseSelctions(){
+        if (::photosFragment.isInitialized && curentFragment == photosFragment) {
+            makeReset(photosFragment.getAdapter().listItems as List<Album>)
+        }
+        if (::cameraFragment.isInitialized && curentFragment == cameraFragment) {
+            makeReset(cameraFragment.getAdapter().listItems as List<Album>)
+        }
+        if (::photosDateOrderFragment.isInitialized && curentFragment == photosDateOrderFragment) {
+            makeReset(photosDateOrderFragment.getAdapter().listItems as List<Album>)
+        }
+        if (::albumsListFragment.isInitialized && curentFragment == albumsListFragment) {
+            makeReset(albumsListFragment.getAdapter().listItems as List<Album>)
+        }
+        resetToolbar()
     }
 
 
@@ -300,7 +310,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
     }
 
     override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
-        resetToolbar()
+        releaseSelctions()
         closeDrawer()
         when (menuItem.itemId) {
             R.id.action_photos -> {
@@ -464,7 +474,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
     override fun onBackPressed() {
 
         try {
-            resetToolbar()
+            releaseSelctions()
             if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
                 closeDrawer()
                 return
