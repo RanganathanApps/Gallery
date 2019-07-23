@@ -129,6 +129,7 @@ dependencies {
     implementation(Libs.Firebase.firebase_core)
     implementation(Libs.Firebase.crashlytics)
     implementation(Libs.Firebase.messaging)
+    implementation(Libs.Firebase.firestore)
 
     /*expandable recyclerview*/
     implementation("com.thoughtbot:expandablerecyclerview:1.3")

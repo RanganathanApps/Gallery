@@ -1,16 +1,16 @@
 package apps.ranganathan.gallery.ui.activity
 
 import android.os.Bundle
+import android.view.View.GONE
 import android.view.View.VISIBLE
-import apps.ranganathan.configlibrary.utils.ForceUpdateChecker
-import apps.ranganathan.gallery.BuildConfig
+import androidx.lifecycle.ViewModelProviders
 import apps.ranganathan.gallery.R
-import apps.ranganathan.gallery.viewmodel.InfoViewModel
+import apps.ranganathan.gallery.viewmodel.FeedbackViewModel
 import kotlinx.android.synthetic.main.content_help_feedback.*
 
 class HelpFeedbackActivity : BaseActivity() {
 
-    private lateinit var infoViewModel: InfoViewModel
+    private lateinit var feedbackViewModel: FeedbackViewModel
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,10 +18,16 @@ class HelpFeedbackActivity : BaseActivity() {
         setContentView(R.layout.content_help_feedback)
         setAppBar("")
         changeToolbarNavIconColor(R.color.colorWhite)
+        feedbackViewModel = ViewModelProviders.of(this).get(FeedbackViewModel::class.java)
         btnSubmitFeedback.setOnClickListener {
-            if (!txtFeedbackEmail.text.isNullOrEmpty()){
+            if (!txtFeedbackEmail.text.isNullOrEmpty() ){
+                if (!txtFeedback.text.isNullOrEmpty()){
+                    updateToFirebase(txtFeedbackEmail.text.toString(),txtFeedback.text.toString())
+                }else{
+                    showToast(getString(R.string.feebcak_cannot_be_empty))
+                }
 
-                updateToFirebase(txtFeedbackEmail.text.toString())
+
             }else{
                 showToast(getString(R.string.email_mandatory))
             }
@@ -29,9 +35,22 @@ class HelpFeedbackActivity : BaseActivity() {
 
     }
 
-    private fun updateToFirebase(feedback: String) {
+    private fun updateToFirebase(email: String, feedback: String) {
         progressBarCircular.visibility = VISIBLE
-        showToast(feedback)
+
+        val items = HashMap<String, Any>()
+        items.put("comment", feedback)
+        items.put("email", email)
+
+        feedbackViewModel.db.collection("feedbacks").document(email).set(items).addOnSuccessListener {
+            showToast(feedback)
+            progressBarCircular.visibility = GONE
+
+        }.addOnFailureListener {
+            showToast("addOnFailureListener")
+            progressBarCircular.visibility = GONE
+
+        }
     }
 
 

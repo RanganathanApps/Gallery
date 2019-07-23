@@ -28,6 +28,20 @@ buildscript {
             jcenter()
             maven(url = "https://jitpack.io")
             maven(url = "https://maven.google.com")
+           
+            //start here
+            configurations.all {
+                resolutionStrategy.eachDependency {
+                    /*requested = details.requested
+                    if (requested.group .equals('com.google.android.gms')) {
+                        details.useVersion("12.0.1")
+                    }
+                    if (requested.group .equals('com.google.firebase')) {
+                        details.useVersion("12.0.1")
+                    }*/
+
+                }
+            }
         }
     }
 

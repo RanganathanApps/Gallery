@@ -43,5 +43,6 @@
     <string name="action_submit_feedback">Submit feeback</string>
     <string name="email_hint">your email address</string>
     <string name="email_mandatory">Email address is mandatory!</string>
+    <string name="feebcak_cannot_be_empty">Feedback cannot be empty</string>
 
 </resources>

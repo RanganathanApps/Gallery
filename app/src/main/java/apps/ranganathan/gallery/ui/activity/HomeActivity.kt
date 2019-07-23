@@ -68,7 +68,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_drawer)
         setSupportActionBar(toolbar)
-        setConnectivityChange()
+        //setConnectivityChange()
         initCode()
     }
 
