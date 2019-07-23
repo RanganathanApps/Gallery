@@ -1,11 +1,11 @@
 package apps.ranganathan.gallery.ui.activity
 
 import android.os.Bundle
+import android.view.View.VISIBLE
 import apps.ranganathan.configlibrary.utils.ForceUpdateChecker
 import apps.ranganathan.gallery.BuildConfig
 import apps.ranganathan.gallery.R
 import apps.ranganathan.gallery.viewmodel.InfoViewModel
-import kotlinx.android.synthetic.main.content_app_info.*
 import kotlinx.android.synthetic.main.content_help_feedback.*
 
 class HelpFeedbackActivity : BaseActivity() {
@@ -30,6 +30,7 @@ class HelpFeedbackActivity : BaseActivity() {
     }
 
     private fun updateToFirebase(feedback: String) {
+        progressBarCircular.visibility = VISIBLE
         showToast(feedback)
     }
 
