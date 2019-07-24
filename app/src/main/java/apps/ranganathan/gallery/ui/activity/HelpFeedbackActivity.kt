@@ -1,5 +1,7 @@
 package apps.ranganathan.gallery.ui.activity
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -16,18 +18,24 @@ class HelpFeedbackActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.content_help_feedback)
-        setAppBar("")
+        setAppBar(getString(R.string.feedback))
+        setToolBarTitle(getString(R.string.feedback))
         changeToolbarNavIconColor(R.color.colorWhite)
+        setConnectivityChange()
         feedbackViewModel = ViewModelProviders.of(this).get(FeedbackViewModel::class.java)
         btnSubmitFeedback.setOnClickListener {
+            if (isDisconnected){
+                showToast(getString(R.string.no_internet_connection))
+
+                return@setOnClickListener
+            }
             if (!txtFeedbackEmail.text.isNullOrEmpty() ){
                 if (!txtFeedback.text.isNullOrEmpty()){
-                    updateToFirebase(txtFeedbackEmail.text.toString(),txtFeedback.text.toString())
+
+                   updateToFirebase(txtFeedbackEmail.text.toString(),txtFeedback.text.toString())
                 }else{
                     showToast(getString(R.string.feebcak_cannot_be_empty))
                 }
-
-
             }else{
                 showToast(getString(R.string.email_mandatory))
             }

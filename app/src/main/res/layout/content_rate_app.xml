@@ -33,6 +33,7 @@
 
 
                     <TextView
+                            android:visibility="visible"
                             android:id="@+id/txtFeedbackTitle"
                             android:layout_margin="@dimen/_6sdp"
                             android:text="@string/app_name"
@@ -40,93 +41,67 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="monospace"
                             android:typeface="monospace"
-                            android:textSize="@dimen/_12sdp"
+                            android:textSize="@dimen/_11sdp"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             android:layout_marginLeft="300dp" android:layout_marginStart="300dp"
                             app:layout_constraintTop_toBottomOf="@+id/imageView3"/>
 
-                    <com.rengwuxian.materialedittext.MaterialEditText
-                            android:id="@+id/txtFeedbackEmail"
+                    <TextView
+                            android:text="@string/rate_our_app"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            app:met_underlineColor="@color/colorPrimaryDark"
-                            android:hint="@string/email_hint"
-                            android:focusedByDefault="false"
-                            android:textColor="@color/colorGrey"
-                            android:inputType="textWebEmailAddress"
-                            android:fontFamily="sans-serif-medium"
+                            android:id="@+id/txtRateApp"
+                            android:fontFamily="monospace"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                             android:typeface="monospace"
-                            android:textSize="@dimen/_12sdp"
+                            android:textSize="@dimen/_20sdp"
                             app:layout_constraintStart_toStartOf="parent"
+                            android:layout_marginTop="32dp"
                             app:layout_constraintTop_toBottomOf="@+id/txtFeedbackTitle"
-                            android:layout_marginTop="24dp"
                             android:layout_marginStart="32dp"
-                            android:layout_marginEnd="32dp"
-                            tools:ignore="UnusedAttribute"/>
+                            android:layout_marginEnd="32dp" app:layout_constraintHorizontal_bias="0.0"/>
 
 
-                    <com.rengwuxian.materialedittext.MaterialEditText
-                            android:id="@+id/txtFeedback"
+
+                    <TextView
+                            android:text="@string/rate_our_app_hint"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:maxLength="200"
-                            android:maxLines="3"
-                            android:focusedByDefault="false"
-                            android:inputType="textMultiLine"
-                            android:imeOptions="actionNone"
-                            app:met_underlineColor="@color/colorPrimaryDark"
-                            app:met_maxCharacters="180"
-                            android:hint="@string/feedback_hint"
-                            android:textColor="@color/colorGrey"
-                            android:scrollbarStyle="outsideOverlay"
-                            android:scrollbars="vertical"
-                            android:overScrollMode="always"
-                            android:ems="2"
-                            android:lines="4"
-                            android:scrollHorizontally="false"
-                            android:fontFamily="sans-serif-medium"
+                            android:id="@+id/txtRateAppHint"
+                            android:fontFamily="monospace"
                             android:typeface="monospace"
                             android:textSize="@dimen/_12sdp"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/txtFeedbackEmail"
-                            android:layout_marginTop="14dp"
+                            android:layout_marginTop="12dp"
+                            app:layout_constraintTop_toBottomOf="@+id/txtRateApp"
                             android:layout_marginStart="32dp"
-                            android:layout_marginEnd="32dp" tools:ignore="UnusedAttribute"/>
+                            android:layout_marginEnd="32dp" app:layout_constraintHorizontal_bias="0.0"/>
+
+
 
                     <Button
-                            android:id="@+id/btnSubmitFeedback"
+                            android:id="@+id/btnRateNow"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@color/colorAccent"
-                            android:text="@string/action_submit_feedback"
+                            android:text="@string/action_rate_now"
                             android:textColor="@android:color/white"
                             app:layout_constraintStart_toStartOf="parent"
                             android:layout_marginStart="32dp"
                             app:layout_constraintEnd_toEndOf="parent"
                             android:layout_marginEnd="32dp"
-                            app:layout_constraintTop_toBottomOf="@+id/txtFeedback"
-                            android:layout_marginTop="20dp" app:layout_constraintHorizontal_bias="0.0"/>
+                            app:layout_constraintTop_toBottomOf="@+id/txtRateAppHint"
+                            android:layout_marginTop="32dp"
+                            app:layout_constraintHorizontal_bias="0.0"/>
 
-                    <ProgressBar
-                            android:layout_margin="@dimen/_16sdp"
-                            android:visibility="gone"
-                            android:id="@+id/progressBarCircular"
-                            android:layout_gravity="center"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginBottom="8dp"
-                            app:layout_constraintBottom_toTopOf="@+id/btnSubmitFeedback"
-                            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
-                            android:layout_marginRight="8dp" app:layout_constraintStart_toStartOf="parent"
-                            android:layout_marginLeft="8dp" android:layout_marginStart="8dp"/>
+
                     <ImageView
-                            android:layout_width="@dimen/_61sdp"
-                            android:layout_height="@dimen/_61sdp"
+                            android:layout_width="71dp"
+                            android:layout_height="71dp"
                             app:srcCompat="@drawable/gallery_app_logo_512"
-                            tools:layout_editor_absoluteX="127dp" android:id="@+id/imageView3"
-                            android:layout_marginTop="8dp"
+                            android:id="@+id/imageView3"
+                            android:layout_marginTop="18dp"
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"

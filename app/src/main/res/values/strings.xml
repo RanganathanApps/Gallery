@@ -44,5 +44,12 @@
     <string name="email_hint">your email address</string>
     <string name="email_mandatory">Email address is mandatory!</string>
     <string name="feebcak_cannot_be_empty">Feedback cannot be empty</string>
+    <string name="no_internet_connection">No internet connection</string>
+    <string name="action_rate_now">Rate Now</string>
+    <string name="rate_our_app">Loving our App?</string>
+    <string name="rate_our_app_hint">We\'are so happy to hear you love to use Gallery app, help supporting app to
+        improve fearures and more.
+    </string>
+    <string name="rate_us">Rate us</string>
 
 </resources>

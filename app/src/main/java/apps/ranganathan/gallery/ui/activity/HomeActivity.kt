@@ -15,7 +15,6 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
@@ -154,7 +153,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
 
     }
 
-    private fun releaseSelctions(){
+    private fun releaseSelctions() {
         if (::photosFragment.isInitialized && curentFragment == photosFragment) {
             makeReset(photosFragment.getAdapter().listItems as List<Album>)
         }
@@ -331,6 +330,10 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
                 startAppActivity(this, HelpFeedbackActivity::class.java)
                 return true
             }
+            R.id.nav_rate_us -> {
+                startAppActivity(this, RateAppActivity::class.java)
+                return true
+            }
 
         }
         return true
@@ -496,11 +499,11 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
     }
 
 
-    fun logFcmToken(){
+    fun logFcmToken() {
         FirebaseInstanceId.getInstance().instanceId
             .addOnCompleteListener(OnCompleteListener { task ->
                 if (!task.isSuccessful) {
-                    makeLog( "FCM token getInstanceId failed"+ task.exception)
+                    makeLog("FCM token getInstanceId failed" + task.exception)
                     return@OnCompleteListener
                 }
 

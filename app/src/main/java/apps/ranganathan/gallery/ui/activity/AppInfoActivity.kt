@@ -24,7 +24,12 @@ class AppInfoActivity : BaseActivity() ,ForceUpdateChecker.OnUpdateNeededListene
         changeToolbarNavIconColor(R.color.colorWhite)
         txtAppVersionAppInfo.text = "v " + BuildConfig.VERSION_NAME
 
+        setConnectivityChange()
         btnCheckForUpdate.setOnClickListener {
+            if (isDisconnected){
+                showToast(getString(R.string.no_internet_connection))
+                return@setOnClickListener
+            }
             txtAppVersionAppInfo.visibility = INVISIBLE
             progressBarCircular.visibility = VISIBLE
             ForceUpdateChecker.with(this@AppInfoActivity).onUpdateNeeded(this@AppInfoActivity).check()
