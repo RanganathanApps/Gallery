@@ -26,7 +26,7 @@ class AppInfoActivity : BaseActivity() ,ForceUpdateChecker.OnUpdateNeededListene
 
         setConnectivityChange()
         btnCheckForUpdate.setOnClickListener {
-            if (isDisconnected){
+            if (!getIsConnected().value!!){
                 showToast(getString(R.string.no_internet_connection))
                 return@setOnClickListener
             }

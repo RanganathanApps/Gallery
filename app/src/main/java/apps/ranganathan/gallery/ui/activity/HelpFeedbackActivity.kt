@@ -24,7 +24,7 @@ class HelpFeedbackActivity : BaseActivity() {
         setConnectivityChange()
         feedbackViewModel = ViewModelProviders.of(this).get(FeedbackViewModel::class.java)
         btnSubmitFeedback.setOnClickListener {
-            if (isDisconnected){
+            if (!getIsConnected().value!!){
                 showToast(getString(R.string.no_internet_connection))
 
                 return@setOnClickListener
