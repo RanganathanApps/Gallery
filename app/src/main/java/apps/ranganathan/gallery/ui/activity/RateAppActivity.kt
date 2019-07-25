@@ -25,11 +25,7 @@ class RateAppActivity : BaseActivity() {
         setConnectivityChange()
         getIsConnected().observe(this, Observer {
             isConnected = it
-            if (isConnected) {
-                showToast(getString(R.string.app_info_hint))
-            }else{
-                showToast(getString(R.string.no_internet_connection))
-            }
+
         })
         feedbackViewModel = ViewModelProviders.of(this).get(FeedbackViewModel::class.java)
         btnRateNow.setOnClickListener {

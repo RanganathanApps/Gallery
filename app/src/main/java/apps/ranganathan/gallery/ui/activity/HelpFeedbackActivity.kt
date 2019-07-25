@@ -62,7 +62,7 @@ class HelpFeedbackActivity : BaseActivity() {
             progressBarCircular.visibility = GONE
 
         }.addOnFailureListener {
-            showToast("Please try again!")
+            showToast(getString(R.string.please_try_agin))
             progressBarCircular.visibility = GONE
 
         }
