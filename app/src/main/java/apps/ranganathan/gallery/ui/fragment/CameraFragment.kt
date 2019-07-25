@@ -154,7 +154,7 @@ class CameraFragment : Fragment(){
                                 if (adapter.isSelection) {
                                     album.isSelected = !album.isSelected
                                     adapter.notifyItemChanged(index)
-                                    (activity as HomeActivity).makeShareaDeleteToolbar(adapter, null, adapter.listItems as List<Album>)
+                                    (activity as HomeActivity).makeShareDeleteToolbar(adapter.listItems as List<Album>)
                                 } else {
                                     val anotherMap = mapOf("position" to index, "tag" to "camera","directory_ui" to DIRECTORY_UI,"directory" to DIRECTORY)
                                     (activity as BaseActivity).startActivityputExtra(
@@ -174,7 +174,7 @@ class CameraFragment : Fragment(){
                                 adapter.isSelection = true
                                 album.isSelected = true
                                 adapter.notifyItemChanged(index)
-                                (activity as HomeActivity).makeShareaDeleteToolbar(adapter, null, adapter.listItems as List<Album>)
+                                (activity as HomeActivity).makeShareDeleteToolbar( adapter.listItems as List<Album>)
                             }
 
                         })

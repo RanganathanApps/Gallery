@@ -68,7 +68,7 @@ class CameraViewModel : HomeViewModel() {
                                 if (adapter.isSelection) {
                                     album.isSelected = !album.isSelected
                                     adapter.notifyItemChanged(index)
-                                    (activity as HomeActivity).makeShareaDeleteToolbar(adapter, null, adapter.listItems as List<Album>)
+                                    (activity as HomeActivity).makeShareDeleteToolbar(adapter.listItems as List<Album>)
                                 } else {
                                     val anotherMap = mapOf("position" to index, "tag" to "photos")
                                     (activity as BaseActivity).startActivityputExtra(
@@ -88,7 +88,7 @@ class CameraViewModel : HomeViewModel() {
                                 adapter.isSelection = true
                                 album.isSelected = true
                                 adapter.notifyItemChanged(index)
-                                (activity as HomeActivity).makeShareaDeleteToolbar(adapter, null, adapter.listItems as List<Album>)
+                                (activity as HomeActivity).makeShareDeleteToolbar(adapter.listItems as List<Album>)
                             }
 
                         })

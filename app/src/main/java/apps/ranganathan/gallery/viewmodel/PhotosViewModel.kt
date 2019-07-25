@@ -2,10 +2,10 @@ package apps.ranganathan.gallery.viewmodel
 
 import android.content.Context
 import android.view.View
+import android.view.View.GONE
 import android.widget.ProgressBar
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import apps.ranganathan.gallery.R
 import apps.ranganathan.gallery.adapter.ListAdapter
 import apps.ranganathan.gallery.model.Album
@@ -17,10 +17,8 @@ import apps.ranganathan.gallery.viewholders.AlbumsDirectoryViewHolder
 import apps.ranganathan.gallery.viewholders.BaseViewHolder
 import apps.ranganathan.gallery.viewholders.HeaderViewHolder
 import kotlinx.android.synthetic.main.photos_fragment.*
-import kotlinx.android.synthetic.main.progress_circle.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
-import java.util.*
 import kotlin.collections.ArrayList
 
 
@@ -81,7 +79,7 @@ class PhotosViewModel : HomeViewModel() {
                                 if (adapter.isSelection) {
                                     album.isSelected = !album.isSelected
                                     adapter.notifyItemChanged(index)
-                                    (activity as HomeActivity).makeShareaDeleteToolbar(adapter, null, adapter.listItems as List<Album>)
+                                    (activity as HomeActivity).makeShareDeleteToolbar(adapter.listItems as List<Album>)
                                 } else {
                                     val anotherMap = mapOf("position" to index, "tag" to "photos")
                                     (activity as BaseActivity).startActivityputExtra(
@@ -101,7 +99,7 @@ class PhotosViewModel : HomeViewModel() {
                                 adapter.isSelection = true
                                 album.isSelected = true
                                 adapter.notifyItemChanged(index)
-                                (activity as HomeActivity).makeShareaDeleteToolbar(adapter, null, adapter.listItems as List<Album>)
+                                (activity as HomeActivity).makeShareDeleteToolbar(adapter.listItems as List<Album>)
                             }
 
                         })
@@ -121,13 +119,8 @@ class PhotosViewModel : HomeViewModel() {
 
 
 
-    internal fun setDataToAdapter(
-        activity: BaseActivity,
-        progressCircularAccent: View,
-        files: ArrayList<Any>
-    ): ListAdapter {
-
-
+    internal fun setDataToAdapter(activity: BaseActivity, progressCircularAccent: View,
+                                    files: ArrayList<Any> ): ListAdapter {
 
         adapter = object : ListAdapter() {
 
@@ -175,11 +168,7 @@ class PhotosViewModel : HomeViewModel() {
                                     if (adapter.isSelection) {
                                         album.isSelected = !album.isSelected
                                         adapter.notifyItemChanged(index)
-                                        (activity as HomeActivity).makeShareaDeleteToolbar(
-                                            adapter,
-                                            null,
-                                            adapter.listItems as List<Album>
-                                        )
+                                        (activity as HomeActivity).makeShareDeleteToolbar(adapter.listItems as List<Album>)
                                     } else {
                                         val anotherMap = mapOf(
                                             "tag" to "date",
@@ -203,11 +192,7 @@ class PhotosViewModel : HomeViewModel() {
                                     adapter.isSelection = true
                                     album.isSelected = true
                                     adapter.notifyItemChanged(index)
-                                    (activity as HomeActivity).makeShareaDeleteToolbar(
-                                        adapter,
-                                        null,
-                                        adapter.listItems as List<Album>
-                                    )
+                                    (activity as HomeActivity).makeShareDeleteToolbar(adapter.listItems as List<Album>)
                                 }
 
                             })
@@ -257,24 +242,8 @@ class PhotosViewModel : HomeViewModel() {
                 }
             }
         }
-
-
         adapter.setItems(files)
-        activity.recyclerPhotos.hasFixedSize()
-        activity.recyclerPhotos.adapter = adapter
-        progressCircularAccent.visibility = View.GONE
-
-        val glm = GridLayoutManager(activity, 3)
-        glm.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-            override fun getSpanSize(position: Int): Int {
-                when (adapter.getItemViewType(position)) {
-                    R.layout.item_header_photos -> return 3
-                    R.layout.item_header_album_directory ->return 3
-                    else -> return 1
-                }
-            }
-        }
-        activity.recyclerPhotos.layoutManager = glm
+        progressCircularAccent.visibility = GONE
         return adapter
     }
 

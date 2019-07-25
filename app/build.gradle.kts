@@ -116,7 +116,7 @@ dependencies {
     implementation("com.github.mukeshsolanki:android-otpview-pinview:2.0.3")
     implementation(Libs.lottie)
     //implementation(Libs.baseAppConfig)
-    implementation("com.github.RanganathanApps:BaseConfigApp:0.0.24")
+    implementation("com.github.RanganathanApps:BaseConfigApp:0.0.25")
 
     implementation("com.felipecsl.asymmetricgridview:library:2.0.1")
     implementation("com.jsibbold:zoomage:1.2.0")

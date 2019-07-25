@@ -61,7 +61,6 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
     private var doubleBackToExitPressedOnce = false
 
     var photosAdapter: ListAdapter? = null
-    private var baseAlbumsAdapter: BaseSectionAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,7 +70,8 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
         initCode()
     }
 
-    private fun initCode() {
+     @Override
+     fun initCode() {
         homeVieModel = ViewModelProviders.of(this).get(HomeViewModel::class.java)
 
         setNavDrawer()
@@ -115,7 +115,95 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
             deleteMultipleFiles()
 
         }
+        checkBoxSelection.setOnCheckedChangeListener { buttonView, isChecked ->
+            buttonView.setOnClickListener {
+                if (isChecked){
+                    selectAll()
+                }else{
+                    unSelectAll()
+                }
+            }
 
+        }
+
+
+    }
+
+    private fun unSelectAll() {
+        var list: List<Album> = arrayListOf()
+
+        if (::photosFragment.isInitialized && curentFragment == photosFragment) {
+            list =photosFragment.adapter.listItems as List<Album>
+        }
+        if (::cameraFragment.isInitialized && curentFragment == cameraFragment) {
+            list =cameraFragment.adapter.listItems as List<Album>
+        }
+        if (::photosDateOrderFragment.isInitialized && curentFragment == photosDateOrderFragment) {
+            list =photosDateOrderFragment.getAdapter().listItems as List<Album>
+        }
+        if (::albumsListFragment.isInitialized && curentFragment == albumsListFragment) {
+            list =albumsListFragment.getAdapter().listItems as List<Album>
+        }
+
+        for (item in list) {
+            if (item.isSelected) {
+                item.isSelected = false
+            }
+        }
+
+        if (photosFragment.getAdapter() != null) {
+            photosFragment.getAdapter().notifyDataSetChanged()
+        }
+        if (::cameraFragment.isInitialized && cameraFragment.getAdapter() != null) {
+            cameraFragment.getAdapter().notifyDataSetChanged()
+        }
+        if (::photosDateOrderFragment.isInitialized && photosDateOrderFragment.getAdapter() != null) {
+            photosDateOrderFragment.getAdapter().notifyDataSetChanged()
+        }
+        if (::albumsListFragment.isInitialized && albumsListFragment.getAdapter() != null) {
+            albumsListFragment.getAdapter().notifyDataSetChanged()
+        }
+        txtSelectionCountToolbar.text = "0"
+    }
+
+    private fun selectAll() {
+        var list: List<Album> = arrayListOf()
+
+        var count = 0
+        if (::photosFragment.isInitialized && curentFragment == photosFragment) {
+            list =photosFragment.adapter.listItems as List<Album>
+        }
+        if (::cameraFragment.isInitialized && curentFragment == cameraFragment) {
+            list =cameraFragment.adapter.listItems as List<Album>
+        }
+        if (::photosDateOrderFragment.isInitialized && curentFragment == photosDateOrderFragment) {
+            list =photosDateOrderFragment.getAdapter().listItems as List<Album>
+        }
+        if (::albumsListFragment.isInitialized && curentFragment == albumsListFragment) {
+            list =albumsListFragment.getAdapter().listItems as List<Album>
+        }
+
+        for (item in list) {
+            if (!item.isSelected) {
+                item.isSelected =  !item.isSelected
+            }
+            if (!item.isSectionHeader)
+                count += 1
+        }
+
+        if (photosFragment.getAdapter() != null) {
+            photosFragment.getAdapter().notifyDataSetChanged()
+        }
+        if (::cameraFragment.isInitialized && cameraFragment.getAdapter() != null) {
+            cameraFragment.getAdapter().notifyDataSetChanged()
+        }
+        if (::photosDateOrderFragment.isInitialized && photosDateOrderFragment.getAdapter() != null) {
+            photosDateOrderFragment.getAdapter().notifyDataSetChanged()
+        }
+        if (::albumsListFragment.isInitialized && albumsListFragment.getAdapter() != null) {
+            albumsListFragment.getAdapter().notifyDataSetChanged()
+        }
+        txtSelectionCountToolbar.text = "" + count
 
     }
 
@@ -406,11 +494,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
         enableDisableScrollFlags(toolbar, false)
     }
 
-    fun makeShareaDeleteToolbar(
-        photosAdapter: ListAdapter?,
-        baseAlbumsAdapter: BaseSectionAdapter?, list: List<Album>
-    ) {
-        this.baseAlbumsAdapter = baseAlbumsAdapter
+    fun makeShareDeleteToolbar(list: List<Album>) {
         var count = 0
         for (item in list) {
             if (item.isSelected) {
@@ -431,6 +515,8 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
             }
 
         }
+        checkBoxSelection.isChecked = false
+
     }
 
     private fun enableDisableScrollFlags(toolbar: Toolbar, flag: Boolean) {

@@ -1,7 +1,6 @@
 package apps.ranganathan.gallery.viewmodel
 
 import android.view.View
-import android.widget.ProgressBar
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.LayoutManager
@@ -15,7 +14,6 @@ import apps.ranganathan.gallery.viewholders.AlbumViewHolder
 import apps.ranganathan.gallery.viewholders.AlbumsDirectoryViewHolder
 import apps.ranganathan.gallery.viewholders.BaseViewHolder
 import kotlinx.android.synthetic.main.photos_fragment.*
-import kotlinx.android.synthetic.main.progress_circle.*
 import java.util.ArrayList
 
 
@@ -69,11 +67,7 @@ class AlbumsDirectoryViewModel : HomeViewModel() {
                                     if (adapter.isSelection) {
                                         album.isSelected = !album.isSelected
                                         adapter.notifyItemChanged(index)
-                                        (activity as HomeActivity).makeShareaDeleteToolbar(
-                                            adapter,
-                                            null,
-                                            adapter.listItems as List<Album>
-                                        )
+                                        (activity as HomeActivity).makeShareDeleteToolbar(adapter.listItems as List<Album>)
                                     } else {
                                         val anotherMap = mapOf("tag" to "albums_list","directory" to album.name,"position" to index,"count" to album.count,"album" to album)
                                        /* val anotherMap = mapOf(
@@ -98,11 +92,7 @@ class AlbumsDirectoryViewModel : HomeViewModel() {
                                     adapter.isSelection = true
                                     album.isSelected = true
                                     adapter.notifyItemChanged(index)
-                                    (activity as HomeActivity).makeShareaDeleteToolbar(
-                                        adapter,
-                                        null,
-                                        adapter.listItems as List<Album>
-                                    )
+                                    (activity as HomeActivity).makeShareDeleteToolbar( adapter.listItems as List<Album>)
                                 }
 
                             })

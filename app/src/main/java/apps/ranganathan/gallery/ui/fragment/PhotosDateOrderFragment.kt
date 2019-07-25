@@ -38,7 +38,7 @@ class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListen
              onItemClickListener.onItemSelected(itemsList, position)
              true
          }*/
-        //(activity as HomeActivity).makeShareaDeleteToolbar(null,mSectionedRecyclerAdapter,getAdapter().itemsList!!)
+        //(activity as HomeActivity).makeShareDeleteToolbar(null,mSectionedRecyclerAdapter,getAdapter().itemsList!!)
     }
 
 
@@ -107,6 +107,18 @@ class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListen
             progressCircularAccent!!,
             data as ArrayList<Any>
         )
+        recyclerView!!.adapter = adapter
+        val glm = GridLayoutManager(activity, 3)
+        glm.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                when (adapter.getItemViewType(position)) {
+                    R.layout.item_header_photos -> return 3
+                    R.layout.item_header_album_directory ->return 3
+                    else -> return 1
+                }
+            }
+        }
+        recyclerView!!.layoutManager = glm
     }
 
     private fun splitData() {

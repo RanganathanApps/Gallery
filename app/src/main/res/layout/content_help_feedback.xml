@@ -34,6 +34,7 @@
 
                     <TextView
                             android:id="@+id/txtFeedbackTitle"
+                            android:visibility="invisible"
                             android:layout_margin="@dimen/_6sdp"
                             android:text="@string/app_name"
                             android:layout_width="wrap_content"
@@ -61,13 +62,15 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/txtFeedbackTitle"
                             android:layout_marginTop="24dp"
-                            android:layout_marginStart="32dp"
-                            android:layout_marginEnd="32dp"
+                            android:layout_marginStart="@dimen/_16sdp"
+                            app:met_iconLeft="@drawable/ic_email_black_24dp"
+                            android:layout_marginEnd="@dimen/_16sdp"
                             tools:ignore="UnusedAttribute"/>
 
 
                     <com.rengwuxian.materialedittext.MaterialEditText
                             android:id="@+id/txtFeedback"
+                            app:met_iconLeft="@drawable/baseline_rate_review_black_24"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:maxLength="200"
@@ -91,8 +94,8 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/txtFeedbackEmail"
                             android:layout_marginTop="14dp"
-                            android:layout_marginStart="32dp"
-                            android:layout_marginEnd="32dp" tools:ignore="UnusedAttribute"/>
+                            android:layout_marginStart="@dimen/_16sdp"
+                            android:layout_marginEnd="@dimen/_16sdp" tools:ignore="UnusedAttribute"/>
 
                     <Button
                             android:id="@+id/btnSubmitFeedback"
@@ -102,9 +105,9 @@
                             android:text="@string/action_submit_feedback"
                             android:textColor="@android:color/white"
                             app:layout_constraintStart_toStartOf="parent"
-                            android:layout_marginStart="32dp"
+                            android:layout_marginStart="@dimen/_16sdp"
                             app:layout_constraintEnd_toEndOf="parent"
-                            android:layout_marginEnd="32dp"
+                            android:layout_marginEnd="@dimen/_16sdp"
                             app:layout_constraintTop_toBottomOf="@+id/txtFeedback"
                             android:layout_marginTop="20dp" app:layout_constraintHorizontal_bias="0.0"/>
 
@@ -122,6 +125,7 @@
                             android:layout_marginRight="8dp" app:layout_constraintStart_toStartOf="parent"
                             android:layout_marginLeft="8dp" android:layout_marginStart="8dp"/>
                     <ImageView
+                            android:visibility="gone"
                             android:layout_width="@dimen/_61sdp"
                             android:layout_height="@dimen/_61sdp"
                             app:srcCompat="@drawable/gallery_app_logo_512"

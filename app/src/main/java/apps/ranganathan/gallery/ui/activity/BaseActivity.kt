@@ -10,6 +10,10 @@ open class BaseActivity : BaseAppActivity() {
         super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase))
     }
 
+    private fun initCode() {
+
+    }
+
 
 
 

@@ -95,7 +95,6 @@ class PhotosFragment : Fragment() {
             recyclerPhotos.layoutManager = GridLayoutManager(activity, 3)
             recyclerPhotos.hasFixedSize()
             recyclerPhotos.adapter = adapter
-            progressCircularAccent.visibility = GONE
         }
     }
 

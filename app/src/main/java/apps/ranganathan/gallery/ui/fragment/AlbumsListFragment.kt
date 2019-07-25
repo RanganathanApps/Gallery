@@ -45,7 +45,7 @@ class AlbumsListFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
              onItemClickListener.onItemSelected(itemsList, position)
              true
          }*/
-        //(activity as HomeActivity).makeShareaDeleteToolbar(null,mSectionedRecyclerAdapter,getAdapter().itemsList!!)
+        //(activity as HomeActivity).makeShareDeleteToolbar(null,mSectionedRecyclerAdapter,getAdapter().itemsList!!)
     }
 
 
@@ -110,12 +110,23 @@ class AlbumsListFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
     }
 
     private fun bindAdapter() {
-        adapter = viewModel.setDataToAdapter(
-            activity as BaseActivity,
+        adapter = viewModel.setDataToAdapter( activity as BaseActivity,
             GridLayoutManager(activity, 3) as RecyclerView.LayoutManager,
             progressCircularAccent!!,
-            data as ArrayList<Any>
-        )
+            data as ArrayList<Any> )
+
+        recyclerView!!.adapter = adapter
+        val glm = GridLayoutManager(activity, 3)
+        glm.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                when (adapter.getItemViewType(position)) {
+                    R.layout.item_header_photos -> return 3
+                    R.layout.item_header_album_directory ->return 3
+                    else -> return 1
+                }
+            }
+        }
+        recyclerView!!.layoutManager = glm
     }
 
     private fun splitData() {
