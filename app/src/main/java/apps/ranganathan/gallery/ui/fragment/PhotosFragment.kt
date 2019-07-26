@@ -3,21 +3,14 @@ package apps.ranganathan.gallery.ui.fragment
 import android.content.Context
 import android.os.Bundle
 import android.view.*
-import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import apps.ranganathan.gallery.R
 import apps.ranganathan.gallery.adapter.ListAdapter
 import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.ui.activity.BaseActivity
-import apps.ranganathan.gallery.ui.activity.HomeActivity
-import apps.ranganathan.gallery.ui.activity.PictureViewActivity
-import apps.ranganathan.gallery.viewholders.AlbumViewHolder
-import apps.ranganathan.gallery.viewholders.BaseViewHolder
-import apps.ranganathan.gallery.viewholders.HeaderViewHolder
 import apps.ranganathan.gallery.viewmodel.PhotosViewModel
 import kotlinx.android.synthetic.main.photos_fragment.*
 import kotlinx.android.synthetic.main.progress_circle.*
@@ -89,7 +82,7 @@ class PhotosFragment : Fragment() {
 
     private fun initPhotos(files: ArrayList<Album>) {
         if (activity!=null) {
-            adapter = viewModel.setDataToAdapter(activity as BaseActivity,progressCircularAccent,files as ArrayList<Any>)
+            adapter = viewModel.setDataToAdapter(activity as BaseActivity,progressCircularAccent,files,"photos")
             //viewModel.loadAndBind(activity as Context,progressCircularAccent,recyclerPhotos)
             adapter.setItems(files)
             recyclerPhotos.layoutManager = GridLayoutManager(activity, 3)

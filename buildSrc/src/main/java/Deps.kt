@@ -27,7 +27,7 @@ object Versions {
 
     val recyclerview_version = "1.0.0"
     val lifecycle_extensions_version = "2.0.0-beta01"
-    val databinding_version = "3.2.0"
+    val databinding_version = "3.4.2"
     val palette_version = "1.0.0"
     val dagger2_version = "2.16"
     val caligraphy_version = "2.3.0"

@@ -104,8 +104,10 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
                 setToolBarTitle("$directory (${1}/${userList.size} items)")
             }else if (intent!!.extras!!.getString("tag") == "albums_list") {
                 album = intent!!.extras!!.getSerializable("album") as Album
-                files = pictureViewModel.getImagesInFile(pictureViewModel.getDirectory(album.path))!!
-                userList = pictureViewModel.getImages(files)
+              /*  files = pictureViewModel.getImagesInFile(pictureViewModel.getDirectory(album.path))!!
+                userList = pictureViewModel.getImages(files)*/
+                directory = intent!!.extras!!.getString("directory_ui")
+                userList = pictureViewModel.getSpecificFolderImages(this, album)
                 position = 0
                 userList.forEachIndexed { index, element ->
                     if (element.albumUri == album.albumUri) {

@@ -2,51 +2,24 @@ package apps.ranganathan.gallery.ui.fragment
 
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.View.GONE
+import android.view.*
 import android.view.View.VISIBLE
-import android.view.ViewGroup
-import android.widget.ProgressBar
-
-import java.util.Collections
-import java.util.Comparator
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import apps.ranganathan.gallery.R
-import apps.ranganathan.gallery.adapter.BaseSectionAdapter
 import apps.ranganathan.gallery.adapter.ListAdapter
-import apps.ranganathan.gallery.adapter.PhotosAdapterByDate
 import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.model.ParentModel
 import apps.ranganathan.gallery.ui.activity.BaseActivity
-import apps.ranganathan.gallery.ui.activity.PictureViewActivity
-import apps.ranganathan.gallery.utils.GridDividerDecoration
 import apps.ranganathan.gallery.viewmodel.AlbumsDirectoryViewModel
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
+import java.util.*
 
-class AlbumsListFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
-
-    override fun onItemSelected(position: Int) {
-
-
-        /* itemView.setOnLongClickListener {
-             onItemClickListener.onItemSelected(itemsList, position)
-             isSelection = true
-             this.itemsList[position].isSelected = true
-             notifyDataSetChanged()
-             onItemClickListener.onItemSelected(itemsList, position)
-             true
-         }*/
-        //(activity as HomeActivity).makeShareDeleteToolbar(null,mSectionedRecyclerAdapter,getAdapter().itemsList!!)
-    }
+class AlbumsListFragment : Fragment() {
 
 
     private lateinit var data: ArrayList<Album>
@@ -58,15 +31,13 @@ class AlbumsListFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
     private var recyclerView: RecyclerView? = null
     private var progressCircularAccent: View? = null
 
-    internal var mSectionedRecyclerAdapter: PhotosAdapterByDate? = null
     internal lateinit var adapter: ListAdapter
 
-    private var gridDividerDecoration: GridDividerDecoration? = null
 
-    fun deleteFile(context: Context){
+    fun deleteFile(context: Context) {
         for (i in 0 until adapter!!.listItems.size) {
             if ((adapter!!.listItems[i] as Album).isSelected) {
-                viewModel.delete(context,(adapter!!.listItems[i] as Album).file)
+                viewModel.delete(context, (adapter!!.listItems[i] as Album).file)
             }
         }
     }
@@ -100,20 +71,20 @@ class AlbumsListFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
                     bindAdapter()
                 }
             }
-        }else{
+        } else {
             bindAdapter()
         }
-
-
 
 
     }
 
     private fun bindAdapter() {
-        adapter = viewModel.setDataToAdapter( activity as BaseActivity,
+        adapter = viewModel.setDataToAdapter(
+            activity as BaseActivity,
             GridLayoutManager(activity, 3) as RecyclerView.LayoutManager,
             progressCircularAccent!!,
-            data as ArrayList<Any> )
+            data as ArrayList<Any>
+        )
 
         recyclerView!!.adapter = adapter
         val glm = GridLayoutManager(activity, 3)
@@ -121,7 +92,7 @@ class AlbumsListFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
             override fun getSpanSize(position: Int): Int {
                 when (adapter.getItemViewType(position)) {
                     R.layout.item_header_photos -> return 3
-                    R.layout.item_header_album_directory ->return 3
+                    R.layout.item_header_album_directory -> return 3
                     else -> return 1
                 }
             }
@@ -130,7 +101,8 @@ class AlbumsListFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
     }
 
     private fun splitData() {
-        this.photosComparator = kotlin.Comparator { o1, o2 -> o1.bucket.capitalize()!!.compareTo(o2.bucket.capitalize()!!)}
+        photosComparator =  kotlin.Comparator { o1, o2 -> o1.bucket.capitalize()!!.compareTo(o2.bucket.capitalize()!!) }
+        photosComparator =  kotlin.Comparator { o1, o2 -> o2.date.compareTo(o1.date) }
 
         Collections.sort(mPhotosList, photosComparator)
 
@@ -175,7 +147,7 @@ class AlbumsListFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
             if (!isDateChanged) {
                 parentModel.albums.add(album)
 
-            }else{
+            } else {
                 parentModel = ParentModel()
                 parentModel.albums = arrayListOf()
                 album.isSectionHeader = false
@@ -201,61 +173,10 @@ class AlbumsListFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
         }
 
 
-
-
     }
 
     fun getAdapter(): ListAdapter {
         return adapter!!
-    }
-
-    private fun setAdapterByGenre() {
-
-        this.photosComparator = kotlin.Comparator { o1, o2 -> o2.date!!.compareTo(o1.date!!) }
-
-        Collections.sort(data, photosComparator)
-
-
-
-        mSectionedRecyclerAdapter = PhotosAdapterByDate(activity as BaseActivity)
-        data?.let { mSectionedRecyclerAdapter!!.setData(it, activity as BaseActivity) }
-        data?.let { mSectionedRecyclerAdapter!!.setDataList(it) }
-        data?.let { mSectionedRecyclerAdapter!!.activity = activity as BaseActivity }
-
-
-    }
-
-
-    private fun setAdapterWithGridLayout() {
-        setAdapterByGenre()
-        val gridLayoutManager = GridLayoutManager(context, 3)
-        recyclerView!!.layoutManager = gridLayoutManager
-        mSectionedRecyclerAdapter!!.setGridLayoutManager(gridLayoutManager)
-    }
-
-    override fun onItemClicked(album: Album, position: Int) {
-
-        val anotherMap = mapOf(
-            "tag" to "date",
-            "date" to album.dateString, "position" to position, "count" to album.count,
-            "album" to album
-        )
-        (activity as BaseActivity).startActivityputExtra(
-            activity as BaseActivity,
-            PictureViewActivity::class.java,
-            anotherMap
-        )
-        /*val index = mPhotosList!!.indexOf(album)
-        mPhotosList!!.remove(movie)
-        mSectionedRecyclerAdapter!!.notifyItemRemovedAtPosition(index)*/
-    }
-
-    override fun onSubheaderClicked(position: Int) {
-        if (mSectionedRecyclerAdapter!!.isSectionExpanded(mSectionedRecyclerAdapter!!.getSectionIndex(position))) {
-            mSectionedRecyclerAdapter!!.collapseSection(mSectionedRecyclerAdapter!!.getSectionIndex(position))
-        } else {
-            mSectionedRecyclerAdapter!!.expandSection(mSectionedRecyclerAdapter!!.getSectionIndex(position))
-        }
     }
 
 

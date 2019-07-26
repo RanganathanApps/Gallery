@@ -42,7 +42,7 @@ class PhotosAdapterByDate(activity1: BaseActivity) : BaseSectionAdapter() {
                     getSectionIndex(position)
                 )}"
             )
-            var currentPos = 0
+            var currentPos:Int
             if (getSectionIndex(position) == 0) {
                 currentPos = position
             } else {

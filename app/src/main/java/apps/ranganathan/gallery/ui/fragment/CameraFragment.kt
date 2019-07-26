@@ -154,7 +154,7 @@ class CameraFragment : Fragment(){
                                 if (adapter.isSelection) {
                                     album.isSelected = !album.isSelected
                                     adapter.notifyItemChanged(index)
-                                    (activity as HomeActivity).makeShareDeleteToolbar(adapter.listItems as List<Album>)
+                                    (activity as HomeActivity).makeShareDeleteToolbar(adapter.listItems )
                                 } else {
                                     val anotherMap = mapOf("position" to index, "tag" to "camera","directory_ui" to DIRECTORY_UI,"directory" to DIRECTORY)
                                     (activity as BaseActivity).startActivityputExtra(
@@ -200,7 +200,7 @@ class CameraFragment : Fragment(){
         if (requestCode == TAKE_PHOTO_REQUEST) {
             if (resultCode == AppCompatActivity.RESULT_OK) {
 
-                if (photoFile != null && ::photoFile.isInitialized)
+                if (::photoFile.isInitialized)
                     photoFile.createNewFile()
                viewModel.setMediaMounted(activity as Context,photoFile.path)
                 loadFiles()

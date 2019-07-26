@@ -31,7 +31,18 @@ android {
             applicationId = AppConfig.applicationId
         }
         create("production") {
+
             applicationId = AppConfig.applicationId
+        }
+
+    }
+    signingConfigs {
+
+        create("release") {
+            storeFile = rootProject.file("gallery_and_photos.jks")
+            storePassword = System.getenv("Ranga@9900")
+            keyAlias = System.getenv("key0")
+            keyPassword = System.getenv("Ranga@9900")
         }
     }
     buildTypes {
@@ -40,6 +51,7 @@ android {
             resValue("string", "app_name", AppConfig.applicaionName)
             isDebuggable = true
         }
+
 
         create("qa") {
             isShrinkResources = true
@@ -53,15 +65,22 @@ android {
         getByName("release") {
 
             resValue("string", "app_name", AppConfig.applicaionName)
-
-            isShrinkResources = true
-            isMinifyEnabled = true
+            resValue("string", "app_type", "release")
             isUseProguard = true
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
+            signingConfig = signingConfigs.getByName("release")
         }
 
 
     }
+    lintOptions {
+        isCheckReleaseBuilds = false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        isAbortOnError =  false
+    }
+
+
     /*compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -138,6 +157,8 @@ dependencies {
     implementation("com.android.support:multidex:1.0.3")
     /*background task execution*/
     implementation("org.jetbrains.anko:anko-common:0.9")
+
+    implementation("com.squareup.okio:okio:1.14.0")
 
 }
 apply(mapOf("plugin" to "com.google.gms.google-services"))

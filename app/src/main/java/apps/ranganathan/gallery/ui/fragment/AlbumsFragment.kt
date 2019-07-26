@@ -92,7 +92,7 @@ class AlbumsFragment : Fragment() {
         }
         // Execute long task here
         override fun doInBackground(vararg voids: Void): List<Album> {
-            return viewModel.getAlbums(activity!!.applicationContext)
+            return viewModel.getAlbums(activity.applicationContext)
         }
         // do things with output
         override fun onPostExecute(result: List<Album>) {
@@ -100,8 +100,8 @@ class AlbumsFragment : Fragment() {
         }
 
         private fun initAlbums(files: List<Album>) {
-            val adapter = AlbumsAdapter(activity!! as BaseActivity, files)
-            activity.recyclerAlbums.layoutManager = GridLayoutManager(activity!! as BaseActivity, 3) as RecyclerView.LayoutManager?
+            val adapter = AlbumsAdapter(activity,  files)
+            activity.recyclerAlbums.layoutManager = GridLayoutManager(activity , 3)
             activity.recyclerAlbums.setHasFixedSize(true)
             activity.recyclerAlbums.adapter = adapter
             contentView!!.findViewById<View>(R.id.progressCircularAccent).visibility = GONE

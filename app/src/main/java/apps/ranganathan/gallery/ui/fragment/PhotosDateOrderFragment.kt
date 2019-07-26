@@ -3,7 +3,6 @@ package apps.ranganathan.gallery.ui.fragment
 import android.content.Context
 import android.os.Bundle
 import android.view.*
-import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
@@ -19,27 +18,14 @@ import apps.ranganathan.gallery.ui.activity.BaseActivity
 import apps.ranganathan.gallery.ui.activity.PictureViewActivity
 import apps.ranganathan.gallery.utils.GridDividerDecoration
 import apps.ranganathan.gallery.viewmodel.PhotosViewModel
-import kotlinx.android.synthetic.main.progress_circle.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import java.util.*
 import kotlin.collections.ArrayList
 
-class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListener {
-
-    override fun onItemSelected(position: Int) {
+class PhotosDateOrderFragment : Fragment(){
 
 
-        /* itemView.setOnLongClickListener {
-             onItemClickListener.onItemSelected(itemsList, position)
-             isSelection = true
-             this.itemsList[position].isSelected = true
-             notifyDataSetChanged()
-             onItemClickListener.onItemSelected(itemsList, position)
-             true
-         }*/
-        //(activity as HomeActivity).makeShareDeleteToolbar(null,mSectionedRecyclerAdapter,getAdapter().itemsList!!)
-    }
 
 
     private lateinit var data: ArrayList<Album>
@@ -53,9 +39,6 @@ class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListen
 
     internal lateinit var adapter: ListAdapter
 
-    internal var mSectionedRecyclerAdapter: PhotosAdapterByDate? = null
-
-    private var gridDividerDecoration: GridDividerDecoration? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -104,8 +87,8 @@ class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListen
     private fun bindAdapter() {
         adapter = viewModel.setDataToAdapter(
             activity as BaseActivity,
-            progressCircularAccent!!,
-            data as ArrayList<Any>
+            progressCircularAccent,
+            data,"date"
         )
         recyclerView!!.adapter = adapter
         val glm = GridLayoutManager(activity, 3)
@@ -122,12 +105,12 @@ class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListen
     }
 
     private fun splitData() {
-        this.photosComparator = kotlin.Comparator { o1, o2 -> o2.date!!.compareTo(o1.date!!) }
+        this.photosComparator = kotlin.Comparator { o1, o2 -> o2.date.compareTo(o1.date) }
 
         Collections.sort(mPhotosList, photosComparator)
 
 
-        data = arrayListOf<Album>()
+        data = arrayListOf()
 
         var dataModels = arrayListOf<ParentModel>()
 
@@ -156,7 +139,7 @@ class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListen
 
         var albumDuplicate = Album()
 
-        var isDateChanged = false
+        var isDateChanged:Boolean
 
         while (iterate.hasNext()) {
 
@@ -207,66 +190,31 @@ class PhotosDateOrderFragment : Fragment(), BaseSectionAdapter.OnItemClickListen
 
     private fun setAdapterByGenre() {
 
-        this.photosComparator = kotlin.Comparator { o1, o2 -> o2.date!!.compareTo(o1.date!!) }
+        this.photosComparator = kotlin.Comparator { o1, o2 -> o2.date.compareTo(o1.date) }
 
         Collections.sort(data, photosComparator)
-
-
-
-        mSectionedRecyclerAdapter = PhotosAdapterByDate(activity as BaseActivity)
-        data?.let { mSectionedRecyclerAdapter!!.setData(it, activity as BaseActivity) }
-        data?.let { mSectionedRecyclerAdapter!!.setDataList(it) }
-        data?.let { mSectionedRecyclerAdapter!!.activity = activity as BaseActivity }
-
 
     }
 
 
     fun deleteFile(context: Context){
-        for (i in 0 until adapter!!.listItems.size) {
-            if ((adapter!!.listItems[i] as Album).isSelected) {
-                viewModel.delete(context,(adapter!!.listItems[i] as Album).file)
+        for (i in 0 until adapter.listItems.size) {
+            if ((adapter.listItems[i] as Album).isSelected) {
+                viewModel.delete(context,(adapter.listItems[i] as Album).file)
             }
         }
     }
-    private fun setAdapterWithGridLayout() {
-        setAdapterByGenre()
-        val gridLayoutManager = GridLayoutManager(context, 3)
-        recyclerView!!.layoutManager = gridLayoutManager
-        mSectionedRecyclerAdapter!!.setGridLayoutManager(gridLayoutManager)
-    }
 
-    override fun onItemClicked(album: Album, position: Int) {
 
-        val anotherMap = mapOf(
-            "tag" to "date",
-            "date" to album.dateString, "position" to position, "count" to album.count,
-            "album" to album
-        )
-        (activity as BaseActivity).startActivityputExtra(
-            activity as BaseActivity,
-            PictureViewActivity::class.java,
-            anotherMap
-        )
-        /*val index = mPhotosList!!.indexOf(album)
-        mPhotosList!!.remove(movie)
-        mSectionedRecyclerAdapter!!.notifyItemRemovedAtPosition(index)*/
-    }
 
-    override fun onSubheaderClicked(position: Int) {
-        if (mSectionedRecyclerAdapter!!.isSectionExpanded(mSectionedRecyclerAdapter!!.getSectionIndex(position))) {
-            mSectionedRecyclerAdapter!!.collapseSection(mSectionedRecyclerAdapter!!.getSectionIndex(position))
-        } else {
-            mSectionedRecyclerAdapter!!.expandSection(mSectionedRecyclerAdapter!!.getSectionIndex(position))
-        }
-    }
+
 
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         menu!!.clear()
 
         inflater!!.inflate(R.menu.menu_main, menu)
-        menu!!.findItem(R.id.menu_sort_date).isVisible = false
+        menu.findItem(R.id.menu_sort_date).isVisible = false
         super.onCreateOptionsMenu(menu, inflater)
     }
 

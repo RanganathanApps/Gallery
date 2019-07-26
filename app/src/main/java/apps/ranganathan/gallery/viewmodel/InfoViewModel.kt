@@ -35,7 +35,6 @@ open class InfoViewModel : BaseViewModel() {
             spf = SimpleDateFormat("dd MMM yyyy \nEEEE hh:mm a")
             dateString = spf.format(newDate)
         } catch (e: Exception) {
-            return dateString
         } finally {
             return dateString
         }
@@ -51,9 +50,8 @@ open class InfoViewModel : BaseViewModel() {
                 "EEE MMM dd HH:mm:ss zzz yyyy", Locale.US
             )
             inputFormat.timeZone = TimeZone.getTimeZone("Etc/UTC")
-            var spf = SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT' yyy")
             val newDate = inputFormat.parse(dateString)
-            spf = SimpleDateFormat("dd MMM yyyy EEEE")
+            var  spf = SimpleDateFormat("dd MMM yyyy EEEE")
             dateString = spf.format(newDate)
         } catch (e: Exception) {
             return dateString
@@ -72,9 +70,8 @@ open class InfoViewModel : BaseViewModel() {
                 "EEE MMM dd HH:mm:ss zzz yyyy", Locale.US
             )
             inputFormat.timeZone = TimeZone.getTimeZone("Etc/UTC")
-            var spf = SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT' yyy")
             val newDate = inputFormat.parse(dateString)
-            spf = SimpleDateFormat("hh:mm a")
+            var spf = SimpleDateFormat("hh:mm a")
             dateString = spf.format(newDate)
         } catch (e: Exception) {
             return dateString
@@ -92,9 +89,8 @@ open class InfoViewModel : BaseViewModel() {
                 "EEE MMM dd HH:mm:ss zzz yyyy", Locale.US
             )
             inputFormat.timeZone = TimeZone.getTimeZone("Etc/UTC")
-            var spf = SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT' yyy")
             val newDate = inputFormat.parse(dateString)
-            spf = SimpleDateFormat("EEE dd MMM yyyy")
+            var spf = SimpleDateFormat("EEE dd MMM yyyy")
             dateString = spf.format(newDate)
         } catch (e: Exception) {
             return dateString
@@ -105,7 +101,6 @@ open class InfoViewModel : BaseViewModel() {
 
     fun getFileSize(file: File): String {
         val length = file.length()// Size in KB
-        val lengthKB = length / 1024 // Size in KB
         return formatFileSize(length)!!//"$lengthKB KB"
     }
 

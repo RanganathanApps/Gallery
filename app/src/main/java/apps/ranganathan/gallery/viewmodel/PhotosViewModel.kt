@@ -16,7 +16,6 @@ import apps.ranganathan.gallery.viewholders.AlbumViewHolder
 import apps.ranganathan.gallery.viewholders.AlbumsDirectoryViewHolder
 import apps.ranganathan.gallery.viewholders.BaseViewHolder
 import apps.ranganathan.gallery.viewholders.HeaderViewHolder
-import kotlinx.android.synthetic.main.photos_fragment.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import kotlin.collections.ArrayList
@@ -32,7 +31,7 @@ class PhotosViewModel : HomeViewModel() {
                     recyclerView: RecyclerView){
         if (!::resultPhotos.isInitialized) {
             doAsync {
-                resultPhotos = getAllImages(context!!.applicationContext)
+                resultPhotos = getAllImages(context.applicationContext)
                 uiThread {
                     setPhotosToAdapter(context,resultPhotos)
                     adapter.setItems(resultPhotos)
@@ -50,7 +49,7 @@ class PhotosViewModel : HomeViewModel() {
         recyclerView.layoutManager = GridLayoutManager(context, 3)
         recyclerView.hasFixedSize()
         recyclerView.adapter = adapter
-        progressCircularAccent.visibility = View.GONE
+        progressCircularAccent.visibility = GONE
     }
 
     private fun setPhotosToAdapter(activity:Context,files: ArrayList<Album>) :ListAdapter {
@@ -79,11 +78,11 @@ class PhotosViewModel : HomeViewModel() {
                                 if (adapter.isSelection) {
                                     album.isSelected = !album.isSelected
                                     adapter.notifyItemChanged(index)
-                                    (activity as HomeActivity).makeShareDeleteToolbar(adapter.listItems as List<Album>)
+                                    (activity as HomeActivity).makeShareDeleteToolbar(adapter.listItems )
                                 } else {
                                     val anotherMap = mapOf("position" to index, "tag" to "photos")
-                                    (activity as BaseActivity).startActivityputExtra(
-                                        activity as BaseActivity,
+                                    (activity).startActivityputExtra(
+                                        activity ,
                                         PictureViewActivity::class.java,
                                         anotherMap
                                     )
@@ -119,8 +118,11 @@ class PhotosViewModel : HomeViewModel() {
 
 
 
-    internal fun setDataToAdapter(activity: BaseActivity, progressCircularAccent: View,
-                                    files: ArrayList<Any> ): ListAdapter {
+    internal fun setDataToAdapter(
+        activity: BaseActivity, progressCircularAccent: View,
+        files: ArrayList<Album>,
+        tag:String
+     ): ListAdapter {
 
         adapter = object : ListAdapter() {
 
@@ -140,9 +142,7 @@ class PhotosViewModel : HomeViewModel() {
                     false -> {
                         R.layout.item_photos
                     }
-                    else -> {
-                        R.layout.item_photos
-                    }
+
                 }
                 /*return when (obj) {
                     is ParentModel -> {
@@ -168,15 +168,15 @@ class PhotosViewModel : HomeViewModel() {
                                     if (adapter.isSelection) {
                                         album.isSelected = !album.isSelected
                                         adapter.notifyItemChanged(index)
-                                        (activity as HomeActivity).makeShareDeleteToolbar(adapter.listItems as List<Album>)
+                                        (activity as HomeActivity).makeShareDeleteToolbar(adapter.listItems)
                                     } else {
                                         val anotherMap = mapOf(
-                                            "tag" to "date",
+                                            "tag" to tag,
                                             "date" to album.dateString, "position" to index, "count" to album.count,
                                             "album" to album
                                         )
-                                        (activity as BaseActivity).startActivityputExtra(
-                                            activity as BaseActivity,
+                                        (activity ).startActivityputExtra(
+                                            activity ,
                                             PictureViewActivity::class.java,
                                             anotherMap
                                         )
@@ -203,7 +203,7 @@ class PhotosViewModel : HomeViewModel() {
 
                         val hol = HeaderViewHolder(view)
                         hol.setActivity(
-                            activity as BaseActivity,
+                            activity,
                             adapter = adapter,
                             clickable = object : BaseViewHolder.Clickable {
 

@@ -76,9 +76,7 @@ class AlbumsAdapterByList(activity1:BaseActivity, itemList1: List<Album>) : Base
 
     override fun onBindSubheaderViewHolder(subheaderHolder: BaseSectionAdapter.SubheaderHolder, nextItemPosition: Int) {
         super.onBindSubheaderViewHolder(subheaderHolder, nextItemPosition)
-        val context = subheaderHolder.itemView.context
         val nextMovie = itemsList[nextItemPosition]
-        val sectionSize = getSectionSize(getSectionIndex(subheaderHolder.adapterPosition))
         val name = nextMovie.bucket
 
         subheaderHolder.mSubheaderText.text = name

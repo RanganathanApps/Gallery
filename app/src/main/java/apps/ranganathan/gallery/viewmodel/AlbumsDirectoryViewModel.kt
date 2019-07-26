@@ -46,9 +46,7 @@ class AlbumsDirectoryViewModel : HomeViewModel() {
                     false -> {
                         R.layout.item_photos
                     }
-                    else -> {
-                        R.layout.item_photos
-                    }
+
                 }
 
             }
@@ -58,7 +56,7 @@ class AlbumsDirectoryViewModel : HomeViewModel() {
                     R.layout.item_photos -> {
                         val hol = AlbumViewHolder(view)
                         hol.setActivity(
-                            activity as BaseActivity,
+                            activity ,
                             adapter = adapter,
                             clickable = object : BaseViewHolder.Clickable {
 
@@ -69,12 +67,17 @@ class AlbumsDirectoryViewModel : HomeViewModel() {
                                         adapter.notifyItemChanged(index)
                                         (activity as HomeActivity).makeShareDeleteToolbar(adapter.listItems as List<Album>)
                                     } else {
-                                        val anotherMap = mapOf("tag" to "albums_list","directory" to album.name,"position" to index,"count" to album.count,"album" to album)
-                                       /* val anotherMap = mapOf(
-                                            "tag" to "date",
+                                        val anotherMap = mapOf("tag" to "albums_list","directory_ui" to album.bucket,"position" to index,"count" to album.count,"album" to album)
+                                        /*val anotherMap = mapOf(
+                                            "tag" to "albums_list",
                                             "date" to album.dateString, "position" to index, "count" to album.count,
                                             "album" to album
                                         )*/
+                                        (activity ).startActivityputExtra(
+                                            activity ,
+                                            PictureViewActivity::class.java,
+                                            anotherMap
+                                        )
                                         (activity as BaseActivity).startActivityputExtra(
                                             activity as BaseActivity,
                                             PictureViewActivity::class.java,
@@ -103,7 +106,7 @@ class AlbumsDirectoryViewModel : HomeViewModel() {
 
                         val hol = AlbumsDirectoryViewHolder(view)
                         hol.setActivity(
-                            activity as BaseActivity,
+                            activity,
                             adapter = adapter,
                             clickable = object : BaseViewHolder.Clickable {
 

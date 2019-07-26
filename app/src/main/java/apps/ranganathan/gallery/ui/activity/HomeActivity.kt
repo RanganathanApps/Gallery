@@ -97,16 +97,16 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
         imgShareToolbar.setOnClickListener {
 
             if (::photosFragment.isInitialized && curentFragment == photosFragment) {
-                shareMultileFiles(photosFragment.adapter.listItems as List<Album>)
+                shareMultileFiles(photosFragment.adapter.listItems)
             }
             if (::cameraFragment.isInitialized && curentFragment == cameraFragment) {
-                shareMultileFiles(cameraFragment.adapter.listItems as List<Album>)
+                shareMultileFiles(cameraFragment.adapter.listItems )
             }
             if (::photosDateOrderFragment.isInitialized && curentFragment == photosDateOrderFragment) {
-                shareMultileFiles(photosDateOrderFragment.getAdapter().listItems as List<Album>)
+                shareMultileFiles(photosDateOrderFragment.getAdapter().listItems )
             }
             if (::albumsListFragment.isInitialized && curentFragment == albumsListFragment) {
-                shareMultileFiles(albumsListFragment.getAdapter().listItems as List<Album>)
+                shareMultileFiles(albumsListFragment.getAdapter().listItems)
             }
             releaseSelctions()
 
@@ -130,60 +130,62 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
     }
 
     private fun unSelectAll() {
-        var list: List<Album> = arrayListOf()
+        var list: List<Any> = arrayListOf()
 
         if (::photosFragment.isInitialized && curentFragment == photosFragment) {
-            list =photosFragment.adapter.listItems as List<Album>
+            list =photosFragment.adapter.listItems
         }
         if (::cameraFragment.isInitialized && curentFragment == cameraFragment) {
-            list =cameraFragment.adapter.listItems as List<Album>
+            list =cameraFragment.adapter.listItems
         }
         if (::photosDateOrderFragment.isInitialized && curentFragment == photosDateOrderFragment) {
-            list =photosDateOrderFragment.getAdapter().listItems as List<Album>
+            list =photosDateOrderFragment.getAdapter().listItems
         }
         if (::albumsListFragment.isInitialized && curentFragment == albumsListFragment) {
-            list =albumsListFragment.getAdapter().listItems as List<Album>
+            list =albumsListFragment.getAdapter().listItems
         }
 
         for (item in list) {
+            item as Album
             if (item.isSelected) {
                 item.isSelected = false
             }
         }
 
-        if (photosFragment.getAdapter() != null) {
+        if (::photosFragment.isInitialized && curentFragment == photosFragment) {
             photosFragment.getAdapter().notifyDataSetChanged()
         }
-        if (::cameraFragment.isInitialized && cameraFragment.getAdapter() != null) {
+        if (::cameraFragment.isInitialized &&  curentFragment == cameraFragment) {
             cameraFragment.getAdapter().notifyDataSetChanged()
         }
-        if (::photosDateOrderFragment.isInitialized && photosDateOrderFragment.getAdapter() != null) {
+        if (::photosDateOrderFragment.isInitialized && curentFragment == photosDateOrderFragment) {
             photosDateOrderFragment.getAdapter().notifyDataSetChanged()
         }
-        if (::albumsListFragment.isInitialized && albumsListFragment.getAdapter() != null) {
+        if (::albumsListFragment.isInitialized && curentFragment == albumsListFragment) {
             albumsListFragment.getAdapter().notifyDataSetChanged()
         }
         txtSelectionCountToolbar.text = "0"
     }
 
     private fun selectAll() {
-        var list: List<Album> = arrayListOf()
+        var list: List<Any> = arrayListOf()
 
         var count = 0
         if (::photosFragment.isInitialized && curentFragment == photosFragment) {
-            list =photosFragment.adapter.listItems as List<Album>
+            list =photosFragment.adapter.listItems
         }
         if (::cameraFragment.isInitialized && curentFragment == cameraFragment) {
-            list =cameraFragment.adapter.listItems as List<Album>
+            list =cameraFragment.adapter.listItems
         }
         if (::photosDateOrderFragment.isInitialized && curentFragment == photosDateOrderFragment) {
-            list =photosDateOrderFragment.getAdapter().listItems as List<Album>
+            list =photosDateOrderFragment.getAdapter().listItems
         }
         if (::albumsListFragment.isInitialized && curentFragment == albumsListFragment) {
-            list =albumsListFragment.getAdapter().listItems as List<Album>
+            list =albumsListFragment.getAdapter().listItems
         }
 
         for (item in list) {
+            item as Album
             if (!item.isSelected) {
                 item.isSelected =  !item.isSelected
             }
@@ -191,16 +193,16 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
                 count += 1
         }
 
-        if (photosFragment.getAdapter() != null) {
+        if (::photosFragment.isInitialized && curentFragment == photosFragment) {
             photosFragment.getAdapter().notifyDataSetChanged()
         }
-        if (::cameraFragment.isInitialized && cameraFragment.getAdapter() != null) {
+        if (::cameraFragment.isInitialized && curentFragment == cameraFragment) {
             cameraFragment.getAdapter().notifyDataSetChanged()
         }
-        if (::photosDateOrderFragment.isInitialized && photosDateOrderFragment.getAdapter() != null) {
+        if (::photosDateOrderFragment.isInitialized && curentFragment == photosDateOrderFragment) {
             photosDateOrderFragment.getAdapter().notifyDataSetChanged()
         }
-        if (::albumsListFragment.isInitialized && albumsListFragment.getAdapter() != null) {
+        if (::albumsListFragment.isInitialized &&  curentFragment == albumsListFragment) {
             albumsListFragment.getAdapter().notifyDataSetChanged()
         }
         txtSelectionCountToolbar.text = "" + count
@@ -224,7 +226,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
                     }
                     if (::photosDateOrderFragment.isInitialized && curentFragment == photosDateOrderFragment) {
                         photosDateOrderFragment.deleteFile(this@HomeActivity)
-                        photosDateOrderFragment.adapter!!.deleteItems()
+                        photosDateOrderFragment.adapter.deleteItems()
                     }
                     if (::albumsListFragment.isInitialized && curentFragment == albumsListFragment) {
                         albumsListFragment.deleteFile(this@HomeActivity)
@@ -243,25 +245,27 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
 
     private fun releaseSelctions() {
         if (::photosFragment.isInitialized && curentFragment == photosFragment) {
-            makeReset(photosFragment.getAdapter().listItems as List<Album>)
+            makeReset(photosFragment.getAdapter().listItems )
         }
         if (::cameraFragment.isInitialized && curentFragment == cameraFragment) {
-            makeReset(cameraFragment.getAdapter().listItems as List<Album>)
+            makeReset(cameraFragment.getAdapter().listItems )
         }
         if (::photosDateOrderFragment.isInitialized && curentFragment == photosDateOrderFragment) {
-            makeReset(photosDateOrderFragment.getAdapter().listItems as List<Album>)
+            makeReset(photosDateOrderFragment.getAdapter().listItems)
         }
         if (::albumsListFragment.isInitialized && curentFragment == albumsListFragment) {
-            makeReset(albumsListFragment.getAdapter().listItems as List<Album>)
+            makeReset(albumsListFragment.getAdapter().listItems )
         }
         resetToolbar()
     }
 
 
-    private fun shareMultileFiles(list: List<Album>) {
+    private fun shareMultileFiles(list: List<Any>) {
         var uris = ArrayList<Uri>()
 
         for (item in list) {
+            item as Album
+
             if (item.isSelected) {
                 val apkURI = FileProvider.getUriForFile(
                     context,
@@ -294,8 +298,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
             for (key in Objects.requireNonNull(intent.extras).keySet()) {
                 try {
                     val componentInfo = intent.extras!!.get(key) as ComponentName
-                    val packageManager = context.getPackageManager()
-                    assert(componentInfo != null)
+                    val packageManager = context.packageManager
                     val appName = packageManager.getApplicationLabel(
                         packageManager.getApplicationInfo(
                             componentInfo.packageName,
@@ -460,9 +463,10 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
     }
 
 
-    fun makeReset(list: List<Album>) {
+    fun makeReset(list: List<Any>) {
 
         for (item in list) {
+            item as Album
             if (item.isSelected) {
                 item.isSelected = !item.isSelected
             }
@@ -473,15 +477,15 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
             photosFragment.getAdapter().isSelection = false
             photosFragment.getAdapter().notifyDataSetChanged()
         }
-        if (::cameraFragment.isInitialized && cameraFragment.getAdapter() != null) {
+        if (::cameraFragment.isInitialized && curentFragment == cameraFragment) {
             cameraFragment.getAdapter().isSelection = false
             cameraFragment.getAdapter().notifyDataSetChanged()
         }
-        if (::photosDateOrderFragment.isInitialized && photosDateOrderFragment.getAdapter() != null) {
+        if (::photosDateOrderFragment.isInitialized && curentFragment == photosDateOrderFragment) {
             photosDateOrderFragment.getAdapter().isSelection = false
             photosDateOrderFragment.getAdapter().notifyDataSetChanged()
         }
-        if (::albumsListFragment.isInitialized && albumsListFragment.getAdapter() != null) {
+        if (::albumsListFragment.isInitialized && curentFragment == albumsListFragment) {
             albumsListFragment.getAdapter().isSelection = false
             albumsListFragment.getAdapter().notifyDataSetChanged()
         }
@@ -494,9 +498,10 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
         enableDisableScrollFlags(toolbar, false)
     }
 
-    fun makeShareDeleteToolbar(list: List<Album>) {
+    fun makeShareDeleteToolbar(list: List<Any>) {
         var count = 0
         for (item in list) {
+            item as Album
             if (item.isSelected) {
                 count += 1
             }

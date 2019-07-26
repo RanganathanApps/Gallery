@@ -61,18 +61,18 @@ class CameraViewModel : HomeViewModel() {
                 when (viewType) {
                     R.layout.item_photos -> {
                         val hol=  AlbumViewHolder(view)
-                        hol.setActivity(activity as BaseActivity,adapter = adapter, clickable = object : BaseViewHolder.Clickable {
+                        hol.setActivity(activity ,adapter = adapter, clickable = object : BaseViewHolder.Clickable {
 
                             override fun clicked(adapter: ListAdapter, index: Int) {
                                 var album =  adapter.listItems[index] as Album
                                 if (adapter.isSelection) {
                                     album.isSelected = !album.isSelected
                                     adapter.notifyItemChanged(index)
-                                    (activity as HomeActivity).makeShareDeleteToolbar(adapter.listItems as List<Album>)
+                                    (activity as HomeActivity).makeShareDeleteToolbar(adapter.listItems)
                                 } else {
                                     val anotherMap = mapOf("position" to index, "tag" to "photos")
-                                    (activity as BaseActivity).startActivityputExtra(
-                                        activity as BaseActivity,
+                                    (activity ).startActivityputExtra(
+                                        activity,
                                         PictureViewActivity::class.java,
                                         anotherMap
                                     )

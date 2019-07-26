@@ -99,6 +99,15 @@ open class HomeViewModel : BaseViewModel(){
         return results
     }
 
+  fun getSpecificFolderImages(context: Context,album: Album): MutableList<Album> {
+
+               val results = mutableListOf<Album>()
+        val k = getImageFileFromFolder(context, MediaStore.Images.Media.EXTERNAL_CONTENT_URI,getFileDateOnlyString(album.date,inputFormatSystem,outputFormatSystemDateOnly),album)
+        results.addAll(k)
+        // results.addAll(getInternalStorageContent(context))
+        return results
+    }
+
     public fun setMediaMounted(context: Context, path: String){
         MediaScannerConnection.scanFile(
             context,
@@ -182,6 +191,42 @@ open class HomeViewModel : BaseViewModel(){
                     album.count = ""
                     album.date = lastModified
                     album.dateString = getFormattedDate(toCalendar(lastModified))//getFileDateOnlyString(lastModified, inputFormatSystem, outputFormatDateWithDay)
+                    album.name = File(absolutePathOfImage).nameWithoutExtension
+                    album.file = File(absolutePathOfImage)
+                    album.albumUri = Uri.fromFile(File(absolutePathOfImage)).toString()
+                    albums.add(album)
+                }
+            }
+
+            cursor.close()
+
+            return albums
+        } catch (e: Exception) {
+            return albums
+        }
+    }
+
+    private fun getImageFileFromFolder(context: Context, uri: Uri,date:String,albumfile: Album): List<Album> {
+        val albums = mutableListOf<Album>()
+        try {
+            var  album =Album()
+            var file : File
+            var currentDate = Date()
+            var lastFolder: String
+
+            val cursor = context.contentResolver.query(uri,projection,
+                null,null, "$orderBy DESC"
+            )
+            while (cursor.moveToNext()) {
+                absolutePathOfImage = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA))
+                file = File(absolutePathOfImage)
+                lastFolder = file.parentFile.name
+
+                if (albumfile.bucket.equals(lastFolder)) {
+                    album = Album()
+                    album.count = ""
+                    album.date = Date(file.lastModified())
+                    album.dateString = getFormattedDate(toCalendar(Date(file.lastModified())))//getFileDateOnlyString(lastModified, inputFormatSystem, outputFormatDateWithDay)
                     album.name = File(absolutePathOfImage).nameWithoutExtension
                     album.file = File(absolutePathOfImage)
                     album.albumUri = Uri.fromFile(File(absolutePathOfImage)).toString()
@@ -460,6 +505,8 @@ open class HomeViewModel : BaseViewModel(){
             album = Album()
             album.name = file.nameWithoutExtension
             album.file = file
+            album.bucket = file.parentFile.name
+            album.date = Date(file.lastModified())
             album.albumUri = Uri.fromFile(file).toString()
             albums.add(album)
         }
