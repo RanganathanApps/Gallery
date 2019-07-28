@@ -35,7 +35,7 @@ class SplashActivity : BaseActivity() {
         mDelayHandler = Handler()
 
         //Navigate with delay
-        mDelayHandler.postDelayed(mRunnable, 2500)
+        mDelayHandler.postDelayed(mRunnable, 100)
 
 
     }

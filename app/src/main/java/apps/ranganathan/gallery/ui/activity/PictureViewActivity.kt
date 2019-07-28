@@ -1,5 +1,6 @@
 package apps.ranganathan.gallery.ui.activity
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -61,7 +62,31 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
 
     private lateinit var album: Album
 
+    var deletedList = arrayListOf<Any>()
+
     private var touchToggle = MutableLiveData<Boolean>()
+
+
+    /*interface for data binding*/
+    interface DeleteListener<T> {
+        fun onDeleted(index: Int,data: T)
+    }
+
+    companion object{
+        private lateinit var deleteListener:DeleteListener<Any>
+
+
+        fun setDeleteListener(li:DeleteListener<Any>){
+            deleteListener = li
+        }
+    }
+
+    override fun onBackPressed() {
+        intent.putExtra("ok","OkValue")
+        setResult(Activity.RESULT_OK,intent)
+        deleteListener.onDeleted(0,deletedList)
+        finish()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,6 +99,8 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
         iniCode()
 
     }
+
+
 
     private fun iniCode() {
         pictureViewModel = ViewModelProviders.of(this).get(PictureViewModel::class.java)
@@ -136,6 +163,7 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
                 }
 
             }
+            deletedList = arrayListOf()
             //pictureViewModel.position.observe(this, Observer {    setAppBar("$directory (${viewpagerPhotos.currentItem} / ${album.count} items)") })
         }
 
@@ -174,6 +202,7 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
                     "Image will be deleted permanently. do you want to continue?",
                     object : Utils.OnClickListener {
                         override fun onClick(v: View) {
+                            //deletedList.add(album)
                             val isDeleted = pictureViewModel.delete(context, album.file)
                             if (isDeleted) {
                                 showToast("File Deleted!")
@@ -182,13 +211,14 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
                                 adapter.notifyDataSetChanged()
                                 viewpagerPhotos.adapter = adapter
                                 viewpagerPhotos.adapter!!.notifyDataSetChanged()
-
-                               /* if (position+1<userList.size) {
+                                //(lister as DeleteListener<Album>).onDeleted(0,album)
+                                if (position+1<userList.size) {
                                     position += 1
                                 }else{
                                     position = 0
-                                }*/
+                                }
                                 viewpagerPhotos.currentItem = position
+                                deletedList.add(album)
                                 // pictureViewModel.setMediaMounted(context, userList[position].file.absolutePath)
 
                             }
@@ -294,6 +324,7 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
             slideShowShecduled = false
         }
     }
+
 
     private fun hideToolbar() {
         appBar.visibility = GONE

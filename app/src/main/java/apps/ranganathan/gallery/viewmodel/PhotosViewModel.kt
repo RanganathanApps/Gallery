@@ -18,41 +18,69 @@ import apps.ranganathan.gallery.viewholders.BaseViewHolder
 import apps.ranganathan.gallery.viewholders.HeaderViewHolder
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
-import kotlin.collections.ArrayList
+import android.os.Environment.getExternalStorageDirectory
+import android.content.Intent
 
 
-class PhotosViewModel : HomeViewModel() {
+
+
+class PhotosViewModel : HomeViewModel(), PictureViewActivity.DeleteListener<Any> {
+
+    override fun onDeleted(index: Int, data: Any) {
+
+        data as MutableList<Album>
+        if (data.isNotEmpty()) {
+            data.forEachIndexed { index, album ->
+                val item = adapter.listItems.find { (it as Album).albumUri.equals(album.albumUri) }
+                if (item != null)
+                    (item as Album).isSelected = true
+            }
+            adapter.deleteItems()
+            /*for (i in 0 until adapter.listItems.size) {
+                   if ((adapter.listItems[i] as Album).albumUri.equals(album.albumUri)) {
+                       (adapter.listItems[i]  as Album).isSelected = true
+                       break
+                   }
+
+               }*/
+
+        }
+    }
 
     private lateinit var resultPhotos: ArrayList<Album>
     private lateinit var adapter: ListAdapter
 
-    fun loadAndBind(context: Context,
-                    progressCircularAccent: ProgressBar,
-                    recyclerView: RecyclerView){
+    fun loadAndBind(
+        context: Context,
+        progressCircularAccent: ProgressBar,
+        recyclerView: RecyclerView
+    ) {
         if (!::resultPhotos.isInitialized) {
             doAsync {
                 resultPhotos = getAllImages(context.applicationContext)
                 uiThread {
-                    setPhotosToAdapter(context,resultPhotos)
+                    setPhotosToAdapter(context, resultPhotos)
                     adapter.setItems(resultPhotos)
                     bindPhotos(context, resultPhotos, progressCircularAccent, recyclerView)
                 }
             }
-        }else{
+        } else {
             bindPhotos(context, resultPhotos, progressCircularAccent, recyclerView)
         }
     }
 
-    private fun bindPhotos(context: Context,results: ArrayList<Album>,progressCircularAccent: View,
-                           recyclerView: RecyclerView) {
+    private fun bindPhotos(
+        context: Context, results: ArrayList<Album>, progressCircularAccent: View,
+        recyclerView: RecyclerView
+    ) {
 
-        recyclerView.layoutManager = GridLayoutManager(context, 3)
+        recyclerView.layoutManager = GridLayoutManager(context, 3) as RecyclerView.LayoutManager
         recyclerView.hasFixedSize()
         recyclerView.adapter = adapter
         progressCircularAccent.visibility = GONE
     }
 
-    private fun setPhotosToAdapter(activity:Context,files: ArrayList<Album>) :ListAdapter {
+    private fun setPhotosToAdapter(activity: Context, files: ArrayList<Album>): ListAdapter {
 
         adapter = object : ListAdapter() {
 
@@ -70,38 +98,41 @@ class PhotosViewModel : HomeViewModel() {
             override fun getViewHolder(view: View, viewType: Int): RecyclerView.ViewHolder {
                 when (viewType) {
                     R.layout.item_photos -> {
-                        val hol=  AlbumViewHolder(view)
-                        hol.setActivity(activity as BaseActivity,adapter = adapter, clickable = object : BaseViewHolder.Clickable {
+                        val hol = AlbumViewHolder(view)
+                        hol.setActivity(
+                            activity as BaseActivity,
+                            adapter = adapter,
+                            clickable = object : BaseViewHolder.Clickable {
 
-                            override fun clicked(adapter: ListAdapter, index: Int) {
-                                var album =  adapter.listItems[index] as Album
-                                if (adapter.isSelection) {
-                                    album.isSelected = !album.isSelected
-                                    adapter.notifyItemChanged(index)
-                                    (activity as HomeActivity).makeShareDeleteToolbar(adapter.listItems )
-                                } else {
-                                    val anotherMap = mapOf("position" to index, "tag" to "photos")
-                                    (activity).startActivityputExtra(
-                                        activity ,
-                                        PictureViewActivity::class.java,
-                                        anotherMap
-                                    )
+                                override fun clicked(adapter: ListAdapter, index: Int) {
+                                    var album = adapter.listItems[index] as Album
+                                    if (adapter.isSelection) {
+                                        album.isSelected = !album.isSelected
+                                        adapter.notifyItemChanged(index)
+                                        (activity as HomeActivity).makeShareDeleteToolbar(adapter.listItems)
+                                    } else {
+                                        val anotherMap = mapOf("position" to index, "tag" to "photos")
+                                        (activity).startActivityputExtra(
+                                            activity,
+                                            PictureViewActivity::class.java,
+                                            anotherMap
+                                        )
+                                    }
                                 }
-                            }
 
-                            override fun onLongClicked(adapter: ListAdapter, index: Int) {
-                                var album =  adapter.listItems[index] as Album
-                                if (!adapter.isSelection){
+                                override fun onLongClicked(adapter: ListAdapter, index: Int) {
+                                    var album = adapter.listItems[index] as Album
+                                    if (!adapter.isSelection) {
+                                        adapter.isSelection = true
+                                        adapter.notifyDataSetChanged()
+                                    }
                                     adapter.isSelection = true
-                                    adapter.notifyDataSetChanged()
+                                    album.isSelected = true
+                                    adapter.notifyItemChanged(index)
+                                    (activity as HomeActivity).makeShareDeleteToolbar(adapter.listItems as List<Album>)
                                 }
-                                adapter.isSelection = true
-                                album.isSelected = true
-                                adapter.notifyItemChanged(index)
-                                (activity as HomeActivity).makeShareDeleteToolbar(adapter.listItems as List<Album>)
-                            }
 
-                        })
+                            })
 
                         return hol
                     }
@@ -117,12 +148,11 @@ class PhotosViewModel : HomeViewModel() {
     }
 
 
-
     internal fun setDataToAdapter(
         activity: BaseActivity, progressCircularAccent: View,
         files: ArrayList<Album>,
-        tag:String
-     ): ListAdapter {
+        tag: String
+    ): ListAdapter {
 
         adapter = object : ListAdapter() {
 
@@ -130,12 +160,12 @@ class PhotosViewModel : HomeViewModel() {
                 val album = obj as Album
                 return when (album.isSectionHeader) {
                     true -> {
-                        try{
+                        try {
                             if (album.bucket.isNotEmpty()) {
                                 R.layout.item_header_album_directory
                             } else
                                 R.layout.item_header_photos
-                        }catch (e:UninitializedPropertyAccessException){
+                        } catch (e: UninitializedPropertyAccessException) {
                             R.layout.item_header_photos
                         }
                     }
@@ -175,8 +205,9 @@ class PhotosViewModel : HomeViewModel() {
                                             "date" to album.dateString, "position" to index, "count" to album.count,
                                             "album" to album
                                         )
-                                        (activity ).startActivityputExtra(
-                                            activity ,
+                                        PictureViewActivity.setDeleteListener(this@PhotosViewModel)
+                                        (activity).startActivityputExtra(
+                                            activity,
                                             PictureViewActivity::class.java,
                                             anotherMap
                                         )
@@ -199,7 +230,7 @@ class PhotosViewModel : HomeViewModel() {
 
                         return hol
                     }
-                    R.layout.item_header_photos-> {
+                    R.layout.item_header_photos -> {
 
                         val hol = HeaderViewHolder(view)
                         hol.setActivity(

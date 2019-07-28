@@ -1,7 +1,11 @@
 package apps.ranganathan.gallery.ui.fragment
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
@@ -9,23 +13,17 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import apps.ranganathan.gallery.R
-import apps.ranganathan.gallery.adapter.BaseSectionAdapter
 import apps.ranganathan.gallery.adapter.ListAdapter
-import apps.ranganathan.gallery.adapter.PhotosAdapterByDate
 import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.model.ParentModel
 import apps.ranganathan.gallery.ui.activity.BaseActivity
-import apps.ranganathan.gallery.ui.activity.PictureViewActivity
-import apps.ranganathan.gallery.utils.GridDividerDecoration
 import apps.ranganathan.gallery.viewmodel.PhotosViewModel
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import java.util.*
-import kotlin.collections.ArrayList
-
-class PhotosDateOrderFragment : Fragment(){
 
 
+class PhotosDateOrderFragment : Fragment() {
 
 
     private lateinit var data: ArrayList<Album>
@@ -38,7 +36,6 @@ class PhotosDateOrderFragment : Fragment(){
     private lateinit var progressCircularAccent: View
 
     internal lateinit var adapter: ListAdapter
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,15 +63,24 @@ class PhotosDateOrderFragment : Fragment(){
                 mPhotosList = viewModel.getAllImages(activity!!.applicationContext)
                 splitData()
                 uiThread {
-                   bindAdapter()
+                    bindAdapter()
                 }
             }
-        }else{
+        } else {
             bindAdapter()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                val scanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
+                val contentUri = Uri.fromFile(mPhotosList!![0].file)
+                scanIntent.data = contentUri
+                activity!!.sendBroadcast(scanIntent)
+            } else {
+                val intent = Intent(
+                    Intent.ACTION_MEDIA_MOUNTED,
+                    Uri.parse("file://" + Environment.getExternalStorageDirectory())
+                )
+                activity!!.sendBroadcast(intent)
+            }
         }
-
-
-
 
 
         /* setAdapterWithGridLayout()
@@ -84,11 +90,12 @@ class PhotosDateOrderFragment : Fragment(){
          recyclerView!!.adapter = mSectionedRecyclerAdapter*/
     }
 
+
     private fun bindAdapter() {
         adapter = viewModel.setDataToAdapter(
             activity as BaseActivity,
             progressCircularAccent,
-            data,"date"
+            data, "date"
         )
         recyclerView!!.adapter = adapter
         val glm = GridLayoutManager(activity, 3)
@@ -96,7 +103,7 @@ class PhotosDateOrderFragment : Fragment(){
             override fun getSpanSize(position: Int): Int {
                 when (adapter.getItemViewType(position)) {
                     R.layout.item_header_photos -> return 3
-                    R.layout.item_header_album_directory ->return 3
+                    R.layout.item_header_album_directory -> return 3
                     else -> return 1
                 }
             }
@@ -139,7 +146,7 @@ class PhotosDateOrderFragment : Fragment(){
 
         var albumDuplicate = Album()
 
-        var isDateChanged:Boolean
+        var isDateChanged: Boolean
 
         while (iterate.hasNext()) {
 
@@ -150,7 +157,7 @@ class PhotosDateOrderFragment : Fragment(){
             if (!isDateChanged) {
                 parentModel.albums.add(album)
 
-            }else{
+            } else {
                 parentModel = ParentModel()
                 parentModel.albums = arrayListOf()
                 album.isSectionHeader = false
@@ -160,7 +167,7 @@ class PhotosDateOrderFragment : Fragment(){
                 albumDuplicate.dateString = album.dateString
                 albumDuplicate.date = album.date
                 albumDuplicate.albumUri = album.albumUri
-               // albumDuplicate.bucket = album.bucket
+                // albumDuplicate.bucket = album.bucket
                 albumDuplicate.isSectionHeader = true
                 data.add(albumDuplicate)
 
@@ -197,17 +204,13 @@ class PhotosDateOrderFragment : Fragment(){
     }
 
 
-    fun deleteFile(context: Context){
+    fun deleteFile(context: Context) {
         for (i in 0 until adapter.listItems.size) {
             if ((adapter.listItems[i] as Album).isSelected) {
-                viewModel.delete(context,(adapter.listItems[i] as Album).file)
+                viewModel.delete(context, (adapter.listItems[i] as Album).file)
             }
         }
     }
-
-
-
-
 
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
