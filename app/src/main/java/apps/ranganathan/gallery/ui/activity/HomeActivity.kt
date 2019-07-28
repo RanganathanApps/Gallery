@@ -1,6 +1,7 @@
 package apps.ranganathan.gallery.ui.activity
 
 import android.Manifest
+import android.app.Activity
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.ComponentName
@@ -241,6 +242,18 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
                 }
             })
 
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode== Activity.RESULT_OK){
+            when (requestCode){
+                1->{
+                showToast("Hah ha!"+data!!.getStringExtra("ok"))
+            }
+            }
+        }
     }
 
     private fun releaseSelctions() {

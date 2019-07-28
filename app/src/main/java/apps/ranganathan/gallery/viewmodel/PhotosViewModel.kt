@@ -20,8 +20,8 @@ import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import android.os.Environment.getExternalStorageDirectory
 import android.content.Intent
-
-
+import android.os.Bundle
+import java.io.Serializable
 
 
 class PhotosViewModel : HomeViewModel(), PictureViewActivity.DeleteListener<Any> {
@@ -112,11 +112,18 @@ class PhotosViewModel : HomeViewModel(), PictureViewActivity.DeleteListener<Any>
                                         (activity as HomeActivity).makeShareDeleteToolbar(adapter.listItems)
                                     } else {
                                         val anotherMap = mapOf("position" to index, "tag" to "photos")
-                                        (activity).startActivityputExtra(
+                                       /* (activity).startActivityputExtra(
                                             activity,
                                             PictureViewActivity::class.java,
                                             anotherMap
-                                        )
+                                        )*/
+                                        val bundle = Bundle()
+                                        for (pair in anotherMap) {
+                                            bundle.putSerializable(pair.key, pair.value as Serializable)
+                                        }
+                                        var intent = Intent(activity,PictureViewActivity::class.java)
+                                        intent.putExtras(bundle)
+                                        activity.startActivityForResult(intent,1)
                                     }
                                 }
 
