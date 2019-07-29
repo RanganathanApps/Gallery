@@ -22,6 +22,9 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import android.content.Intent
+
+
 
 
 open class HomeViewModel : BaseViewModel(){
@@ -108,12 +111,17 @@ open class HomeViewModel : BaseViewModel(){
         return results
     }
 
-    public fun setMediaMounted(context: Context, path: String){
+    public fun setMediaMounted(context: Context, file: File){
         MediaScannerConnection.scanFile(
             context,
-            arrayOf(path),
+            arrayOf(file.path),
             arrayOf("image/jpeg"), null
         )
+        var scanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
+        var contentUri = Uri.fromFile(file)
+        scanIntent.data = contentUri
+        context.sendBroadcast(scanIntent)
+
     }
 
 

@@ -66,19 +66,23 @@ class AlbumsListFragment : Fragment() {
 
 
         if (!::adapter.isInitialized) {
-            view.findViewById<View>(R.id.progressCircularAccent).visibility = VISIBLE
-            doAsync {
-                mPhotosList = viewModel.getAllImages(activity!!.applicationContext)
-                splitData()
-                uiThread {
-                    bindAdapter()
-                }
-            }
+            loadFiles()
         } else {
             bindAdapter()
         }
 
 
+    }
+
+    public fun loadFiles() {
+        progressCircularAccent!!.visibility = VISIBLE
+        doAsync {
+            mPhotosList = viewModel.getAllImages(activity!!.applicationContext)
+            splitData()
+            uiThread {
+                bindAdapter()
+            }
+        }
     }
 
     private fun bindAdapter() {

@@ -89,9 +89,10 @@ class CameraFragment : Fragment() {
 
         txtDirectory.text = "Directory : $DIRECTORY_UI"
 
+
     }
 
-    private fun loadFiles() {
+    public fun loadFiles() {
         view!!.findViewById<View>(R.id.progressCircularAccent).visibility = View.VISIBLE
         doAsync {
             val files = viewModel.getImagesInFile(viewModel.getDirectory(DIRECTORY))!!
@@ -214,7 +215,7 @@ class CameraFragment : Fragment() {
 
                 if (::photoFile.isInitialized)
                     photoFile.createNewFile()
-                viewModel.setMediaMounted(activity as Context, photoFile.path)
+                viewModel.setMediaMounted(activity as Context, photoFile)
                 loadFiles()
 
             }

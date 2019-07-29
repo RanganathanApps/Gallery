@@ -3,14 +3,12 @@ package apps.ranganathan.gallery.ui.activity
 import android.Manifest
 import android.app.Activity
 import android.app.PendingIntent
-import android.content.BroadcastReceiver
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
+import android.content.*
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.os.Handler
 import android.util.Log
 import android.view.Menu
@@ -122,6 +120,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
                 } else {
                     unSelectAll()
                 }
+
             }
 
         }
@@ -296,6 +295,38 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        var ejectFilter =  IntentFilter(Intent.ACTION_MEDIA_MOUNTED)
+    ejectFilter.addAction(Intent.ACTION_MEDIA_MOUNTED)
+    ejectFilter.addAction(Intent.ACTION_MEDIA_EJECT)
+    ejectFilter.addAction(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
+    ejectFilter.addDataScheme("file")
+        //val receiver = MYBroadCastReceiver()
+    registerReceiver(broadCastReceiver, ejectFilter)
+
+
+    }
+
+    val broadCastReceiver = object :  BroadcastReceiver() {
+        override fun onReceive(contxt: Context?, intent: Intent?) {
+
+            when (intent?.action) {
+                Intent.ACTION_MEDIA_SCANNER_SCAN_FILE -> {
+                    if (::photosFragment.isInitialized ) {
+                        photosFragment.mediaMounted = true
+                    }
+                    if (::photosDateOrderFragment.isInitialized ) {
+                        photosDateOrderFragment.mediaMounted = true
+                    }
+                    if (::albumsListFragment.isInitialized) {
+                        albumsListFragment.loadFiles()
+                    }
+                }
+            }
+        }
+    }
+
     private fun removeItems(data: Any) {
         data as MutableList<Album>
         if (data.isNotEmpty()) {
@@ -320,8 +351,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
         }
         if (::photosDateOrderFragment.isInitialized) {
             data.forEachIndexed { index, album ->
-                val item =
-                    photosDateOrderFragment.adapter.listItems.find { (it as Album).albumUri.equals(album.albumUri) }
+                val item = photosDateOrderFragment.adapter.listItems.find { (it as Album).albumUri.equals(album.albumUri) }
                 val pos = photosDateOrderFragment.adapter.listItems.indexOf(item)
                 if ((item as Album).isSectionHeader) {
                     if (item.dateString.equals((photosDateOrderFragment.adapter.listItems[pos + 2] as Album).dateString)) {
@@ -339,11 +369,16 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
         if (::albumsListFragment.isInitialized) {
             data.forEachIndexed { index, album ->
                 val item = albumsListFragment.adapter.listItems.find { (it as Album).albumUri.equals(album.albumUri) }
-                if (item != null)
-                    (item as Album).isSelected = true
+                val pos = albumsListFragment.adapter.listItems.indexOf(item)
                 if ((item as Album).isSectionHeader) {
-                    val pos = albumsListFragment.adapter.listItems.indexOf(item)
-                    (albumsListFragment.adapter.listItems[pos + 1] as Album).isSelected = true
+                    if (item.bucket.equals((albumsListFragment.adapter.listItems[pos + 2] as Album).bucket)) {
+                        (albumsListFragment.adapter.listItems[pos + 1] as Album).isSelected = true
+                    } else {
+                        (item as Album).isSelected = true
+                        (albumsListFragment.adapter.listItems[pos + 1] as Album).isSelected = true
+                    }
+                } else {
+                    (item as Album).isSelected = true
                 }
             }
             albumsListFragment.getAdapter().deleteItems()

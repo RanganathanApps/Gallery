@@ -37,6 +37,8 @@ class PhotosDateOrderFragment : Fragment() {
 
     internal lateinit var adapter: ListAdapter
 
+    public var mediaMounted: Boolean = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,36 +60,26 @@ class PhotosDateOrderFragment : Fragment() {
         recyclerView!!.addItemDecoration(gridDividerDecoration!!)*/
 
         if (!::adapter.isInitialized) {
-            progressCircularAccent.visibility = View.VISIBLE
-            doAsync {
-                mPhotosList = viewModel.getAllImages(activity!!.applicationContext)
-                splitData()
-                uiThread {
-                    bindAdapter()
-                }
-            }
+            loadFiles()
         } else {
             bindAdapter()
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                val scanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
-                val contentUri = Uri.fromFile(mPhotosList!![0].file)
-                scanIntent.data = contentUri
-                activity!!.sendBroadcast(scanIntent)
-            } else {
-                val intent = Intent(
-                    Intent.ACTION_MEDIA_MOUNTED,
-                    Uri.parse("file://" + Environment.getExternalStorageDirectory())
-                )
-                activity!!.sendBroadcast(intent)
-            }
         }
 
+        if (mediaMounted){
+            mediaMounted = !mediaMounted
+            loadFiles()
+        }
+    }
 
-        /* setAdapterWithGridLayout()
-
-         mSectionedRecyclerAdapter!!.setOnItemClickListener(this)
-
-         recyclerView!!.adapter = mSectionedRecyclerAdapter*/
+    public fun loadFiles() {
+        progressCircularAccent.visibility = View.VISIBLE
+        doAsync {
+            mPhotosList = viewModel.getAllImages(activity!!.applicationContext)
+            splitData()
+            uiThread {
+                bindAdapter()
+            }
+        }
     }
 
 

@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.view.View.VISIBLE
+import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
@@ -31,6 +32,8 @@ class PhotosFragment : Fragment() {
     internal lateinit var adapter: ListAdapter
     private var contentView: View? = null
     private lateinit var viewModel: PhotosViewModel
+
+    public var mediaMounted: Boolean = false
 
     fun getAdapter():ListAdapter{
         return adapter
@@ -68,11 +71,15 @@ class PhotosFragment : Fragment() {
         }else{
             initPhotos(result)
         }
+        if (mediaMounted){
+            mediaMounted = !mediaMounted
+            loadPhotos()
+        }
         //viewModel.loadAndBind(activity as Context,progressCircularAccent,recyclerPhotos)
     }
 
     internal fun loadPhotos() {
-        progressCircularAccent.visibility = VISIBLE
+        contentView!!.findViewById<View>(R.id.progressCircularAccent).visibility = View.VISIBLE
         doAsync {
             result =  viewModel.getAllImages(activity!!.applicationContext)
             uiThread {
