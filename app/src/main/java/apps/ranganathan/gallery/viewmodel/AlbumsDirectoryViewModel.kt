@@ -1,5 +1,7 @@
 package apps.ranganathan.gallery.viewmodel
 
+import android.content.Intent
+import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,6 +16,7 @@ import apps.ranganathan.gallery.viewholders.AlbumViewHolder
 import apps.ranganathan.gallery.viewholders.AlbumsDirectoryViewHolder
 import apps.ranganathan.gallery.viewholders.BaseViewHolder
 import kotlinx.android.synthetic.main.photos_fragment.*
+import java.io.Serializable
 import java.util.ArrayList
 
 
@@ -68,21 +71,14 @@ class AlbumsDirectoryViewModel : HomeViewModel() {
                                         (activity as HomeActivity).makeShareDeleteToolbar(adapter.listItems as List<Album>)
                                     } else {
                                         val anotherMap = mapOf("tag" to "albums_list","directory_ui" to album.bucket,"position" to index,"count" to album.count,"album" to album)
-                                        /*val anotherMap = mapOf(
-                                            "tag" to "albums_list",
-                                            "date" to album.dateString, "position" to index, "count" to album.count,
-                                            "album" to album
-                                        )*/
-                                        (activity ).startActivityputExtra(
-                                            activity ,
-                                            PictureViewActivity::class.java,
-                                            anotherMap
-                                        )
-                                        (activity as BaseActivity).startActivityputExtra(
-                                            activity as BaseActivity,
-                                            PictureViewActivity::class.java,
-                                            anotherMap
-                                        )
+
+                                        val bundle = Bundle()
+                                        for (pair in anotherMap) {
+                                            bundle.putSerializable(pair.key, pair.value as Serializable)
+                                        }
+                                        var intent = Intent(activity,PictureViewActivity::class.java)
+                                        intent.putExtras(bundle)
+                                        activity.startActivityForResult(intent,1)
                                     }
                                 }
 

@@ -28,7 +28,7 @@ class PhotosViewModel : HomeViewModel(), PictureViewActivity.DeleteListener<Any>
 
     override fun onDeleted(index: Int, data: Any) {
 
-        data as MutableList<Album>
+       /* data as MutableList<Album>
         if (data.isNotEmpty()) {
             data.forEachIndexed { index, album ->
                 val item = adapter.listItems.find { (it as Album).albumUri.equals(album.albumUri) }
@@ -36,15 +36,15 @@ class PhotosViewModel : HomeViewModel(), PictureViewActivity.DeleteListener<Any>
                     (item as Album).isSelected = true
             }
             adapter.deleteItems()
-            /*for (i in 0 until adapter.listItems.size) {
+            *//*for (i in 0 until adapter.listItems.size) {
                    if ((adapter.listItems[i] as Album).albumUri.equals(album.albumUri)) {
                        (adapter.listItems[i]  as Album).isSelected = true
                        break
                    }
 
-               }*/
+               }*//*
 
-        }
+        }*/
     }
 
     private lateinit var resultPhotos: ArrayList<Album>
@@ -213,11 +213,18 @@ class PhotosViewModel : HomeViewModel(), PictureViewActivity.DeleteListener<Any>
                                             "album" to album
                                         )
                                         PictureViewActivity.setDeleteListener(this@PhotosViewModel)
-                                        (activity).startActivityputExtra(
+                                        /*(activity).startActivityputExtra(
                                             activity,
                                             PictureViewActivity::class.java,
                                             anotherMap
-                                        )
+                                        )*/
+                                        val bundle = Bundle()
+                                        for (pair in anotherMap) {
+                                            bundle.putSerializable(pair.key, pair.value as Serializable)
+                                        }
+                                        var intent = Intent(activity,PictureViewActivity::class.java)
+                                        intent.putExtras(bundle)
+                                        activity.startActivityForResult(intent,1)
                                     }
                                 }
 

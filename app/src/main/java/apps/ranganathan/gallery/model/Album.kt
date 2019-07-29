@@ -20,5 +20,6 @@ open class Album : Serializable, Comparable<Album> {
     lateinit var subfiles: ArrayList<File>
     var isSelected: Boolean = false
     var isSectionHeader: Boolean = false
+    var sectionCount: Int = 1
 
 }

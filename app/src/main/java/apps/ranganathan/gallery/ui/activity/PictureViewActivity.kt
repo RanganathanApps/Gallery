@@ -34,6 +34,7 @@ import kotlinx.android.synthetic.main.content_picture_view.*
 import kotlinx.android.synthetic.main.toolbar_home.*
 import kotlinx.coroutines.delay
 import java.io.File
+import java.io.Serializable
 import java.util.*
 import apps.ranganathan.configlibrary.utils.Utils.OnClickListener as OnClickListener1
 
@@ -82,9 +83,10 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
     }
 
     override fun onBackPressed() {
-        intent.putExtra("ok","OkValue")
+        var bundle = Bundle()
+        bundle.putSerializable("deleted_albums",deletedList as Serializable)
+        intent.putExtras(bundle)
         setResult(Activity.RESULT_OK,intent)
-        deleteListener.onDeleted(0,deletedList)
         finish()
     }
 
@@ -205,6 +207,7 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
                             //deletedList.add(album)
                             val isDeleted = pictureViewModel.delete(context, album.file)
                             if (isDeleted) {
+                                deletedList.add(album)
                                 showToast("File Deleted!")
                                 userList.removeAt(position)
                                 adapter.updateList(userList)
@@ -218,7 +221,7 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
                                     position = 0
                                 }
                                 viewpagerPhotos.currentItem = position
-                                deletedList.add(album)
+
                                 // pictureViewModel.setMediaMounted(context, userList[position].file.absolutePath)
 
                             }

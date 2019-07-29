@@ -37,6 +37,8 @@ abstract class ListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 temp.add(listItems[i])
         }
 
+
+
         (this.listItems as MutableList<Any>).removeAll(temp)
         Handler().postDelayed({
             //doSomethingHere()

@@ -109,7 +109,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
             if (::albumsListFragment.isInitialized && curentFragment == albumsListFragment) {
                 shareMultileFiles(albumsListFragment.getAdapter().listItems)
             }
-            releaseSelctions()
+            releaseSelections()
 
         }
         imgDeleteToolbar.setOnClickListener {
@@ -233,7 +233,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
                         albumsListFragment.deleteFile(this@HomeActivity)
                         albumsListFragment.getAdapter().deleteItems()
                     }
-                    releaseSelctions()
+                    releaseSelections()
 
                 }
             },
@@ -246,17 +246,69 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+        //super.onActivityResult(requestCode, resultCode, data)
         if (resultCode== Activity.RESULT_OK){
+             var bundle = data!!.extras
             when (requestCode){
                 1->{
-                showToast("Hah ha!"+data!!.getStringExtra("ok"))
+                    var list = bundle.getSerializable("deleted_albums")
+                    removeItems(list)
             }
             }
         }
     }
 
-    private fun releaseSelctions() {
+    private fun removeItems(data: Any) {
+        data as MutableList<Album>
+        if (data.isNotEmpty()) {
+
+        }
+
+        if (::photosFragment.isInitialized) {
+            data.forEachIndexed { index, album ->
+                val item = photosFragment.adapter.listItems.find { (it as Album).albumUri.equals(album.albumUri) }
+                if (item != null)
+                    (item as Album).isSelected = true
+            }
+            photosFragment.adapter.deleteItems()
+        }
+        if (::cameraFragment.isInitialized ) {
+            data.forEachIndexed { index, album ->
+                val item = cameraFragment.adapter.listItems.find { (it as Album).albumUri.equals(album.albumUri) }
+                if (item != null)
+                    (item as Album).isSelected = true
+            }
+            cameraFragment.adapter.deleteItems()
+        }
+        if (::photosDateOrderFragment.isInitialized) {
+            data.forEachIndexed { index, album ->
+                val item = photosDateOrderFragment.adapter.listItems.find { (it as Album).albumUri.equals(album.albumUri) }
+                if (item != null)
+                    (item as Album).isSelected = true
+                if ((item as Album).isSectionHeader){
+                    val pos = photosDateOrderFragment.adapter.listItems.indexOf(item)
+                    (photosDateOrderFragment.adapter.listItems[pos+1] as Album).isSelected = true
+                }
+
+            }
+            photosDateOrderFragment.adapter.deleteItems()
+        }
+        if (::albumsListFragment.isInitialized) {
+            data.forEachIndexed { index, album ->
+                val item = albumsListFragment.adapter.listItems.find { (it as Album).albumUri.equals(album.albumUri) }
+                if (item != null)
+                    (item as Album).isSelected = true
+                if ((item as Album).isSectionHeader){
+                    val pos = albumsListFragment.adapter.listItems.indexOf(item)
+                    (albumsListFragment.adapter.listItems[pos+1] as Album).isSelected = true
+                }
+            }
+            albumsListFragment.getAdapter().deleteItems()
+        }
+
+    }
+
+    private fun releaseSelections() {
         if (::photosFragment.isInitialized && curentFragment == photosFragment) {
             makeReset(photosFragment.getAdapter().listItems )
         }
@@ -413,7 +465,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
     }
 
     override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
-        releaseSelctions()
+        releaseSelections()
         closeDrawer()
         when (menuItem.itemId) {
             R.id.action_photos -> {
@@ -581,7 +633,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
     override fun onBackPressed() {
 
         try {
-            releaseSelctions()
+            releaseSelections()
             if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
                 closeDrawer()
                 return

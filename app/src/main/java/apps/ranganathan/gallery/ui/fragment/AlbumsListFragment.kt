@@ -146,6 +146,7 @@ class AlbumsListFragment : Fragment() {
 
             if (!isDateChanged) {
                 parentModel.albums.add(album)
+                albumDuplicate.sectionCount +=1
 
             } else {
                 parentModel = ParentModel()
