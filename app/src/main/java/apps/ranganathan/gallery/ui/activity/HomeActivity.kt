@@ -278,16 +278,21 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
     }
 
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        //super.onActivityResult(requestCode, resultCode, data)
+    @Override
+    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+
         if (resultCode == Activity.RESULT_OK) {
-            var bundle = data!!.extras
             when (requestCode) {
                 1 -> {
+                    var bundle = data!!.extras
                     var list = bundle.getSerializable("deleted_albums")
                     removeItems(list)
                 }
             }
+        }
+        try {
+            super.onActivityResult(requestCode, resultCode, data)
+        } catch (e: Exception) {
         }
     }
 
@@ -547,13 +552,11 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
                 return true
             }
             R.id.menu_albums_list -> {
-                sortBy = 0
                 sortByDirectory = 1
                 moveToListAlbums()
                 return true
             }
             R.id.menu_grid -> {
-                sortBy = 0
                 sortByDirectory = 0
                 moveToAlbums()
                 return true

@@ -29,7 +29,7 @@ import org.jetbrains.anko.uiThread
 import java.io.File
 
 
-class CameraFragment : Fragment(){
+class CameraFragment : Fragment() {
 
     internal lateinit var adapter: ListAdapter
     private val TAKE_PHOTO_REQUEST: Int = 12
@@ -45,18 +45,18 @@ class CameraFragment : Fragment(){
 
     private lateinit var viewModel: CameraViewModel
 
-    fun deleteFile(context:Context): java.util.ArrayList<Album> {
+    fun deleteFile(context: Context): java.util.ArrayList<Album> {
         var list = arrayListOf<Album>()
         for (i in 0 until adapter.listItems.size) {
             if ((adapter.listItems[i] as Album).isSelected) {
                 list.add((adapter.listItems[i] as Album))
-                viewModel.delete(context,(adapter.listItems[i] as Album).file)
+                viewModel.delete(context, (adapter.listItems[i] as Album).file)
             }
         }
-        return  list
+        return list
     }
 
-    fun getAdapter():ListAdapter{
+    fun getAdapter(): ListAdapter {
         return adapter
     }
 
@@ -149,38 +149,46 @@ class CameraFragment : Fragment(){
             override fun getViewHolder(view: View, viewType: Int): RecyclerView.ViewHolder {
                 when (viewType) {
                     R.layout.item_photos -> {
-                        val hol=  AlbumViewHolder(view)
-                        hol.setActivity(activity as BaseActivity,adapter = adapter, clickable = object : BaseViewHolder.Clickable {
+                        val hol = AlbumViewHolder(view)
+                        hol.setActivity(
+                            activity as BaseActivity,
+                            adapter = adapter,
+                            clickable = object : BaseViewHolder.Clickable {
 
-                            override fun clicked(adapter: ListAdapter, index: Int) {
-                                var album =  adapter.listItems[index] as Album
-                                if (adapter.isSelection) {
-                                    album.isSelected = !album.isSelected
-                                    adapter.notifyItemChanged(index)
-                                    (activity as HomeActivity).makeShareDeleteToolbar(adapter.listItems )
-                                } else {
-                                    val anotherMap = mapOf("position" to index, "tag" to "camera","directory_ui" to DIRECTORY_UI,"directory" to DIRECTORY)
-                                    (activity as BaseActivity).startActivityputExtra(
-                                        activity as BaseActivity,
-                                        PictureViewActivity::class.java,
-                                        anotherMap
-                                    )
+                                override fun clicked(adapter: ListAdapter, index: Int) {
+                                    var album = adapter.listItems[index] as Album
+                                    if (adapter.isSelection) {
+                                        album.isSelected = !album.isSelected
+                                        adapter.notifyItemChanged(index)
+                                        (activity as HomeActivity).makeShareDeleteToolbar(adapter.listItems)
+                                    } else {
+                                        val anotherMap = mapOf(
+                                            "position" to index,
+                                            "tag" to "camera",
+                                            "directory_ui" to DIRECTORY_UI,
+                                            "directory" to DIRECTORY
+                                        )
+                                        (activity as BaseActivity).startActivityputExtra(
+                                            activity as BaseActivity,
+                                            PictureViewActivity::class.java,
+                                            anotherMap
+                                        )
+                                    }
                                 }
-                            }
 
-                            override fun onLongClicked(adapter: ListAdapter, index: Int) {
-                                var album =  adapter.listItems[index] as Album
-                                if (!adapter.isSelection){
+                                override fun onLongClicked(adapter: ListAdapter, index: Int) {
+                                    var album = adapter.listItems[index] as Album
+                                    if (!adapter.isSelection) {
+                                        adapter.isSelection = true
+                                        adapter.notifyDataSetChanged()
+                                    }
                                     adapter.isSelection = true
-                                    adapter.notifyDataSetChanged()
+                                    album.isSelected = true
+                                    adapter.notifyItemChanged(index)
+                                    (activity as HomeActivity).makeShareDeleteToolbar(adapter.listItems as List<Album>)
                                 }
-                                adapter.isSelection = true
-                                album.isSelected = true
-                                adapter.notifyItemChanged(index)
-                                (activity as HomeActivity).makeShareDeleteToolbar( adapter.listItems as List<Album>)
-                            }
 
-                        })
+                            })
 
                         return hol
                     }
@@ -198,6 +206,7 @@ class CameraFragment : Fragment(){
         view!!.findViewById<View>(R.id.progressCircularAccent).visibility = View.GONE
     }
 
+    @Override
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == TAKE_PHOTO_REQUEST) {
@@ -205,7 +214,7 @@ class CameraFragment : Fragment(){
 
                 if (::photoFile.isInitialized)
                     photoFile.createNewFile()
-               viewModel.setMediaMounted(activity as Context,photoFile.path)
+                viewModel.setMediaMounted(activity as Context, photoFile.path)
                 loadFiles()
 
             }
@@ -221,7 +230,6 @@ class CameraFragment : Fragment(){
         }
         return super.onOptionsItemSelected(item)
     }
-
 
 
 }

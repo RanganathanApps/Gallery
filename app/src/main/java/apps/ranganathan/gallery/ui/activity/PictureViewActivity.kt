@@ -85,6 +85,7 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
     override fun onBackPressed() {
         var bundle = Bundle()
         bundle.putSerializable("deleted_albums",deletedList as Serializable)
+        var intent = Intent()
         intent.putExtras(bundle)
         setResult(Activity.RESULT_OK,intent)
         finish()

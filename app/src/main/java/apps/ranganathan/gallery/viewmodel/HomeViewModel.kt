@@ -365,7 +365,7 @@ open class HomeViewModel : BaseViewModel(){
             })
 
             if (files!=null) {
-                for (i in 0..files.size - 1) {
+                for (i in 0 until files.size) {
                     if (files[i].name.endsWith(".jpg")
                         || files[i].name.endsWith(".png")
                         || files[i].name.endsWith(".gif")
@@ -522,6 +522,7 @@ open class HomeViewModel : BaseViewModel(){
         contentResolver.delete(filesUri, where, selectionArgs)
 
         if (file.exists()) {
+            file.delete()
 
             contentResolver.delete(filesUri, where, selectionArgs)
         }
