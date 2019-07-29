@@ -23,6 +23,7 @@ import androidx.core.content.FileProvider
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import apps.ranganathan.configlibrary.utils.ForceUpdateChecker
 import apps.ranganathan.configlibrary.utils.Utils
 import apps.ranganathan.gallery.R
 import apps.ranganathan.gallery.adapter.ListAdapter
@@ -297,6 +298,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
 
     override fun onResume() {
         super.onResume()
+        setConnectivityChange()
         var ejectFilter =  IntentFilter(Intent.ACTION_MEDIA_MOUNTED)
     ejectFilter.addAction(Intent.ACTION_MEDIA_MOUNTED)
     ejectFilter.addAction(Intent.ACTION_MEDIA_EJECT)
@@ -306,7 +308,23 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
     registerReceiver(broadCastReceiver, ejectFilter)
 
 
+        getIsConnected().observe(this,androidx.lifecycle.Observer {
+            if (it){
+                ForceUpdateChecker.with(this).onUpdateNeeded(this).check()
+            }
+        })
+
+
+
     }
+
+    override fun onUpToDate() {
+    }
+
+    override fun onUpdateNeeded(updateUrl: String) {
+        super.onUpdateNeeded(updateUrl)
+    }
+
 
     val broadCastReceiver = object :  BroadcastReceiver() {
         override fun onReceive(contxt: Context?, intent: Intent?) {
