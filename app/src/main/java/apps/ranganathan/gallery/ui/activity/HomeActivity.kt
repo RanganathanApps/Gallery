@@ -27,7 +27,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import apps.ranganathan.configlibrary.utils.Utils
 import apps.ranganathan.gallery.R
-import apps.ranganathan.gallery.adapter.BaseSectionAdapter
 import apps.ranganathan.gallery.adapter.ListAdapter
 import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.ui.fragment.*
@@ -71,8 +70,8 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
         initCode()
     }
 
-     @Override
-     fun initCode() {
+    @Override
+    fun initCode() {
         homeVieModel = ViewModelProviders.of(this).get(HomeViewModel::class.java)
 
         setNavDrawer()
@@ -101,10 +100,10 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
                 shareMultileFiles(photosFragment.adapter.listItems)
             }
             if (::cameraFragment.isInitialized && curentFragment == cameraFragment) {
-                shareMultileFiles(cameraFragment.adapter.listItems )
+                shareMultileFiles(cameraFragment.adapter.listItems)
             }
             if (::photosDateOrderFragment.isInitialized && curentFragment == photosDateOrderFragment) {
-                shareMultileFiles(photosDateOrderFragment.getAdapter().listItems )
+                shareMultileFiles(photosDateOrderFragment.getAdapter().listItems)
             }
             if (::albumsListFragment.isInitialized && curentFragment == albumsListFragment) {
                 shareMultileFiles(albumsListFragment.getAdapter().listItems)
@@ -118,9 +117,9 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
         }
         checkBoxSelection.setOnCheckedChangeListener { buttonView, isChecked ->
             buttonView.setOnClickListener {
-                if (isChecked){
+                if (isChecked) {
                     selectAll()
-                }else{
+                } else {
                     unSelectAll()
                 }
             }
@@ -134,16 +133,16 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
         var list: List<Any> = arrayListOf()
 
         if (::photosFragment.isInitialized && curentFragment == photosFragment) {
-            list =photosFragment.adapter.listItems
+            list = photosFragment.adapter.listItems
         }
         if (::cameraFragment.isInitialized && curentFragment == cameraFragment) {
-            list =cameraFragment.adapter.listItems
+            list = cameraFragment.adapter.listItems
         }
         if (::photosDateOrderFragment.isInitialized && curentFragment == photosDateOrderFragment) {
-            list =photosDateOrderFragment.getAdapter().listItems
+            list = photosDateOrderFragment.getAdapter().listItems
         }
         if (::albumsListFragment.isInitialized && curentFragment == albumsListFragment) {
-            list =albumsListFragment.getAdapter().listItems
+            list = albumsListFragment.getAdapter().listItems
         }
 
         for (item in list) {
@@ -156,7 +155,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
         if (::photosFragment.isInitialized && curentFragment == photosFragment) {
             photosFragment.getAdapter().notifyDataSetChanged()
         }
-        if (::cameraFragment.isInitialized &&  curentFragment == cameraFragment) {
+        if (::cameraFragment.isInitialized && curentFragment == cameraFragment) {
             cameraFragment.getAdapter().notifyDataSetChanged()
         }
         if (::photosDateOrderFragment.isInitialized && curentFragment == photosDateOrderFragment) {
@@ -173,22 +172,22 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
 
         var count = 0
         if (::photosFragment.isInitialized && curentFragment == photosFragment) {
-            list =photosFragment.adapter.listItems
+            list = photosFragment.adapter.listItems
         }
         if (::cameraFragment.isInitialized && curentFragment == cameraFragment) {
-            list =cameraFragment.adapter.listItems
+            list = cameraFragment.adapter.listItems
         }
         if (::photosDateOrderFragment.isInitialized && curentFragment == photosDateOrderFragment) {
-            list =photosDateOrderFragment.getAdapter().listItems
+            list = photosDateOrderFragment.getAdapter().listItems
         }
         if (::albumsListFragment.isInitialized && curentFragment == albumsListFragment) {
-            list =albumsListFragment.getAdapter().listItems
+            list = albumsListFragment.getAdapter().listItems
         }
 
         for (item in list) {
             item as Album
             if (!item.isSelected) {
-                item.isSelected =  !item.isSelected
+                item.isSelected = !item.isSelected
             }
             if (!item.isSectionHeader)
                 count += 1
@@ -203,7 +202,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
         if (::photosDateOrderFragment.isInitialized && curentFragment == photosDateOrderFragment) {
             photosDateOrderFragment.getAdapter().notifyDataSetChanged()
         }
-        if (::albumsListFragment.isInitialized &&  curentFragment == albumsListFragment) {
+        if (::albumsListFragment.isInitialized && curentFragment == albumsListFragment) {
             albumsListFragment.getAdapter().notifyDataSetChanged()
         }
         txtSelectionCountToolbar.text = "" + count
@@ -217,20 +216,54 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
             object : Utils.OnClickListener {
                 override fun onClick(v: View) {
 
+                    var deletion = arrayListOf<Album>()
                     if (::photosFragment.isInitialized && curentFragment == photosFragment) {
-                        photosFragment.deleteFile(this@HomeActivity)
-                        photosFragment.adapter.deleteItems()
+                        deletion = photosFragment.deleteFile(this@HomeActivity)
                     }
                     if (::cameraFragment.isInitialized && curentFragment == cameraFragment) {
-                        cameraFragment.deleteFile(this@HomeActivity)
-                        cameraFragment.adapter.deleteItems()
+                        deletion =  cameraFragment.deleteFile(this@HomeActivity)
                     }
                     if (::photosDateOrderFragment.isInitialized && curentFragment == photosDateOrderFragment) {
-                        photosDateOrderFragment.deleteFile(this@HomeActivity)
-                        photosDateOrderFragment.adapter.deleteItems()
+                        deletion = photosDateOrderFragment.deleteFile(this@HomeActivity)
                     }
                     if (::albumsListFragment.isInitialized && curentFragment == albumsListFragment) {
-                        albumsListFragment.deleteFile(this@HomeActivity)
+                        deletion =   albumsListFragment.deleteFile(this@HomeActivity)
+                    }
+
+                    if (::photosFragment.isInitialized) {
+                        deletion.forEachIndexed { index, album ->
+                            photosFragment.adapter.listItems.forEachIndexed { index, any ->
+                                if (album.albumUri.equals((any as Album).albumUri))
+                                    (photosFragment.adapter.listItems[index] as Album).isSelected = true
+                            }
+                        }
+                        photosFragment.adapter.deleteItems()
+                    }
+                    if (::cameraFragment.isInitialized) {
+                        deletion.forEachIndexed { index, album ->
+                            cameraFragment.adapter.listItems.forEachIndexed { index, any ->
+                                if (album.albumUri.equals((any as Album).albumUri))
+                                    (cameraFragment.adapter.listItems[index] as Album).isSelected = true
+                            }
+                        }
+                        cameraFragment.adapter.deleteItems()
+                    }
+                    if (::photosDateOrderFragment.isInitialized) {
+                        deletion.forEachIndexed { index, album ->
+                            photosDateOrderFragment.adapter.listItems.forEachIndexed { index, any ->
+                                if (album.albumUri.equals((any as Album).albumUri))
+                                    (photosDateOrderFragment.adapter.listItems[index] as Album).isSelected = true
+                            }
+                        }
+                        photosDateOrderFragment.adapter.deleteItems()
+                    }
+                    if (::albumsListFragment.isInitialized) {
+                        deletion.forEachIndexed { index, album ->
+                            albumsListFragment.adapter.listItems.forEachIndexed { index, any ->
+                                if (album.albumUri.equals((any as Album).albumUri))
+                                    (albumsListFragment.adapter.listItems[index] as Album).isSelected = true
+                            }
+                        }
                         albumsListFragment.getAdapter().deleteItems()
                     }
                     releaseSelections()
@@ -247,13 +280,13 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         //super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode== Activity.RESULT_OK){
-             var bundle = data!!.extras
-            when (requestCode){
-                1->{
+        if (resultCode == Activity.RESULT_OK) {
+            var bundle = data!!.extras
+            when (requestCode) {
+                1 -> {
                     var list = bundle.getSerializable("deleted_albums")
                     removeItems(list)
-            }
+                }
             }
         }
     }
@@ -272,7 +305,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
             }
             photosFragment.adapter.deleteItems()
         }
-        if (::cameraFragment.isInitialized ) {
+        if (::cameraFragment.isInitialized) {
             data.forEachIndexed { index, album ->
                 val item = cameraFragment.adapter.listItems.find { (it as Album).albumUri.equals(album.albumUri) }
                 if (item != null)
@@ -282,14 +315,19 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
         }
         if (::photosDateOrderFragment.isInitialized) {
             data.forEachIndexed { index, album ->
-                val item = photosDateOrderFragment.adapter.listItems.find { (it as Album).albumUri.equals(album.albumUri) }
-                if (item != null)
+                val item =
+                    photosDateOrderFragment.adapter.listItems.find { (it as Album).albumUri.equals(album.albumUri) }
+                val pos = photosDateOrderFragment.adapter.listItems.indexOf(item)
+                if ((item as Album).isSectionHeader) {
+                    if (item.dateString.equals((photosDateOrderFragment.adapter.listItems[pos + 2] as Album).dateString)) {
+                        (photosDateOrderFragment.adapter.listItems[pos + 1] as Album).isSelected = true
+                    } else {
+                        (item as Album).isSelected = true
+                        (photosDateOrderFragment.adapter.listItems[pos + 1] as Album).isSelected = true
+                    }
+                } else {
                     (item as Album).isSelected = true
-                if ((item as Album).isSectionHeader){
-                    val pos = photosDateOrderFragment.adapter.listItems.indexOf(item)
-                    (photosDateOrderFragment.adapter.listItems[pos+1] as Album).isSelected = true
                 }
-
             }
             photosDateOrderFragment.adapter.deleteItems()
         }
@@ -298,9 +336,9 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
                 val item = albumsListFragment.adapter.listItems.find { (it as Album).albumUri.equals(album.albumUri) }
                 if (item != null)
                     (item as Album).isSelected = true
-                if ((item as Album).isSectionHeader){
+                if ((item as Album).isSectionHeader) {
                     val pos = albumsListFragment.adapter.listItems.indexOf(item)
-                    (albumsListFragment.adapter.listItems[pos+1] as Album).isSelected = true
+                    (albumsListFragment.adapter.listItems[pos + 1] as Album).isSelected = true
                 }
             }
             albumsListFragment.getAdapter().deleteItems()
@@ -310,16 +348,16 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
 
     private fun releaseSelections() {
         if (::photosFragment.isInitialized && curentFragment == photosFragment) {
-            makeReset(photosFragment.getAdapter().listItems )
+            makeReset(photosFragment.getAdapter().listItems)
         }
         if (::cameraFragment.isInitialized && curentFragment == cameraFragment) {
-            makeReset(cameraFragment.getAdapter().listItems )
+            makeReset(cameraFragment.getAdapter().listItems)
         }
         if (::photosDateOrderFragment.isInitialized && curentFragment == photosDateOrderFragment) {
             makeReset(photosDateOrderFragment.getAdapter().listItems)
         }
         if (::albumsListFragment.isInitialized && curentFragment == albumsListFragment) {
-            makeReset(albumsListFragment.getAdapter().listItems )
+            makeReset(albumsListFragment.getAdapter().listItems)
         }
         resetToolbar()
     }

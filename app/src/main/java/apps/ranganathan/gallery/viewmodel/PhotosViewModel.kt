@@ -12,15 +12,12 @@ import apps.ranganathan.gallery.model.Album
 import apps.ranganathan.gallery.ui.activity.BaseActivity
 import apps.ranganathan.gallery.ui.activity.HomeActivity
 import apps.ranganathan.gallery.ui.activity.PictureViewActivity
-import apps.ranganathan.gallery.viewholders.AlbumViewHolder
-import apps.ranganathan.gallery.viewholders.AlbumsDirectoryViewHolder
-import apps.ranganathan.gallery.viewholders.BaseViewHolder
-import apps.ranganathan.gallery.viewholders.HeaderViewHolder
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import android.os.Environment.getExternalStorageDirectory
 import android.content.Intent
 import android.os.Bundle
+import apps.ranganathan.gallery.viewholders.*
 import java.io.Serializable
 
 
@@ -169,7 +166,12 @@ class PhotosViewModel : HomeViewModel(), PictureViewActivity.DeleteListener<Any>
                     true -> {
                         try {
                             if (album.bucket.isNotEmpty()) {
-                                R.layout.item_header_album_directory
+                                if ((adapter.listItems[position+1] as Album).dateString == album.dateString) {
+                                    R.layout.item_header_photos
+                                }else{
+                                    (adapter.listItems as MutableList<Any>).remove(album)
+                                    R.layout.item_header_empty
+                                }
                             } else
                                 R.layout.item_header_photos
                         } catch (e: UninitializedPropertyAccessException) {
@@ -264,7 +266,7 @@ class PhotosViewModel : HomeViewModel(), PictureViewActivity.DeleteListener<Any>
 
                         return hol
                     }
-                    else -> {
+                    R.layout.item_header_album_directory  -> {
 
                         val hol = AlbumsDirectoryViewHolder(view)
                         hol.setActivity(
@@ -283,7 +285,25 @@ class PhotosViewModel : HomeViewModel(), PictureViewActivity.DeleteListener<Any>
                             })
 
                         return hol
-                    }
+                    }else -> {
+                    val hol = EmptyViewHolder(view)
+                    hol.setActivity(
+                        activity,
+                        adapter = adapter,
+                        clickable = object : BaseViewHolder.Clickable {
+
+                            override fun clicked(adapter: ListAdapter, index: Int) {
+
+                            }
+
+                            override fun onLongClicked(adapter: ListAdapter, index: Int) {
+
+                            }
+
+                        })
+
+                    return hol
+                }
                 }
             }
         }

@@ -47,19 +47,15 @@ class AlbumsDirectoryViewHolder : BaseViewHolder {
     }
 }
 
-class ParentViewHolder : BaseViewHolder {
+class EmptyViewHolder : BaseViewHolder {
 
     private lateinit var parentModel: ParentModel
-    var txtAlbum: AppCompatTextView
 
     constructor(itemView: View) : super(itemView) {
-        txtAlbum = itemView.findViewById(R.id.txtAlbum) as AppCompatTextView
 
     }
 
     override fun bind(holder: RecyclerView.ViewHolder,data: Any) {
 
-        parentModel = data as ParentModel
-        txtAlbum.text = parentModel.header
     }
 }

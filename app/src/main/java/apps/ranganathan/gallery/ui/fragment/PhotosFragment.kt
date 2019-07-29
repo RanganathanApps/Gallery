@@ -35,12 +35,15 @@ class PhotosFragment : Fragment() {
     fun getAdapter():ListAdapter{
         return adapter
     }
-    fun deleteFile(context:Context){
+    fun deleteFile(context:Context): ArrayList<Album> {
+        var list = arrayListOf<Album>()
         for (i in 0 until adapter.listItems.size) {
             if ((adapter.listItems[i] as Album).isSelected) {
+                list.add((adapter.listItems[i] as Album))
                 viewModel.delete(context,(adapter.listItems[i] as Album).file)
             }
         }
+        return  list
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
