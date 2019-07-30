@@ -27,7 +27,7 @@ class AlbumViewHolder : BaseViewHolder{
 
     override fun bind(holder:RecyclerView.ViewHolder,data: Any) {
         album = data as Album
-        (activity as BaseActivity).loadImage(
+        (activity as BaseActivity).loadImagePicasso(
             album.albumUri,
             photo,
             R.drawable.ic_camera_alt_white_24dp
