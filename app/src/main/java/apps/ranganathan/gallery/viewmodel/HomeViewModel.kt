@@ -76,7 +76,7 @@ open class HomeViewModel : BaseViewModel(){
     fun getAllImages(context: Context): ArrayList<Album> {
         val results = ArrayList<Album>()
         results.addAll(getExternalStorageContent(context))
-       // results.addAll(getInternalStorageContent(context))
+        //results.addAll(getInternalStorageContent(context))
 
         return results
     }
@@ -86,11 +86,12 @@ open class HomeViewModel : BaseViewModel(){
 
 
     fun getAlbums(context: Context): List<Album> {
+        val results = ArrayList<Album>()
+        results.addAll(getAlbumFileFromUri(context,uri))
+        //results.addAll(getInternalStorageContent(context))
 
-        val k =  getAlbumFileFromUri(context,uri)
 
-
-        return k
+        return results
     }
 
     fun getSpecificDateImages(context: Context,album: Album): MutableList<Album> {
@@ -98,7 +99,7 @@ open class HomeViewModel : BaseViewModel(){
                val results = mutableListOf<Album>()
         val k = getImageFileFromDate(context, MediaStore.Images.Media.EXTERNAL_CONTENT_URI,getFileDateOnlyString(album.date,inputFormatSystem,outputFormatSystemDateOnly),album)
         results.addAll(k)
-        // results.addAll(getInternalStorageContent(context))
+        //results.addAll(getInternalStorageContent(context))
         return results
     }
 
@@ -129,6 +130,8 @@ open class HomeViewModel : BaseViewModel(){
 
 
     private fun getExternalStorageContent(context: Context): Collection<Album> = getImageFileFromUri(context, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+
+    private fun getInternalStorageContent(context: Context): Collection<Album> = getImageFileFromUri(context, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
 
 
     private fun getImageFileFromUri(context: Context, uri: Uri): List<Album> {
@@ -320,7 +323,7 @@ open class HomeViewModel : BaseViewModel(){
         while (cursor2.moveToNext()) {
             val bucket = cursor2.getString(folderName)
             val imagePath = cursor2.getString(imageData)
-            //Log.w("albums  : ",bucket)
+            Log.w("bucket  : ",bucket)
             val selectionArgs = arrayOf("%$bucket%")
             val selection = MediaStore.Video.Media.DATA + " like ? "
             val projectionOnlyBucket = arrayOf(MediaStore.MediaColumns.DATA, MediaStore.Video.Media.BUCKET_DISPLAY_NAME)
@@ -336,7 +339,7 @@ open class HomeViewModel : BaseViewModel(){
                 pathDirectory .append(filePathUri.pathSegments.get(i))
 
             }
-            //Log.w("albums :", "filePath fileName  :$pathDirectory")
+            Log.w("albums :", "filePath fileName  :$pathDirectory")
 
 
 
@@ -379,7 +382,13 @@ open class HomeViewModel : BaseViewModel(){
                         || files[i].name.endsWith(".gif")
                         || files[i].name.endsWith(".bmp")
                         || files[i].name.endsWith(".WebP")
-                        || files[i].name.endsWith(".jpeg") ) {
+                        || files[i].name.endsWith(".jpeg")
+                        || files[i].name.endsWith(".JPG")
+                        || files[i].name.endsWith(".PNG")
+                        || files[i].name.endsWith(".GIF")
+                        || files[i].name.endsWith(".BMP")
+                        || files[i].name.endsWith(".WEBP")
+                        || files[i].name.endsWith(".JPEG")) {
                         a.add(files[i])
                     }
                 }
@@ -394,7 +403,7 @@ open class HomeViewModel : BaseViewModel(){
 
     fun getDirectory(folderName:String) :File{
         var externalStorageAbsolutePath: String = Environment.getExternalStorageDirectory()!!.absolutePath
-        //Log.w("albums AbsolutePath", " " + externalStorageAbsolutePath)
+        Log.w("albums folderName", "$folderName  $externalStorageAbsolutePath")
         if (!folderName.contains("storage")){
             return File( externalStorageAbsolutePath+folderName)
         }
@@ -408,7 +417,7 @@ open class HomeViewModel : BaseViewModel(){
         val images = imageReader(file)
         if (images!=null){
             for (a in images){
-               // Log.w("albums absolutePath", "" + a.absolutePath)
+                Log.w("albums absolutePath", "" + a.absolutePath)
             }
         }
         return images

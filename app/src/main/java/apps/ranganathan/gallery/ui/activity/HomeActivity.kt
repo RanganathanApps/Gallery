@@ -310,7 +310,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
 
         getIsConnected().observe(this,androidx.lifecycle.Observer {
             if (it){
-                ForceUpdateChecker.with(this).onUpdateNeeded(this).check()
+               // ForceUpdateChecker.with(this).onUpdateNeeded(this).check()
             }
         })
 
