@@ -348,59 +348,62 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
     private fun removeItems(data: Any) {
         data as MutableList<Album>
         if (data.isNotEmpty()) {
-
-        }
-
-        if (::photosFragment.isInitialized) {
-            data.forEachIndexed { index, album ->
-                val item = photosFragment.adapter.listItems.find { (it as Album).albumUri.equals(album.albumUri) }
-                if (item != null)
-                    (item as Album).isSelected = true
+            if (::photosFragment.isInitialized) {
+                data.forEachIndexed { index, album ->
+                    val item = photosFragment.adapter.listItems.find { (it as Album).albumUri.equals(album.albumUri) }
+                    if (item != null)
+                        (item as Album).isSelected = true
+                }
+                photosFragment.adapter.deleteItems()
             }
-            photosFragment.adapter.deleteItems()
-        }
-        if (::cameraFragment.isInitialized) {
-            data.forEachIndexed { index, album ->
-                val item = cameraFragment.adapter.listItems.find { (it as Album).albumUri.equals(album.albumUri) }
-                if (item != null)
-                    (item as Album).isSelected = true
+            if (::cameraFragment.isInitialized) {
+                data.forEachIndexed { index, album ->
+                    val item = cameraFragment.adapter.listItems.find { (it as Album).albumUri.equals(album.albumUri) }
+                    if (item != null)
+                        (item as Album).isSelected = true
+                }
+                cameraFragment.adapter.deleteItems()
             }
-            cameraFragment.adapter.deleteItems()
-        }
-        if (::photosDateOrderFragment.isInitialized) {
-            data.forEachIndexed { index, album ->
-                val item = photosDateOrderFragment.adapter.listItems.find { (it as Album).albumUri.equals(album.albumUri) }
-                val pos = photosDateOrderFragment.adapter.listItems.indexOf(item)
-                if ((item as Album).isSectionHeader) {
-                    if (item.dateString.equals((photosDateOrderFragment.adapter.listItems[pos + 2] as Album).dateString)) {
-                        (photosDateOrderFragment.adapter.listItems[pos + 1] as Album).isSelected = true
+            if (::photosDateOrderFragment.isInitialized) {
+                data.forEachIndexed { index, album ->
+                    val item = photosDateOrderFragment.adapter.listItems.find { (it as Album).albumUri.equals(album.albumUri) }
+                    val pos = photosDateOrderFragment.adapter.listItems.indexOf(item)
+                    if ((item as Album).isSectionHeader) {
+                        if (item.dateString.equals((photosDateOrderFragment.adapter.listItems[pos + 2] as Album).dateString)) {
+                            (photosDateOrderFragment.adapter.listItems[pos + 1] as Album).isSelected = true
+                        } else {
+                            (item as Album).isSelected = true
+                            (photosDateOrderFragment.adapter.listItems[pos + 1] as Album).isSelected = true
+                        }
                     } else {
                         (item as Album).isSelected = true
-                        (photosDateOrderFragment.adapter.listItems[pos + 1] as Album).isSelected = true
                     }
-                } else {
-                    (item as Album).isSelected = true
                 }
+                photosDateOrderFragment.adapter.deleteItems()
             }
-            photosDateOrderFragment.adapter.deleteItems()
-        }
-        if (::albumsListFragment.isInitialized) {
-            data.forEachIndexed { index, album ->
-                val item = albumsListFragment.adapter.listItems.find { (it as Album).albumUri.equals(album.albumUri) }
-                val pos = albumsListFragment.adapter.listItems.indexOf(item)
-                if ((item as Album).isSectionHeader) {
-                    if (item.bucket.equals((albumsListFragment.adapter.listItems[pos + 2] as Album).bucket)) {
-                        (albumsListFragment.adapter.listItems[pos + 1] as Album).isSelected = true
+            if (::albumsListFragment.isInitialized) {
+                data.forEachIndexed { index, album ->
+                    val item = albumsListFragment.adapter.listItems.find { (it as Album).albumUri.equals(album.albumUri) }
+                    val pos = albumsListFragment.adapter.listItems.indexOf(item)
+                    if ((item as Album).isSectionHeader) {
+                        if (item.bucket.equals((albumsListFragment.adapter.listItems[pos + 2] as Album).bucket)) {
+                            (albumsListFragment.adapter.listItems[pos + 1] as Album).isSelected = true
+                        } else {
+                            (item as Album).isSelected = true
+                            (albumsListFragment.adapter.listItems[pos + 1] as Album).isSelected = true
+                        }
                     } else {
                         (item as Album).isSelected = true
-                        (albumsListFragment.adapter.listItems[pos + 1] as Album).isSelected = true
                     }
-                } else {
-                    (item as Album).isSelected = true
                 }
+                albumsListFragment.getAdapter().deleteItems()
             }
-            albumsListFragment.getAdapter().deleteItems()
+            if (::albumsFragment.isInitialized) {
+                albumsFragment.loadFiles()
+            }
         }
+
+
 
     }
 

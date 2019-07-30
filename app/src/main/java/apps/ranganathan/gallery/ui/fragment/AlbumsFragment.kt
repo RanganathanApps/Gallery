@@ -41,7 +41,6 @@ class AlbumsFragment : Fragment() {
         setHasOptionsMenu(true)
     }
 
-
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         super.onCreateOptionsMenu(menu, inflater)
         //Empty the old menu
@@ -51,7 +50,6 @@ class AlbumsFragment : Fragment() {
         menu!!.findItem(R.id.menu_grid).isVisible = false
         super.onCreateOptionsMenu(menu, inflater)
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -65,49 +63,23 @@ class AlbumsFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(PhotosViewModel::class.java)
         if (!::adapter.isInitialized) {
-            // Calling the AsyncTask
-            //SimpleAsyncTask(viewModel,activity as BaseActivity,contentView).execute()
-            view!!.findViewById<View>(R.id.progressCircularAccent).visibility = VISIBLE
-            doAsync {
-                result =  viewModel.getAlbums(activity!!.applicationContext)
-                uiThread {
-                   // toast(result)
-                    initAlbums(result)
-                }
-            }
+            loadFiles()
         }else{
             initAlbums(result)
         }
     }
 
-    internal class SimpleAsyncTask(
-        private val viewModel: PhotosViewModel,
-        private val activity: BaseActivity,
-        private val contentView: View?
-    ) :
-        AsyncTask<Void, Void, List<Album>>() {
-        // do things with output
-        override fun onPreExecute() {
-            contentView!!.findViewById<View>(R.id.progressCircularAccent).visibility = VISIBLE
-        }
-        // Execute long task here
-        override fun doInBackground(vararg voids: Void): List<Album> {
-            return viewModel.getAlbums(activity.applicationContext)
-        }
-        // do things with output
-        override fun onPostExecute(result: List<Album>) {
-            initAlbums(result)
-        }
+    public fun loadFiles() {
 
-        private fun initAlbums(files: List<Album>) {
-            val adapter = AlbumsAdapter(activity,  files)
-            activity.recyclerAlbums.layoutManager = GridLayoutManager(activity , 3)
-            activity.recyclerAlbums.setHasFixedSize(true)
-            activity.recyclerAlbums.adapter = adapter
-            contentView!!.findViewById<View>(R.id.progressCircularAccent).visibility = GONE
+        view!!.findViewById<View>(R.id.progressCircularAccent).visibility = VISIBLE
+        doAsync {
+            result =  viewModel.getAlbums(activity!!.applicationContext)
+            uiThread {
+                // toast(result)
+                initAlbums(result)
+            }
         }
     }
-
 
     private fun initAlbums(files: List<Album>) {
 
@@ -119,9 +91,6 @@ class AlbumsFragment : Fragment() {
             recyclerAlbums.adapter = adapter
             contentView!!.findViewById<View>(R.id.progressCircularAccent).visibility = GONE
         }
-
-
-        //viewModel.makeHideShow(recyclerAlbums, navigation = (activity as HomeActivity).getBottomNavigationView())
 
     }
 

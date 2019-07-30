@@ -216,12 +216,17 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
                                 viewpagerPhotos.adapter = adapter
                                 viewpagerPhotos.adapter!!.notifyDataSetChanged()
                                 //(lister as DeleteListener<Album>).onDeleted(0,album)
-                                if (position+1<userList.size) {
-                                    position += 1
+                                if (userList.size>0) {
+                                    if (position + 1 < userList.size) {
+                                        position += 1
+                                    } else {
+                                        position = 0
+                                    }
+                                    viewpagerPhotos.currentItem = position
                                 }else{
-                                    position = 0
+                                    onBackPressed()
                                 }
-                                viewpagerPhotos.currentItem = position
+
 
                                 // pictureViewModel.setMediaMounted(context, userList[position].file.absolutePath)
 

@@ -1,5 +1,7 @@
 package apps.ranganathan.gallery.adapter
 
+import android.content.Intent
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +15,7 @@ import apps.ranganathan.gallery.ui.activity.BaseActivity
 import apps.ranganathan.gallery.ui.activity.PictureViewActivity
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
+import java.io.Serializable
 
 class AlbumsAdapter(activity: BaseActivity, val userList: List<Album>) : RecyclerView.Adapter<AlbumsAdapter.ViewHolder>() {
 
@@ -32,7 +35,13 @@ class AlbumsAdapter(activity: BaseActivity, val userList: List<Album>) : Recycle
         holder.imageAlbum.setOnClickListener {
             val album = userList.get(position)
             val anotherMap = mapOf("tag" to "album","directory" to album.name,"position" to position,"count" to album.count,"album" to album)
-            activity.startActivityputExtra(activity, PictureViewActivity::class.java,anotherMap)
+            var intent = Intent(activity, PictureViewActivity::class.java)
+            var bundle = Bundle()
+            for (pair in anotherMap) {
+                bundle.putSerializable(pair.key, pair.value as Serializable)
+            }
+            intent.putExtras(bundle)
+            activity.startActivityForResult(intent,1)
         }
     }
 
