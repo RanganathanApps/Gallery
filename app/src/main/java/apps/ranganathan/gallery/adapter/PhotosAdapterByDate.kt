@@ -36,19 +36,13 @@ class PhotosAdapterByDate(activity1: BaseActivity) : BaseSectionAdapter() {
         (holder as ListAdapter.Binder<Any>).bind(holder,listItems[position])
         holder.itemView.setOnClickListener {
             //holder.clicked(, position)
-            Log.w(
-                "getSectionIndex):",
-                "${getSectionIndex(position)} : ${getItemPositionInSection(position)} ${getSectionSubheaderPosition(
-                    getSectionIndex(position)
-                )}"
-            )
+
             var currentPos:Int
             if (getSectionIndex(position) == 0) {
                 currentPos = position
             } else {
                 currentPos = position - getSectionIndex(position)
             }
-            Log.w("Position:", "$currentPos ${itemsList[currentPos].name}")
             if (isSelection) {
                 itemsList[currentPos].isSelected = !itemsList[currentPos].isSelected
                 notifyItemChanged((currentPos))

@@ -27,14 +27,11 @@ class AlbumViewHolder : BaseViewHolder{
 
     override fun bind(holder:RecyclerView.ViewHolder,data: Any) {
         album = data as Album
-        if (photo.drawable==null) {
-            (activity as BaseActivity).loadImage(
-                album.albumUri,
-                photo,
-                R.drawable.ic_camera_alt_white_24dp
-            )
-
-        }
+        (activity as BaseActivity).loadImage(
+            album.albumUri,
+            photo,
+            R.drawable.ic_camera_alt_white_24dp
+        )
         if (adapter.isSelection) {
             imgAlbumSelectable.visibility = View.VISIBLE
             imgAlbumSelected.setColorFilter(ContextCompat.getColor(activity!!.applicationContext, R.color.colorWhite))

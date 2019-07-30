@@ -260,7 +260,7 @@ open class HomeViewModel : BaseViewModel(){
         var dateString: String = ""
         try {
             dateString = date.toString()
-            Log.w("Date:", dateString)
+            //Log.w("Date:", dateString)
             input.timeZone = TimeZone.getTimeZone("Etc/UTC")
             val newDate = input.parse(dateString)
             dateString = output.format(newDate)
@@ -320,13 +320,13 @@ open class HomeViewModel : BaseViewModel(){
         while (cursor2.moveToNext()) {
             val bucket = cursor2.getString(folderName)
             val imagePath = cursor2.getString(imageData)
-            Log.w("albums  : ",bucket)
+            //Log.w("albums  : ",bucket)
             val selectionArgs = arrayOf("%$bucket%")
             val selection = MediaStore.Video.Media.DATA + " like ? "
             val projectionOnlyBucket = arrayOf(MediaStore.MediaColumns.DATA, MediaStore.Video.Media.BUCKET_DISPLAY_NAME)
 
             val cursorBucket = context.contentResolver.query(uri, projectionOnlyBucket, selection, selectionArgs, null)
-            Log.w("albums :", "size :" + cursorBucket.count + ", path "+imagePath)
+           // Log.w("albums :", "size :" + cursorBucket.count + ", path "+imagePath)
             val filePathUri = Uri.parse(imagePath)
             val fileName = filePathUri.getLastPathSegment().toString()
             val size = filePathUri.pathSegments.size -1
@@ -336,7 +336,7 @@ open class HomeViewModel : BaseViewModel(){
                 pathDirectory .append(filePathUri.pathSegments.get(i))
 
             }
-            Log.w("albums :", "filePath fileName  :$pathDirectory")
+            //Log.w("albums :", "filePath fileName  :$pathDirectory")
 
 
 
@@ -394,7 +394,7 @@ open class HomeViewModel : BaseViewModel(){
 
     fun getDirectory(folderName:String) :File{
         var externalStorageAbsolutePath: String = Environment.getExternalStorageDirectory()!!.absolutePath
-        Log.w("albums AbsolutePath", " " + externalStorageAbsolutePath)
+        //Log.w("albums AbsolutePath", " " + externalStorageAbsolutePath)
         if (!folderName.contains("storage")){
             return File( externalStorageAbsolutePath+folderName)
         }
@@ -404,11 +404,11 @@ open class HomeViewModel : BaseViewModel(){
     }
 
     fun getImagesInFile(file: File): ArrayList<File>? {
-        Log.w("albums fullpath", "" + file)
+        //Log.w("albums fullpath", "" + file)
         val images = imageReader(file)
         if (images!=null){
             for (a in images){
-                Log.w("albums absolutePath", "" + a.absolutePath)
+               // Log.w("albums absolutePath", "" + a.absolutePath)
             }
         }
         return images
@@ -473,14 +473,14 @@ open class HomeViewModel : BaseViewModel(){
             (Environment.getExternalStorageDirectory()).toString() + directory
         )
         // have the object build the directory structure, if needed.
-        Log.w("save image", wallpaperDirectory.toString())
+        //Log.w("save image", wallpaperDirectory.toString())
         if (!wallpaperDirectory.exists()) {
 
             wallpaperDirectory.mkdirs()
         }
 
         try {
-            Log.w("save", wallpaperDirectory.toString())
+            //Log.w("save", wallpaperDirectory.toString())
             val f = File(
                 wallpaperDirectory, ((Calendar.getInstance()
                     .timeInMillis).toString() + ".jpg")
@@ -496,7 +496,7 @@ open class HomeViewModel : BaseViewModel(){
                 arrayOf("image/jpeg"), null
             )
             fo.close()
-            Log.w("save ", "File Saved::--->" + f.absolutePath)
+           // Log.w("save ", "File Saved::--->" + f.absolutePath)
 
             return f.absolutePath
         } catch (e1: IOException) {

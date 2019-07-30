@@ -25,7 +25,7 @@ open class InfoViewModel : BaseViewModel() {
         try {
             val date = Date(file.lastModified())
             dateString = date.toString()
-            Log.w("Date:", dateString)
+            //Log.w("Date:", dateString)
             val inputFormat = SimpleDateFormat(
                 "EEE MMM dd HH:mm:ss zzz yyyy", Locale.US
             )
@@ -45,7 +45,7 @@ open class InfoViewModel : BaseViewModel() {
         try {
             val date = Date(file.lastModified())
             dateString = date.toString()
-            Log.w("Date:", dateString)
+            //Log.w("Date:", dateString)
             val inputFormat = SimpleDateFormat(
                 "EEE MMM dd HH:mm:ss zzz yyyy", Locale.US
             )
@@ -65,7 +65,7 @@ open class InfoViewModel : BaseViewModel() {
         try {
             val date = Date(file.lastModified())
             dateString = date.toString()
-            Log.w("Date:", dateString)
+            //Log.w("Date:", dateString)
             val inputFormat = SimpleDateFormat(
                 "EEE MMM dd HH:mm:ss zzz yyyy", Locale.US
             )
