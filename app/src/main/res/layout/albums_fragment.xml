@@ -9,6 +9,11 @@
         tools:context=".ui.fragment.PhotosFragment">
 
     <androidx.recyclerview.widget.RecyclerView
+            app:fastScrollEnabled="true"
+            app:fastScrollHorizontalThumbDrawable="@drawable/thumb_drawable"
+            app:fastScrollHorizontalTrackDrawable="@drawable/line_drawable"
+            app:fastScrollVerticalThumbDrawable="@drawable/thumb_drawable"
+            app:fastScrollVerticalTrackDrawable="@drawable/line_drawable"
             android:id="@+id/recyclerAlbums"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
