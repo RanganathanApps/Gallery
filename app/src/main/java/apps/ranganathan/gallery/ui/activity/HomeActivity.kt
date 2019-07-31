@@ -40,6 +40,7 @@ import kotlinx.android.synthetic.main.activity_drawer.*
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.toolbar_home.*
 import kotlinx.android.synthetic.main.toolbar_home_share_delete.*
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -61,6 +62,12 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
 
     var photosAdapter: ListAdapter? = null
 
+    private var PRIVATE_MODE = 0
+    private val PREF_NAME = "gallery_and_photos"
+    private val isChecked = "isChecked"
+    private val lastUpdated = "lastUpdated"
+    lateinit var sharedPref: SharedPreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_drawer)
@@ -72,7 +79,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
     @Override
     fun initCode() {
         homeVieModel = ViewModelProviders.of(this).get(HomeViewModel::class.java)
-
+        sharedPref = getSharedPreferences(PREF_NAME, PRIVATE_MODE)
         setNavDrawer()
         setNavigation()
         logFcmToken()
@@ -125,8 +132,23 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
             }
 
         }
+        setConnectivityChange()
 
+        val sdf = SimpleDateFormat("dd/M/yyyy")
+        val currentDate = sdf.format(Date())
+        val lu= sharedPref.getString(lastUpdated,"")
 
+        if (!currentDate.equals(lu!!)) {
+            showToast(currentDate)
+            getIsConnected().observe(this,androidx.lifecycle.Observer {
+                if (it){
+                    ForceUpdateChecker.with(this).onUpdateNeeded(this).check()
+                    val editor = sharedPref.edit()
+                    editor.putString(lastUpdated, currentDate)
+                    editor.apply()
+                }
+            })
+        }
     }
 
     private fun unSelectAll() {
@@ -298,7 +320,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
 
     override fun onResume() {
         super.onResume()
-        setConnectivityChange()
+
         var ejectFilter =  IntentFilter(Intent.ACTION_MEDIA_MOUNTED)
     ejectFilter.addAction(Intent.ACTION_MEDIA_MOUNTED)
     ejectFilter.addAction(Intent.ACTION_MEDIA_EJECT)
@@ -308,11 +330,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
     registerReceiver(broadCastReceiver, ejectFilter)
 
 
-        getIsConnected().observe(this,androidx.lifecycle.Observer {
-            if (it){
-               // ForceUpdateChecker.with(this).onUpdateNeeded(this).check()
-            }
-        })
+
 
 
 
