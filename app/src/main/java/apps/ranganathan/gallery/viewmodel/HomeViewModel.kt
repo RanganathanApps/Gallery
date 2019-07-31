@@ -145,9 +145,14 @@ open class HomeViewModel : BaseViewModel(){
                 null, null, "$orderBy DESC")
             while (cursor.moveToNext()) {
                 absolutePathOfImage = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA))
-
+                Log.w("path actual:", ""+absolutePathOfImage)
                 val folderName = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
                 val bucket = cursor.getString(folderName)
+
+                if (absolutePathOfImage!!.contains("/mnt/media_rw/")){
+                    absolutePathOfImage = absolutePathOfImage!!.replace("/mnt/media_rw/","/storage/")
+                }
+
                 val filePathUri = Uri.parse(absolutePathOfImage)
                 val size = filePathUri.pathSegments.size -1
                 pathDirectory = StringBuffer()
@@ -155,8 +160,10 @@ open class HomeViewModel : BaseViewModel(){
                     pathDirectory.append("/")
                     pathDirectory .append(filePathUri.pathSegments.get(i))
 
+
                 }
 
+                Log.w("path formed:", ""+pathDirectory.toString())
 
                 file = File(absolutePathOfImage)
                 lastModified = getFileDateOnly(file)
@@ -322,7 +329,7 @@ open class HomeViewModel : BaseViewModel(){
         val imageData = cursor2.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA)
         while (cursor2.moveToNext()) {
             val bucket = cursor2.getString(folderName)
-            val imagePath = cursor2.getString(imageData)
+            var imagePath = cursor2.getString(imageData)
             Log.w("bucket  : ",bucket)
             val selectionArgs = arrayOf("%$bucket%")
             val selection = MediaStore.Video.Media.DATA + " like ? "
@@ -330,6 +337,11 @@ open class HomeViewModel : BaseViewModel(){
 
             val cursorBucket = context.contentResolver.query(uri, projectionOnlyBucket, selection, selectionArgs, null)
            // Log.w("albums :", "size :" + cursorBucket.count + ", path "+imagePath)
+
+            if (imagePath!!.contains("/mnt/media_rw/")){
+                imagePath = imagePath!!.replace("/mnt/media_rw/","/storage/")
+            }
+
             val filePathUri = Uri.parse(imagePath)
             val fileName = filePathUri.getLastPathSegment().toString()
             val size = filePathUri.pathSegments.size -1
@@ -413,7 +425,7 @@ open class HomeViewModel : BaseViewModel(){
     }
 
     fun getImagesInFile(file: File): ArrayList<File>? {
-        //Log.w("albums fullpath", "" + file)
+        Log.w("albums fullpath", "" + file)
         val images = imageReader(file)
         if (images!=null){
             for (a in images){
