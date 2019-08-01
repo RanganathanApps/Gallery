@@ -85,10 +85,8 @@ class PhotosDateOrderFragment : Fragment() {
 
     private fun bindAdapter() {
         adapter = viewModel.setDataToAdapter(
-            activity as BaseActivity,
-            progressCircularAccent,
-            data, "date"
-        )
+            activity as BaseActivity, "date" )
+        adapter.setItems(data)
         recyclerView!!.adapter = adapter
         val glm = GridLayoutManager(activity, 3)
         glm.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
@@ -101,6 +99,7 @@ class PhotosDateOrderFragment : Fragment() {
             }
         }
         recyclerView!!.layoutManager = glm
+        progressCircularAccent.visibility = View.GONE
     }
 
     private fun splitData() {

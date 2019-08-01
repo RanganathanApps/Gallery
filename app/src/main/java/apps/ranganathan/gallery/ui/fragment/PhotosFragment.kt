@@ -92,12 +92,13 @@ class PhotosFragment : Fragment() {
 
     private fun initPhotos(files: ArrayList<Album>) {
         if (activity!=null) {
-            adapter = viewModel.setDataToAdapter(activity as BaseActivity,progressCircularAccent,files,"photos")
+            adapter = viewModel.setDataToAdapter(activity as BaseActivity,"photos")
             //viewModel.loadAndBind(activity as Context,progressCircularAccent,recyclerPhotos)
             adapter.setItems(files)
             recyclerPhotos.layoutManager = GridLayoutManager(activity, 3)
             recyclerPhotos.hasFixedSize()
             recyclerPhotos.adapter = adapter
+            contentView!!.findViewById<View>(R.id.progressCircularAccent).visibility = View.GONE
         }
     }
 

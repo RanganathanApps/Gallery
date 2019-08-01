@@ -22,6 +22,9 @@ import java.util.ArrayList
 
 class AlbumsDirectoryViewModel : HomeViewModel() {
 
+    private lateinit var bundle: Bundle
+    private lateinit var map: Map<String, Any>
+    private lateinit var intent: Intent
     private lateinit var adapter: ListAdapter
 
     internal fun setDataToAdapter(
@@ -70,13 +73,13 @@ class AlbumsDirectoryViewModel : HomeViewModel() {
                                         adapter.notifyItemChanged(index)
                                         (activity as HomeActivity).makeShareDeleteToolbar(adapter.listItems as List<Album>)
                                     } else {
-                                        val anotherMap = mapOf("tag" to "albums_list","directory_ui" to album.bucket,"position" to index,"count" to album.count,"album" to album)
+                                        map = mapOf("tag" to "albums_list","position" to index,"album" to album)
 
-                                        val bundle = Bundle()
-                                        for (pair in anotherMap) {
+                                        bundle = Bundle()
+                                        for (pair in map) {
                                             bundle.putSerializable(pair.key, pair.value as Serializable)
                                         }
-                                        var intent = Intent(activity,PictureViewActivity::class.java)
+                                        intent = Intent(activity,PictureViewActivity::class.java)
                                         intent.putExtras(bundle)
                                         activity.startActivityForResult(intent,1)
                                     }

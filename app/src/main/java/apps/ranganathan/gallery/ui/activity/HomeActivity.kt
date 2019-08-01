@@ -62,6 +62,8 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
 
     var photosAdapter: ListAdapter? = null
 
+    val sdf = SimpleDateFormat("dd/M/yyyy")
+
     private var PRIVATE_MODE = 0
     private val PREF_NAME = "gallery_and_photos"
     private val isChecked = "isChecked"
@@ -134,12 +136,11 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
         }
         setConnectivityChange()
 
-        val sdf = SimpleDateFormat("dd/M/yyyy")
+
         val currentDate = sdf.format(Date())
         val lu= sharedPref.getString(lastUpdated,"")
 
-        if (!currentDate.equals(lu!!)) {
-            showToast(currentDate)
+        if (currentDate != lu!!) {
             getIsConnected().observe(this,androidx.lifecycle.Observer {
                 if (it){
                     ForceUpdateChecker.with(this).onUpdateNeeded(this).check()
@@ -149,6 +150,14 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
                 }
             })
         }
+    }
+
+    override fun onUpToDate() {
+
+    }
+
+    override fun onUpdateNeeded(updateUrl: String) {
+        super.onUpdateNeeded(updateUrl)
     }
 
     private fun unSelectAll() {
@@ -336,12 +345,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
 
     }
 
-    override fun onUpToDate() {
-    }
 
-    override fun onUpdateNeeded(updateUrl: String) {
-        super.onUpdateNeeded(updateUrl)
-    }
 
 
     val broadCastReceiver = object :  BroadcastReceiver() {

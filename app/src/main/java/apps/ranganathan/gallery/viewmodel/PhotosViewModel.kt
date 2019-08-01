@@ -23,6 +23,11 @@ import java.io.Serializable
 
 class PhotosViewModel : HomeViewModel(), PictureViewActivity.DeleteListener<Any> {
 
+    private lateinit var bundle: Bundle
+    private lateinit var map: Map<String, Any>
+    private lateinit var intent: Intent
+    private lateinit var album: Album
+
     override fun onDeleted(index: Int, data: Any) {
 
        /* data as MutableList<Album>
@@ -153,8 +158,7 @@ class PhotosViewModel : HomeViewModel(), PictureViewActivity.DeleteListener<Any>
 
 
     internal fun setDataToAdapter(
-        activity: BaseActivity, progressCircularAccent: View,
-        files: ArrayList<Album>,
+        activity: BaseActivity,
         tag: String
     ): ListAdapter {
 
@@ -183,14 +187,7 @@ class PhotosViewModel : HomeViewModel(), PictureViewActivity.DeleteListener<Any>
                     }
 
                 }
-                /*return when (obj) {
-                    is ParentModel -> {
-                        R.layout.item_header_photos
-                    }
-                    else -> {
-                        R.layout.item_photos
-                    }
-                }*/
+
             }
 
             override fun getViewHolder(view: View, viewType: Int): RecyclerView.ViewHolder {
@@ -203,30 +200,22 @@ class PhotosViewModel : HomeViewModel(), PictureViewActivity.DeleteListener<Any>
                             clickable = object : BaseViewHolder.Clickable {
 
                                 override fun clicked(adapter: ListAdapter, index: Int) {
-                                    var album = adapter.listItems[index] as Album
+                                    activity.showToast("Loading")
+                                    album = adapter.listItems[index] as Album
                                     if (adapter.isSelection) {
                                         album.isSelected = !album.isSelected
                                         adapter.notifyItemChanged(index)
                                         (activity as HomeActivity).makeShareDeleteToolbar(adapter.listItems)
                                     } else {
-                                        val anotherMap = mapOf(
-                                            "tag" to tag,
-                                            "date" to album.dateString, "position" to index, "count" to album.count,
-                                            "album" to album
-                                        )
-                                        PictureViewActivity.setDeleteListener(this@PhotosViewModel)
-                                        /*(activity).startActivityputExtra(
-                                            activity,
-                                            PictureViewActivity::class.java,
-                                            anotherMap
-                                        )*/
-                                        val bundle = Bundle()
-                                        for (pair in anotherMap) {
+                                        map = mapOf("tag" to tag,"position" to index,"album" to album)
+                                        bundle = Bundle()
+                                        for (pair in map) {
                                             bundle.putSerializable(pair.key, pair.value as Serializable)
                                         }
-                                        var intent = Intent(activity,PictureViewActivity::class.java)
+                                        intent = Intent(activity,PictureViewActivity::class.java)
                                         intent.putExtras(bundle)
                                         activity.startActivityForResult(intent,1)
+                                        activity.showToast("Loading")
                                     }
                                 }
 
@@ -307,8 +296,6 @@ class PhotosViewModel : HomeViewModel(), PictureViewActivity.DeleteListener<Any>
                 }
             }
         }
-        adapter.setItems(files)
-        progressCircularAccent.visibility = GONE
         return adapter
     }
 

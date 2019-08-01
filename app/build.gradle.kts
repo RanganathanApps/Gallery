@@ -1,5 +1,3 @@
-import AppConfig.applicationId
-
 plugins {
 
     id("com.android.application")
@@ -135,7 +133,7 @@ dependencies {
     implementation("com.github.mukeshsolanki:android-otpview-pinview:2.0.3")
     implementation(Libs.lottie)
     //implementation(Libs.baseAppConfig)
-    implementation("com.github.RanganathanApps:BaseConfigApp:0.0.26")
+    implementation("com.github.RanganathanApps:BaseConfigApp:0.0.32")
 
     implementation("com.felipecsl.asymmetricgridview:library:2.0.1")
     implementation("com.jsibbold:zoomage:1.2.0")
@@ -158,7 +156,7 @@ dependencies {
     /*background task execution*/
     implementation("org.jetbrains.anko:anko-common:0.9")
 
-    implementation("com.squareup.okio:okio:1.14.0")
+    implementation("com.squareup.okio:okio:1.15.0")
 
 }
 apply(mapOf("plugin" to "com.google.gms.google-services"))

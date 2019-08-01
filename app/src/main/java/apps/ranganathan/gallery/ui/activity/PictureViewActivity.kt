@@ -73,14 +73,7 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
         fun onDeleted(index: Int,data: T)
     }
 
-    companion object{
-        private lateinit var deleteListener:DeleteListener<Any>
 
-
-        fun setDeleteListener(li:DeleteListener<Any>){
-            deleteListener = li
-        }
-    }
 
     override fun onBackPressed() {
         var bundle = Bundle()
@@ -119,7 +112,6 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
                 files = pictureViewModel.getImagesInFile(pictureViewModel.getDirectory(album.path))!!
                 userList = pictureViewModel.getImages(files)
             } else if (intent!!.extras!!.getString("tag") == "photos") {
-                //userList = intent!!.extras!!.getSerializable("photos") as List<Album>
                 position = intent!!.extras!!.getInt("position")
                 userList = pictureViewModel.getAllImages(this)
                 album = userList[position]
@@ -136,7 +128,7 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
                 album = intent!!.extras!!.getSerializable("album") as Album
               /*  files = pictureViewModel.getImagesInFile(pictureViewModel.getDirectory(album.path))!!
                 userList = pictureViewModel.getImages(files)*/
-                directory = intent!!.extras!!.getString("directory_ui")
+                directory = album.bucket
                 userList = pictureViewModel.getSpecificFolderImages(this, album)
                 position = 0
                 userList.forEachIndexed { index, element ->
@@ -150,24 +142,19 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
                     album = userList[position]
                 }
 
-            } else {
+            } else  if (intent!!.extras!!.getString("tag") == "date") {
                 album = intent!!.extras!!.getSerializable("album") as Album
                 userList = pictureViewModel.getSpecificDateImages(this, album)
                 position = 0
-                userList.forEachIndexed { index, element ->
-                    if (element.albumUri == album.albumUri) {
-                        position = index
-                    }
-                }
+
+                position = userList.indexOfFirst { it.albumUri == album.albumUri } // -1 if not found
+
+                pictureViewModel.position.value = position
+                album = userList[position]
                 setToolBarTitle("${album.dateString} (${1}/${userList.size} items)")
-                if (userList.isNotEmpty()) {
-                    pictureViewModel.position.value = position
-                    album = userList[position]
-                }
 
             }
             deletedList = arrayListOf()
-            //pictureViewModel.position.observe(this, Observer {    setAppBar("$directory (${viewpagerPhotos.currentItem} / ${album.count} items)") })
         }
 
         touchToggle.observe(this, Observer {
@@ -443,23 +430,14 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
 
         viewpagerPhotos.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(i: Int, v: Float, i2: Int) {
-                //Toast.makeText(MyActivity.this, i+"  Is Selected  "+data.size(), Toast.LENGTH_SHORT).show();
                 position = i
                 album = userList[i]
-                if (intent!!.extras!!.getString("tag") == "date") {
-                    try {
-                        setToolBarTitle("${album.dateString} (${i + 1}/${userList.size} items)")
-                    } catch (e: UninitializedPropertyAccessException) {
-
-                    } catch (e: Exception) {
-
-                    }
-                    return
-                }
-
-
                 try {
-                    setToolBarTitle("$directory (${i + 1}/${userList.size} items)")
+                    when(intent!!.extras!!.getString("tag")) {
+                        "date" -> setToolBarTitle("${album.dateString} (${i + 1}/${userList.size} items)")
+                        "albums_list" -> setToolBarTitle("$directory (${i + 1}/${userList.size} items)")
+                        else -> setToolBarTitle(userList[i].name)
+                    }
                 } catch (e: UninitializedPropertyAccessException) {
                     setToolBarTitle(userList[i].name)
                 } catch (e: Exception) {
