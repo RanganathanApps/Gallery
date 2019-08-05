@@ -12,6 +12,7 @@ import android.os.Handler
 import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -31,8 +32,11 @@ import apps.ranganathan.gallery.viewmodel.PictureViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_picture_view.*
 import kotlinx.android.synthetic.main.content_picture_view.*
+import kotlinx.android.synthetic.main.progress_circle.*
 import kotlinx.android.synthetic.main.toolbar_home.*
 import kotlinx.coroutines.delay
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 import java.io.File
 import java.io.Serializable
 import java.util.*
@@ -67,6 +71,8 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
 
     private var touchToggle = MutableLiveData<Boolean>()
 
+    lateinit var progressBar:ProgressBar
+
 
     /*interface for data binding*/
     interface DeleteListener<T> {
@@ -99,6 +105,8 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
 
 
     private fun iniCode() {
+        setUpViewPager()
+        progressCircularViewPager.visibility = VISIBLE
         pictureViewModel = ViewModelProviders.of(this).get(PictureViewModel::class.java)
         if (intent!!.extras != null) {
             if (!intent!!.extras!!.containsKey("tag")) {
@@ -109,49 +117,79 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
                 directory = album.name
                 count = album.count
                 setToolBarTitle("$directory (${1}/${album.count} items)")
-                files = pictureViewModel.getImagesInFile(pictureViewModel.getDirectory(album.path))!!
-                userList = pictureViewModel.getImages(files)
+                doAsync {
+                     files = pictureViewModel.getImagesInFile(pictureViewModel.getDirectory(album.path))!!
+                     userList = pictureViewModel.getImages(files)
+                   uiThread {
+                       setUpViewPager()
+                   }
+               }
+
+
             } else if (intent!!.extras!!.getString("tag") == "photos") {
-                position = intent!!.extras!!.getInt("position")
-                userList = pictureViewModel.getAllImages(this)
-                album = userList[position]
-                setToolBarTitle(album.name)
+
+                doAsync {
+                    position = intent!!.extras!!.getInt("position")
+                    album = intent!!.extras!!.getSerializable("album") as Album
+                    userList = pictureViewModel.getAllImages(context)
+                    uiThread {
+                        setUpViewPager()
+                        setToolBarTitle(album.name)
+                    }
+                }
+
             } else if (intent!!.extras!!.getString("tag") == "camera") {
                 directory = intent!!.extras!!.getString("directory")
                 position = intent!!.extras!!.getInt("position")
-                files = pictureViewModel.getImagesInFile(pictureViewModel.getDirectory(directory))!!
-                directory = intent!!.extras!!.getString("directory_ui")
-                userList = pictureViewModel.getImages(files)
-                album = userList[position]
-                setToolBarTitle("$directory (${1}/${userList.size} items)")
+                doAsync {
+                    files = pictureViewModel.getImagesInFile(pictureViewModel.getDirectory(directory))!!
+                    directory = intent!!.extras!!.getString("directory_ui")
+                    userList = pictureViewModel.getImages(files)
+                    album = userList[position]
+                    uiThread {
+                        setUpViewPager()
+                        setToolBarTitle("$directory (${1}/${userList.size} items)")
+                    }
+                }
+
+
+
             }else if (intent!!.extras!!.getString("tag") == "albums_list") {
                 album = intent!!.extras!!.getSerializable("album") as Album
               /*  files = pictureViewModel.getImagesInFile(pictureViewModel.getDirectory(album.path))!!
                 userList = pictureViewModel.getImages(files)*/
                 directory = album.bucket
-                userList = pictureViewModel.getSpecificFolderImages(this, album)
-                position = 0
-                userList.forEachIndexed { index, element ->
-                    if (element.albumUri == album.albumUri) {
-                        position = index
+                doAsync {
+                    userList = pictureViewModel.getSpecificFolderImages(context, album)
+                    position = 0
+                    userList.forEachIndexed { index, element ->
+                        if (element.albumUri == album.albumUri) {
+                            position = index
+                        }
                     }
-                }
-                setToolBarTitle("${album.bucket} (${1}/${userList.size} items)")
-                if (userList.isNotEmpty()) {
-                    pictureViewModel.position.value = position
-                    album = userList[position]
+                    if (userList.isNotEmpty()) {
+                        album = userList[position]
+                    }
+                    uiThread {
+                        pictureViewModel.position.value = position
+                        setUpViewPager()
+                        setToolBarTitle("${album.bucket} (${1}/${userList.size} items)")
+                    }
                 }
 
             } else  if (intent!!.extras!!.getString("tag") == "date") {
-                album = intent!!.extras!!.getSerializable("album") as Album
-                userList = pictureViewModel.getSpecificDateImages(this, album)
-                position = 0
-
-                position = userList.indexOfFirst { it.albumUri == album.albumUri } // -1 if not found
-
-                pictureViewModel.position.value = position
-                album = userList[position]
-                setToolBarTitle("${album.dateString} (${1}/${userList.size} items)")
+                doAsync {
+                    album = intent!!.extras!!.getSerializable("album") as Album
+                    userList = pictureViewModel.getSpecificDateImages(context, album)
+                    position = 0
+                    position = userList.indexOfFirst { it.albumUri == album.albumUri } // -1 if not found
+                    album = userList[position]
+                    uiThread {
+                        pictureViewModel.position.value = position
+                        setUpViewPager()
+                        setToolBarTitle("${album.dateString} (${1}/${userList.size} items)")
+                    }
+                }
 
             }
             deletedList = arrayListOf()
@@ -166,7 +204,6 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
 
         })
 
-        setUpViewPager()
         setNavigation()
 
 
@@ -423,6 +460,7 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
     }
 
     private fun setUpViewPager() {
+        progressCircularViewPager.visibility = GONE
         touchToggle.value = false
         adapter = ViewPagerAdapter(this, userList, pictureViewModel.position, touchToggle)
         viewpagerPhotos.adapter = adapter
@@ -472,6 +510,8 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
             hideToolbar()
         }
         handlerAutoHide.postDelayed(runnableAutoHide,1000)
+
+
 
     }
 

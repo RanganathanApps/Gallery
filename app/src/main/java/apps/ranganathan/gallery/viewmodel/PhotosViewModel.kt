@@ -61,7 +61,7 @@ class PhotosViewModel : HomeViewModel(), PictureViewActivity.DeleteListener<Any>
             doAsync {
                 resultPhotos = getAllImages(context.applicationContext)
                 uiThread {
-                    setPhotosToAdapter(context, resultPhotos)
+                   // setPhotosToAdapter(context, resultPhotos)
                     adapter.setItems(resultPhotos)
                     bindPhotos(context, resultPhotos, progressCircularAccent, recyclerView)
                 }
@@ -82,79 +82,7 @@ class PhotosViewModel : HomeViewModel(), PictureViewActivity.DeleteListener<Any>
         progressCircularAccent.visibility = GONE
     }
 
-    private fun setPhotosToAdapter(activity: Context, files: ArrayList<Album>): ListAdapter {
 
-        adapter = object : ListAdapter() {
-
-            override fun getLayoutId(position: Int, obj: Any): Int {
-                return when (obj) {
-                    is Album -> {
-                        R.layout.item_photos
-                    }
-                    else -> {
-                        R.layout.item_album
-                    }
-                }
-            }
-
-            override fun getViewHolder(view: View, viewType: Int): RecyclerView.ViewHolder {
-                when (viewType) {
-                    R.layout.item_photos -> {
-                        val hol = AlbumViewHolder(view)
-                        hol.setActivity(
-                            activity as BaseActivity,
-                            adapter = adapter,
-                            clickable = object : BaseViewHolder.Clickable {
-
-                                override fun clicked(adapter: ListAdapter, index: Int) {
-                                    var album = adapter.listItems[index] as Album
-                                    if (adapter.isSelection) {
-                                        album.isSelected = !album.isSelected
-                                        adapter.notifyItemChanged(index)
-                                        (activity as HomeActivity).makeShareDeleteToolbar(adapter.listItems)
-                                    } else {
-                                        val anotherMap = mapOf("position" to index, "tag" to "photos")
-                                       /* (activity).startActivityputExtra(
-                                            activity,
-                                            PictureViewActivity::class.java,
-                                            anotherMap
-                                        )*/
-                                        val bundle = Bundle()
-                                        for (pair in anotherMap) {
-                                            bundle.putSerializable(pair.key, pair.value as Serializable)
-                                        }
-                                        var intent = Intent(activity,PictureViewActivity::class.java)
-                                        intent.putExtras(bundle)
-                                        activity.startActivityForResult(intent,1)
-                                    }
-                                }
-
-                                override fun onLongClicked(adapter: ListAdapter, index: Int) {
-                                    var album = adapter.listItems[index] as Album
-                                    if (!adapter.isSelection) {
-                                        adapter.isSelection = true
-                                        adapter.notifyDataSetChanged()
-                                    }
-                                    adapter.isSelection = true
-                                    album.isSelected = true
-                                    adapter.notifyItemChanged(index)
-                                    (activity as HomeActivity).makeShareDeleteToolbar(adapter.listItems as List<Album>)
-                                }
-
-                            })
-
-                        return hol
-                    }
-                    else -> {
-                        return HeaderViewHolder(view)
-                    }
-                }
-            }
-        }
-        return adapter
-
-
-    }
 
 
     internal fun setDataToAdapter(
@@ -200,7 +128,6 @@ class PhotosViewModel : HomeViewModel(), PictureViewActivity.DeleteListener<Any>
                             clickable = object : BaseViewHolder.Clickable {
 
                                 override fun clicked(adapter: ListAdapter, index: Int) {
-                                    activity.showToast("Loading")
                                     album = adapter.listItems[index] as Album
                                     if (adapter.isSelection) {
                                         album.isSelected = !album.isSelected
@@ -215,7 +142,6 @@ class PhotosViewModel : HomeViewModel(), PictureViewActivity.DeleteListener<Any>
                                         intent = Intent(activity,PictureViewActivity::class.java)
                                         intent.putExtras(bundle)
                                         activity.startActivityForResult(intent,1)
-                                        activity.showToast("Loading")
                                     }
                                 }
 

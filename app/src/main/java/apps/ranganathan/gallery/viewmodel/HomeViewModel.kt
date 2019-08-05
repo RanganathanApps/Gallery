@@ -23,12 +23,31 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 import android.content.Intent
-
-
+import android.content.res.Resources
 
 
 open class HomeViewModel : BaseViewModel(){
 
+   companion object{
+       lateinit var appContext: Context
+       lateinit var allImagesResults: java.util.ArrayList<Album>
+
+       fun getResources(): Resources = appContext.resources
+
+      fun getAll(): java.util.ArrayList<Album> {
+          if (!::allImagesResults.isInitialized) {
+              allImagesResults = ArrayList<Album>()
+
+          }
+          return allImagesResults
+      }
+
+       private fun getExternalStorageContent(context: Any): Collection<Album> {
+           TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+       }
+
+
+   }
     private lateinit var albums: ArrayList<Album>
     val inputFormatSystem = SimpleDateFormat( "EEE MMM dd HH:mm:ss zzz yyyy", Locale.US )
     val outputFormatDateWithDay = SimpleDateFormat("EEE dd MMM yyyy")
@@ -63,7 +82,7 @@ open class HomeViewModel : BaseViewModel(){
             MediaStore.Images.ImageColumns.DATE_TAKEN,
             MediaStore.Images.ImageColumns.DATA)
 
-
+        getAll()
 
    }
 
@@ -74,11 +93,13 @@ open class HomeViewModel : BaseViewModel(){
     }
 
     fun getAllImages(context: Context): ArrayList<Album> {
-        val results = ArrayList<Album>()
-        results.addAll(getExternalStorageContent(context))
-        //results.addAll(getInternalStorageContent(context))
+        if (allImagesResults.size==0 ) {
+            allImagesResults = ArrayList<Album>()
+            allImagesResults.addAll(getExternalStorageContent(context))
+            //results.addAll(getInternalStorageContent(context))
+        }
 
-        return results
+        return allImagesResults
     }
 
 
@@ -96,7 +117,7 @@ open class HomeViewModel : BaseViewModel(){
 
     fun getSpecificDateImages(context: Context,album: Album): MutableList<Album> {
 
-               val results = mutableListOf<Album>()
+        val results = mutableListOf<Album>()
         val k = getImageFileFromDate(context, MediaStore.Images.Media.EXTERNAL_CONTENT_URI,getFileDateOnlyString(album.date,inputFormatSystem,outputFormatSystemDateOnly),album)
         results.addAll(k)
         //results.addAll(getInternalStorageContent(context))
