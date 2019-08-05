@@ -105,9 +105,9 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
 
 
     private fun iniCode() {
-        setUpViewPager()
-        progressCircularViewPager.visibility = VISIBLE
         pictureViewModel = ViewModelProviders.of(this).get(PictureViewModel::class.java)
+        album = intent!!.extras!!.getSerializable("album") as Album
+        progressCircularViewPager.visibility = VISIBLE
         if (intent!!.extras != null) {
             if (!intent!!.extras!!.containsKey("tag")) {
                 return
@@ -163,17 +163,18 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
                     userList = pictureViewModel.getSpecificFolderImages(context, album)
                     position = 0
                     userList.forEachIndexed { index, element ->
-                        if (element.albumUri == album.albumUri) {
+                        if (element.albumUri == (intent!!.extras!!.getSerializable("album") as Album).albumUri) {
                             position = index
                         }
                     }
-                    if (userList.isNotEmpty()) {
-                        album = userList[position]
-                    }
+
                     uiThread {
+                        if (userList.isNotEmpty()) {
+                            album = userList[position]
+                        }
                         pictureViewModel.position.value = position
+                        setToolBarTitle("$directory (${1}/${userList.size} items)")
                         setUpViewPager()
-                        setToolBarTitle("${album.bucket} (${1}/${userList.size} items)")
                     }
                 }
 

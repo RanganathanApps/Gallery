@@ -31,6 +31,7 @@ open class HomeViewModel : BaseViewModel(){
    companion object{
        lateinit var appContext: Context
        lateinit var allImagesResults: java.util.ArrayList<Album>
+       lateinit var albumsResults: java.util.ArrayList<Album>
 
        fun getResources(): Resources = appContext.resources
 
@@ -42,12 +43,17 @@ open class HomeViewModel : BaseViewModel(){
           return allImagesResults
       }
 
-       private fun getExternalStorageContent(context: Any): Collection<Album> {
-           TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+       fun initAlbums(): java.util.ArrayList<Album> {
+           if (!::albumsResults.isInitialized) {
+               albumsResults = ArrayList<Album>()
+
+           }
+           return albumsResults
        }
 
 
    }
+
     private lateinit var albums: ArrayList<Album>
     val inputFormatSystem = SimpleDateFormat( "EEE MMM dd HH:mm:ss zzz yyyy", Locale.US )
     val outputFormatDateWithDay = SimpleDateFormat("EEE dd MMM yyyy")
@@ -83,6 +89,7 @@ open class HomeViewModel : BaseViewModel(){
             MediaStore.Images.ImageColumns.DATA)
 
         getAll()
+        initAlbums()
 
    }
 
@@ -107,12 +114,12 @@ open class HomeViewModel : BaseViewModel(){
 
 
     fun getAlbums(context: Context): List<Album> {
-        val results = ArrayList<Album>()
-        results.addAll(getAlbumFileFromUri(context,uri))
-        //results.addAll(getInternalStorageContent(context))
-
-
-        return results
+        if (albumsResults.size==0 ) {
+            albumsResults = ArrayList<Album>()
+            albumsResults.addAll(getAlbumFileFromUri(context,uri))
+            //results.addAll(getInternalStorageContent(context))
+        }
+        return albumsResults
     }
 
     fun getSpecificDateImages(context: Context,album: Album): MutableList<Album> {
