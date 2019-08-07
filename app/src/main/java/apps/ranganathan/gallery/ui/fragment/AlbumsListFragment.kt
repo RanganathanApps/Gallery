@@ -56,7 +56,7 @@ class AlbumsListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         recyclerView = view.findViewById<View>(R.id.recyclerPhotos) as RecyclerView
-        recyclerView!!.isNestedScrollingEnabled = false
+        //recyclerView!!.isNestedScrollingEnabled = false
         progressCircularAccent = view.findViewById<View>(R.id.progressCircularAccent) as View
         viewModel = ViewModelProviders.of(this).get(AlbumsDirectoryViewModel::class.java)
 

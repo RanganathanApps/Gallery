@@ -443,7 +443,7 @@ open class HomeViewModel : BaseViewModel(){
 
     fun getDirectory(folderName:String) :File{
         var externalStorageAbsolutePath: String = Environment.getExternalStorageDirectory()!!.absolutePath
-        Log.w("albums folderName", "$folderName  $externalStorageAbsolutePath")
+        //Log.w("albums folderName", "$folderName  $externalStorageAbsolutePath")
         if (!folderName.contains("storage")){
             return File( externalStorageAbsolutePath+folderName)
         }
