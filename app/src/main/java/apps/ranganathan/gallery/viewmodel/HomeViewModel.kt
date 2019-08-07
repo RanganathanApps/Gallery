@@ -574,13 +574,13 @@ open class HomeViewModel : BaseViewModel(){
         val where = MediaStore.MediaColumns.DATA + "=?"
         val selectionArgs = arrayOf(file.absolutePath)
         val contentResolver = context.contentResolver
-        val filesUri = MediaStore.Files.getContentUri("external")
+        var filesUri = MediaStore.Files.getContentUri("external")
 
         contentResolver.delete(filesUri, where, selectionArgs)
 
         if (file.exists()) {
-            file.delete()
-
+            //file.delete()
+            filesUri = MediaStore.Files.getContentUri("internal")
             contentResolver.delete(filesUri, where, selectionArgs)
         }
         return !file.exists()
