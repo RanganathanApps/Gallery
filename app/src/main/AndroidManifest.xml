@@ -64,25 +64,51 @@
                 android:label="@string/app_name"
                 android:theme="@style/AppTheme.NoActionBar">
 
-
-            <intent-filter android:priority="1">
-
+            <intent-filter android:label="@string/app_name">
                 <action android:name="android.intent.action.VIEW" />
-                <action android:name="android.intent.action.EDIT" />
-                <action android:name="android.intent.action.PICK" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <category android:name="android.intent.category.OPENABLE" />
+                <data android:scheme="file"  android:host="*" android:pathPattern=".*\\.jpg" android:mimeType="image/*"  />
+
+                <data android:mimeType="image/jpeg" /> <!-- .jpeg -->
+                <data android:mimeType="image/png" /> <!-- .png -->
+                <data android:mimeType="image/jpg" /> <!-- .gif -->
+
+
+            </intent-filter>
+
+           <!-- <intent-filter android:priority="1">
+
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="file" />
+                <data android:scheme="content" />
                 <data android:mimeType="image/*" android:host="*"/>
+
                 <data android:pathPattern="*.jpg" />
+                <data android:pathPattern="*.png" />
+
+                <data android:host="*" />
+                <data android:scheme="file" />
+                <data android:scheme="content" />
+                <data android:mimeType="*/*" />
+
 
                 <data android:pathPattern=".*\\.jpg" />
                 <data android:pathPattern=".*\\.jpeg" />
                 <data android:pathPattern=".*\\.webp" />
                 <data android:pathPattern=".*\\.png" />
-                <data android:scheme="file" />
-            </intent-filter>
+                <data android:pathPattern=".*\\.png" />
+                <data android:pathPattern=".*\\..*\\.jpg" />
+                <data android:pathPattern=".*\\..*\\..*\\.jpg" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\.jpg" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.jpg" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.jpg" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.jpg" />
+
+
+            </intent-filter>-->
         </activity>
         <activity
                 android:name=".ui.activity.HomeActivity"
