@@ -10,6 +10,7 @@ import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -106,18 +107,37 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
     private fun iniCode() {
         pictureViewModel = ViewModelProviders.of(this).get(PictureViewModel::class.java)
 
-        if (intent!!.extras != null) {
+        if (intent!= null) {
             val action = intent.action
-            if (action!=null && action.compareTo(Intent.ACTION_VIEW) == 0) {
+            if (action != null && action.compareTo(Intent.ACTION_VIEW) == 0) {
                 val scheme = intent!!.scheme
-                if (scheme!!.compareTo(ContentResolver.SCHEME_FILE) == 0) {
+                if (scheme!!.compareTo(ContentResolver.SCHEME_CONTENT) == 0) {
                     val uri = intent.data
                     val name = uri.lastPathSegment
+
                     makeLog(name)
+                    userList = arrayListOf()
+                    album = Album()
+                    val size = uri.pathSegments.size -1
+                    var pathDirectory = StringBuffer()
+                    for (i in 0 until size){
+                        pathDirectory.append("/")
+                        pathDirectory.append(uri.pathSegments[i])
+
+                    }
+                    Log.w("view :", "filePath  :$pathDirectory")
+                    pathDirectory.append("/")
+                    album.albumUri = pathDirectory.append(name).toString()
+                    album.name= name
+                    album.file= File(album.albumUri)
+                    userList.add(0,album)
+                    pictureViewModel.position.value = 0
+                    setUpViewPager()
                 } else {
 
                 }
-            } else {
+            }else if (intent!!.extras != null) {
+
 
                 album = intent!!.extras!!.getSerializable("album") as Album
                 progressCircularViewPager.visibility = VISIBLE
@@ -207,18 +227,20 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
                 }
                 deletedList = arrayListOf()
             }
-
-            touchToggle.observe(this, Observer {
-                if (it) {
-                    showToolbar()
-                } else {
-                    hideToolbar()
-                }
-
-            })
-
-            setNavigation()
         }
+
+
+
+        touchToggle.observe(this, Observer {
+            if (it) {
+                showToolbar()
+            } else {
+                hideToolbar()
+            }
+
+        })
+
+        setNavigation()
 
 
     }

@@ -64,17 +64,15 @@
                 android:label="@string/app_name"
                 android:theme="@style/AppTheme.NoActionBar">
 
-            <intent-filter android:label="@string/app_name">
+
+            <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="file"  android:host="*" android:pathPattern=".*\\.jpg" android:mimeType="image/*"  />
-
-                <data android:mimeType="image/jpeg" /> <!-- .jpeg -->
-                <data android:mimeType="image/png" /> <!-- .png -->
-                <data android:mimeType="image/jpg" /> <!-- .gif -->
-
-
+                <data android:scheme="file" />
+                <data android:scheme="content" />
+                <data android:scheme="null" />
+                <data android:mimeType="image/*" />
+                <data android:host="*" />
             </intent-filter>
 
            <!-- <intent-filter android:priority="1">
