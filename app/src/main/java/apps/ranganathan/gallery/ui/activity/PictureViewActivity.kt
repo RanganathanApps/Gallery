@@ -8,8 +8,11 @@ import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.provider.DocumentsContract
+import android.provider.MediaStore
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -48,6 +51,7 @@ import java.util.*
 class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
 
 
+    private lateinit var id: String
     private lateinit var adapter: ViewPagerAdapter
     private var slideShowShecduled: Boolean = false
     private lateinit var runnableUpdate: Runnable
@@ -107,36 +111,38 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
     private fun iniCode() {
         pictureViewModel = ViewModelProviders.of(this).get(PictureViewModel::class.java)
 
-        if (intent!= null) {
+        if (intent != null) {
             val action = intent.action
             if (action != null && action.compareTo(Intent.ACTION_VIEW) == 0) {
                 val scheme = intent!!.scheme
-                if (scheme!!.compareTo(ContentResolver.SCHEME_CONTENT) == 0) {
+                if (scheme!!.compareTo(ContentResolver.SCHEME_CONTENT) == 0 ||
+                    scheme!!.compareTo(ContentResolver.SCHEME_FILE) == 0) {
                     val uri = intent.data
                     val name = uri.lastPathSegment
 
                     makeLog(name)
                     userList = arrayListOf()
                     album = Album()
-                    val size = uri.pathSegments.size -1
+                    val size = uri.pathSegments.size - 1
                     var pathDirectory = StringBuffer()
-                    for (i in 0 until size){
+                    for (i in 0 until size) {
                         pathDirectory.append("/")
                         pathDirectory.append(uri.pathSegments[i])
 
                     }
                     Log.w("view :", "filePath  :$pathDirectory")
-                    pathDirectory.append("/")
-                    album.albumUri = pathDirectory.append(name).toString()
-                    album.name= name
-                    album.file= File(album.albumUri)
-                    userList.add(0,album)
+                    Log.w("view :", "uri.encodedPath  :${uri.encodedPath}")
+                    Log.w("view :", "uri  :${getRealPathFromURI(uri)}")
+                    album.albumUri = uri.toString()
+                    album.name = name
+                    album.file = File(album.albumUri)
+                    userList.add(0, album)
                     pictureViewModel.position.value = 0
                     setUpViewPager()
                 } else {
 
                 }
-            }else if (intent!!.extras != null) {
+            } else if (intent!!.extras != null) {
 
 
                 album = intent!!.extras!!.getSerializable("album") as Album
@@ -243,6 +249,53 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
         setNavigation()
 
 
+    }
+
+
+    public fun getRealPathFromURI(contentUri: Uri): String {
+        try {
+            val projection = arrayOf(
+                MediaStore.Images.ImageColumns.BUCKET_ID,
+                MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME,
+                MediaStore.Images.ImageColumns.DATE_TAKEN,
+                MediaStore.Images.ImageColumns.DATA
+            )
+
+
+            val orderBy = MediaStore.Images.Media._ID
+            makeLog("contentUri $contentUri")
+            makeLog("FilecontentUri ${File(contentUri.path)}")
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                if (DocumentsContract.isDocumentUri(context.getApplicationContext(), contentUri)) {
+                    val wholeID =  DocumentsContract.getDocumentId(contentUri)
+                    // Split at colon, use second item in the array
+                    id = wholeID.split(":")[1]
+                    makeLog("$wholeID $id")
+
+                }
+            }
+
+            val cursor = context.contentResolver.query(
+                contentUri, projection,
+                null, arrayOf(id), "$orderBy DESC"
+            )
+
+
+            while (cursor.moveToNext()) {
+                val absolutePathOfImage = cursor.getString(cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA))
+                makeLog("absolutePathOfImage ${absolutePathOfImage}")
+                val file = File(absolutePathOfImage)
+            }
+
+            // val cursor = managedQuery(contentUri, proj, null, null, null)
+            val column_index = cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+            cursor.moveToFirst()
+            return cursor.getString(column_index)
+        } catch (e: Exception) {
+            makeLog("Exception ${e.localizedMessage}")
+        }
+
+        return  ""
     }
 
     private fun setAs(uri: Uri) {
@@ -553,6 +606,14 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_picture_view, menu)
+
+        if (intent != null) {
+            val action = intent.action
+            if (action != null && action.compareTo(Intent.ACTION_VIEW) == 0) {
+                menu!!.findItem(R.id.action_menu_slideshow).isVisible = false
+            }
+        }
+
         return true
     }
 

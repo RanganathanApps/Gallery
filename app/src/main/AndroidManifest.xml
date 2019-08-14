@@ -73,6 +73,10 @@
                 <data android:scheme="null" />
                 <data android:mimeType="image/*" />
                 <data android:host="*" />
+                <!--<data android:pathPattern=".*\\.jpg" />
+                <data android:pathPattern=".*\\.jpeg" />
+                <data android:pathPattern=".*\\.webp" />
+                <data android:pathPattern=".*\\.png" />-->
             </intent-filter>
 
            <!-- <intent-filter android:priority="1">

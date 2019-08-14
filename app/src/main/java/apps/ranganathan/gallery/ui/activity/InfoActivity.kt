@@ -12,7 +12,8 @@ import kotlinx.android.synthetic.main.content_info.*
 import java.io.File
 import android.graphics.BitmapFactory
 import android.net.Uri
-
+import android.view.View.GONE
+import java.net.URI
 
 
 class InfoActivity : BaseActivity() {
@@ -26,44 +27,46 @@ class InfoActivity : BaseActivity() {
         setContentView(R.layout.activity_info)
         setAppBar("")
         changeToolbarNavIconColor(R.color.colorWhite)
-
         infoViewModel = ViewModelProviders.of(this).get(InfoViewModel::class.java)
         if (intent!!.extras != null) {
             if (intent!!.extras!!.containsKey("album")) {
                 album = intent!!.extras!!.getSerializable("album") as Album
+                if (!album.albumUri.startsWith("file")){
+                    album.albumUri =  Uri.parse(album.albumUri).toString()
+
+                }
+                if (getIMGSize(album.file)!=null){
+                    infoSizeLy.visibility = GONE
+                    infoDimensionLy.visibility = GONE
+                }else{
+                    txtSize.text = infoViewModel.getFileSize(album.file)
+                    txtWidth.text = getIMGSize(album.file)
+                }
+
+                txtPath.text = infoViewModel.getFilePath(album.file)
+                txtLastModified.text = infoViewModel.getFileDate(album.file)
+                txtLastModifiedTime.text = infoViewModel.getFileTime(album.file)
                 setToolBarTitle(album.file.name)
+                loadImage(album.albumUri,
+                    imgInfo,
+                    R.drawable.ic_camera_alt_white_24dp)
             }
         }
 
-        txtPath.text = infoViewModel.getFilePath(album.file)
-        txtLastModified.text = infoViewModel.getFileDate(album.file)
-        txtLastModifiedTime.text = infoViewModel.getFileTime(album.file)
-        txtSize.text = infoViewModel.getFileSize(album.file)
-        getIMGSize(album.file)
-
-        Picasso.get().load(album.albumUri).into(imgInfo, object : Callback {
-            override fun onError(e: Exception?) {
-
-            }
-
-            override fun onSuccess() {
-                //imageAlbum.heightRatio = (imageAlbum.height /4).toDouble()
-                //imageAlbum.layoutParams.height = imageAlbum.height/2
-                //imageAlbum.layoutParams.width = imageAlbum.width/2
-            }
-
-
-        })
-
     }
-    private fun getIMGSize(file: File) {
+
+
+    private fun getIMGSize(file: File): String? {
         val options = BitmapFactory.Options()
         options.inJustDecodeBounds = true
         BitmapFactory.decodeFile(file.absolutePath, options)
         val imageHeight = options.outHeight
         val imageWidth = options.outWidth
+        if (imageWidth==0){
+            return null
+        }
 
-        txtWidth.text = "$imageWidth (W) * $imageHeight (H)"
+        return "$imageWidth (W) * $imageHeight (H)"
 
     }
 

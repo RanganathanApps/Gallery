@@ -31,6 +31,7 @@
             android:orientation="vertical">
         <LinearLayout
 
+                android:id="@+id/infoSizeLy"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -164,6 +165,7 @@
         </LinearLayout>
 
         <LinearLayout
+                android:id="@+id/infoDimensionLy"
                 android:layout_marginTop="@dimen/_10sdp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
