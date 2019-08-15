@@ -116,7 +116,7 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
             if (action != null && action.compareTo(Intent.ACTION_VIEW) == 0) {
                 val scheme = intent!!.scheme
                 if (scheme!!.compareTo(ContentResolver.SCHEME_CONTENT) == 0 ||
-                    scheme!!.compareTo(ContentResolver.SCHEME_FILE) == 0) {
+                    scheme.compareTo(ContentResolver.SCHEME_FILE) == 0) {
                     val uri = intent.data
                     val name = uri.lastPathSegment
 
@@ -143,7 +143,7 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
 
                 }
             } else if (intent!!.extras != null) {
-
+                setNavigation()
 
                 album = intent!!.extras!!.getSerializable("album") as Album
                 progressCircularViewPager.visibility = VISIBLE
@@ -246,7 +246,7 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
 
         })
 
-        setNavigation()
+
 
 
     }
@@ -361,7 +361,7 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
                         .packageName + ".provider", album.file
                 )
                 val shareIntent = Intent(Intent.ACTION_SEND)
-                shareIntent.type = "image/jpg"
+                shareIntent.type = "image/*"
                 shareIntent.putExtra(Intent.EXTRA_STREAM, apkURI)
                 startActivity(Intent.createChooser(shareIntent, "Share image using"))
             }
@@ -433,7 +433,13 @@ class PictureViewActivity : BaseActivity(), BottomNavigationView.OnNavigationIte
 
     private fun showToolbar() {
         appBar.visibility = VISIBLE
-        navigation.visibility = VISIBLE
+        val action = intent.action
+        if (action != null && action.compareTo(Intent.ACTION_VIEW) == 0) {
+            navigation.visibility = GONE
+        }else {
+            navigation.visibility = VISIBLE
+        }
+
         setBootomBarHeight()
         showSystemUI()
         setToolBarHeight()

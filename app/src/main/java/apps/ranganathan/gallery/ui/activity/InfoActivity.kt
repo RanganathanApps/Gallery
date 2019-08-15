@@ -35,7 +35,7 @@ class InfoActivity : BaseActivity() {
                     album.albumUri =  Uri.parse(album.albumUri).toString()
 
                 }
-                if (getIMGSize(album.file)!=null){
+                if (getIMGSize(album.file)==null){
                     infoSizeLy.visibility = GONE
                     infoDimensionLy.visibility = GONE
                 }else{
